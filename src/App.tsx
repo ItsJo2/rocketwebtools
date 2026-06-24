@@ -1556,6 +1556,10 @@ export default function App() {
                     slug={blogPostSlug}
                     isDark={isDark}
                     onOpenTool={handleOpenTool}
+                    onOpenPost={(slug) => {
+                      setBlogPostSlug(slug);
+                      window.history.pushState({ page: 'blog', slug }, '', `?page=blog&slug=${slug}`);
+                    }}
                   />
                 ) : (
                   <BlogPage

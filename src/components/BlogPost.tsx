@@ -18,6 +18,7 @@ interface BlogPostProps {
   isDark: boolean;
   onBack: () => void;
   onOpenTool: (toolId: string) => void;
+  onOpenPost: (slug: string) => void;
 }
 
 interface Suggestion {
@@ -88,10 +89,31 @@ const CATEGORY_SUGGESTIONS: Record<string, Suggestion[]> = {
   ],
 };
 
-export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
+export function BlogPost({ slug, isDark, onBack, onOpenTool, onOpenPost }: BlogPostProps) {
   const [meta, setMeta] = useState<BlogPostMeta | null>(null);
   const [htmlContent, setHtmlContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [rawMarkdown, setRawMarkdown] = useState<string>('');
+  const [headings, setHeadings] = useState<{ id: string; text: string }[]>([]);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+  const [allPosts, setAllPosts] = useState<BlogPostMeta[]>([]);
+
+  const extractHeadings = (markdown: string) => {
+    const lines = markdown.split('\n');
+    return lines
+      .filter(line => line.startsWith('## '))
+      .map((line, idx) => ({
+        id: `heading-${idx}`,
+        text: line.replace('## ', '').trim()
+      }));
+  };
+
+  const calculateReadTime = (text: string) => {
+    const wordCount = text.split(/\s+/).length;
+    const minutes = Math.ceil(wordCount / 200);
+    return `${minutes} min read`;
+  };
 
   const t = isDark ? {
     panelBg: 'bg-[#141414]',
@@ -127,6 +149,7 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
         return res.json();
       })
       .then((posts: BlogPostMeta[]) => {
+        setAllPosts(posts);
         const found = posts.find((p) => p.slug === slug);
         if (found) {
           setMeta(found);
@@ -138,7 +161,17 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
         return res.text();
       })
       .then((markdownText) => {
-        const parsedHtml = marked.parse(markdownText) as string;
+        setRawMarkdown(markdownText);
+        const extracted = extractHeadings(markdownText);
+        setHeadings(extracted);
+
+        let processedMarkdown = markdownText;
+        let headingIndex = 0;
+        processedMarkdown = processedMarkdown.replace(/^## (.+)$/gm, (_, title) => {
+          return `## <span id="heading-${headingIndex++}">${title}</span>`;
+        });
+
+        const parsedHtml = marked.parse(processedMarkdown) as string;
         setHtmlContent(parsedHtml);
         setIsLoading(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -149,6 +182,16 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
         setIsLoading(false);
       });
   }, [slug]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      setReadingProgress(Math.min(100, Math.max(0, progress)));
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const formatDate = (dateString: string) => {
     try {
@@ -196,6 +239,73 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
   // Get recommendations based on category
   const recommendations = meta ? CATEGORY_SUGGESTIONS[meta.category] || [] : [];
 
+  // Pick the 2 most recent ones that are not the current slug
+  const relatedPosts = allPosts
+    .filter((p) => p.slug !== slug)
+    .slice(0, 2);
+
+  const twitterUrl = meta ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(meta.title)}&url=${encodeURIComponent(`https://www.rocketwebtools.com?page=blog&post=${slug}`)}` : '';
+  const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://www.rocketwebtools.com?page=blog&post=${slug}`)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://www.rocketwebtools.com?page=blog&post=${slug}`)}`;
+
+  const renderShareBar = () => (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className={`text-xs font-mono font-bold uppercase tracking-widest mr-1 ${
+        isDark ? 'text-gray-500' : 'text-gray-400'
+      }`}>Share</span>
+      
+      <a href={twitterUrl} target="_blank" rel="noopener noreferrer"
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          isDark 
+            ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8' 
+            : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}>
+        <Icons.Twitter className="w-3.5 h-3.5" />
+        X / Twitter
+      </a>
+
+      <a href={linkedinUrl} target="_blank" rel="noopener noreferrer"
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          isDark 
+            ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8' 
+            : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}>
+        <Icons.Linkedin className="w-3.5 h-3.5" />
+        LinkedIn
+      </a>
+
+      <a href={facebookUrl} target="_blank" rel="noopener noreferrer"
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          isDark 
+            ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8' 
+            : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}>
+        <Icons.Facebook className="w-3.5 h-3.5" />
+        Facebook
+      </a>
+
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard.writeText(`https://www.rocketwebtools.com?page=blog&post=${slug}`);
+          setLinkCopied(true);
+          setTimeout(() => setLinkCopied(false), 2000);
+        }}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          linkCopied
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+            : isDark 
+              ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8' 
+              : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}>
+        {linkCopied 
+          ? <><Icons.Check className="w-3.5 h-3.5" /> Copied!</>
+          : <><Icons.Link className="w-3.5 h-3.5" /> Copy Link</>
+        }
+      </button>
+    </div>
+  );
+
   // Scoped styling for rendered markdown content
   const cssStyles = `
     .blog-content h2 {
@@ -236,132 +346,220 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool }: BlogPostProps) {
   `;
 
   return (
-    <div className="space-y-8 font-sans max-w-3xl mx-auto" id="blog-post-display-container">
-      {/* Dynamic Style Injection */}
-      <style dangerouslySetInnerHTML={{ __html: cssStyles }} />
-
-      {/* Header Breadcrumbs */}
-      <div className={`flex items-center justify-between border-b ${t.border} pb-4`}>
-        <button
-          type="button"
-          onClick={onBack}
-          className={`flex items-center gap-2 text-xs font-semibold p-2 px-4 ${t.panelBg} border ${t.borderStrong} hover:border-orange-550/40 rounded-full ${t.text} hover:${t.textPrimary} transition-all cursor-pointer shadow-sm`}
-        >
-          <Icons.ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Articles</span>
-        </button>
-        <span className={`text-[10px] font-mono ${t.textMuted} uppercase tracking-widest ${t.badgeBg} px-2.5 py-1 rounded`}>
-          Article View
-        </span>
+    <>
+      <div className="fixed top-0 left-0 w-full h-0.5 z-50 bg-transparent">
+        <div 
+          className="h-full bg-orange-500 transition-all duration-100"
+          style={{ width: `${readingProgress}%` }}
+        />
       </div>
 
-      {isLoading ? (
-        <div className="py-24 text-center space-y-4">
-          <Icons.Loader className="w-8 h-8 text-orange-500 animate-spin mx-auto" />
-          <p className={`text-xs font-mono ${t.textMuted}`}>RETRIEVING ARTICLE CONTENT...</p>
+      <div className="space-y-8 font-sans max-w-3xl lg:max-w-5xl mx-auto" id="blog-post-display-container">
+        {/* Dynamic Style Injection */}
+        <style dangerouslySetInnerHTML={{ __html: cssStyles }} />
+
+        {/* Header Breadcrumbs */}
+        <div className={`flex items-center justify-between border-b ${t.border} pb-4`}>
+          <button
+            type="button"
+            onClick={onBack}
+            className={`flex items-center gap-2 text-xs font-semibold p-2 px-4 ${t.panelBg} border ${t.borderStrong} hover:border-orange-550/40 rounded-full ${t.text} hover:${t.textPrimary} transition-all cursor-pointer shadow-sm`}
+          >
+            <Icons.ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Articles</span>
+          </button>
+          <span className={`text-[10px] font-mono ${t.textMuted} uppercase tracking-widest ${t.badgeBg} px-2.5 py-1 rounded`}>
+            Article View
+          </span>
         </div>
-      ) : (
-        <article className="space-y-6 text-left">
-          {meta && (
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2.5 text-xs">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${getCategoryBadgeClass(meta.category)}`}>
-                  {meta.category}
-                </span>
-                <span className={t.textMuted}>&bull;</span>
-                <span className={`${t.textSecondary} flex items-center gap-1`}>
-                  <Icons.Calendar className="w-3.5 h-3.5" />
-                  {formatDate(meta.date)}
-                </span>
-                <span className={t.textMuted}>&bull;</span>
-                <span className={`${t.textSecondary} flex items-center gap-1`}>
-                  <Icons.Clock className="w-3.5 h-3.5" />
-                  {meta.readTime} read
-                </span>
-              </div>
 
-              <h1 className={`text-3xl sm:text-4xl font-black ${t.textPrimary} tracking-tight leading-tight`}>
-                {meta.title}
-              </h1>
-
-              {/* Tags block inside meta row */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {meta.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 ${t.badgeBg} ${t.textSecondary} rounded`}
-                  >
-                    #{tag}
+        {isLoading ? (
+          <div className="py-24 text-center space-y-4">
+            <Icons.Loader className="w-8 h-8 text-orange-500 animate-spin mx-auto" />
+            <p className={`text-xs font-mono ${t.textMuted}`}>RETRIEVING ARTICLE CONTENT...</p>
+          </div>
+        ) : (
+          <article className="space-y-6 text-left">
+            {meta && (
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2.5 text-xs">
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${getCategoryBadgeClass(meta.category)}`}>
+                    {meta.category}
                   </span>
-                ))}
-              </div>
-
-              <div className={`flex items-center gap-2.5 pt-3 border-b ${t.border} pb-4`}>
-                <div className="w-7 h-7 rounded-full bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold text-xs">
-                  R
+                  <span className={t.textMuted}>&bull;</span>
+                  <span className={`${t.textSecondary} flex items-center gap-1`}>
+                    <Icons.Calendar className="w-3.5 h-3.5" />
+                    {formatDate(meta.date)}
+                  </span>
+                  <span className={t.textMuted}>&bull;</span>
+                  <span className={`${t.textSecondary} flex items-center gap-1`}>
+                    <Icons.Clock className="w-3.5 h-3.5" />
+                    {meta.readTime || calculateReadTime(rawMarkdown)}
+                  </span>
                 </div>
-                <div className="text-xs">
-                  <p className={`font-semibold ${t.textPrimary}`}>{meta.author || 'Rocket Web Tools Team'}</p>
-                  <p className={t.textMuted}>Content Editorial Desk</p>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {/* Rendered HTML */}
-          <div 
-            className="blog-content leading-relaxed text-sm sm:text-base space-y-4"
-            dangerouslySetInnerHTML={{ __html: htmlContent }} 
-          />
+                <h1 className={`text-3xl sm:text-4xl font-black ${t.textPrimary} tracking-tight leading-tight`}>
+                  {meta.title}
+                </h1>
 
-          {/* Related Tools CTA Box */}
-          {recommendations.length > 0 && (
-            <div className={`p-6 ${t.panelBg} border ${t.border} rounded-2xl space-y-4 mt-12`}>
-              <div className="space-y-1">
-                <h3 className={`text-base font-black ${t.textPrimary} tracking-tight flex items-center gap-2`}>
-                  <Icons.Wrench className="w-4 h-4 text-orange-500" />
-                  Try Related Web Utilities
-                </h3>
-                <p className={`text-xs ${t.textSecondary}`}>
-                  Execute these tasks right now entirely inside your browser sandbox.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {recommendations.map((tool) => {
-                  const ToolIcon = Icons[tool.icon as keyof typeof Icons] || Icons.Wrench;
-                  return (
-                    <div 
-                      key={tool.id} 
-                      className={`p-4 rounded-xl border ${t.border} ${t.cardBg} ${t.cardHover} transition-all duration-200 flex flex-col justify-between gap-3`}
+                {/* Tags block inside meta row */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {meta.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 ${t.badgeBg} ${t.textSecondary} rounded`}
                     >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded bg-orange-500/10 text-orange-500 flex items-center justify-center">
-                            <ToolIcon className="w-4 h-4" />
-                          </div>
-                          <h4 className={`text-xs font-bold ${t.textPrimary}`}>{tool.name}</h4>
-                        </div>
-                        <p className={`text-[11px] ${t.textSecondary} leading-normal`}>
-                          {tool.description}
-                        </p>
-                      </div>
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
 
-                      <button
-                        type="button"
-                        onClick={() => onOpenTool(tool.id)}
-                        className="w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2 rounded-lg cursor-pointer transition-colors mt-1"
-                      >
-                        Launch Tool
-                      </button>
-                    </div>
-                  );
-                })}
+                <div className={`flex items-center gap-2.5 pt-3 border-b ${t.border} pb-4`}>
+                  <div className="w-7 h-7 rounded-full bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold text-xs">
+                    R
+                  </div>
+                  <div className="text-xs">
+                    <p className={`font-semibold ${t.textPrimary}`}>{meta.author || 'Rocket Web Tools Team'}</p>
+                    <p className={t.textMuted}>Content Editorial Desk</p>
+                  </div>
+                </div>
               </div>
+            )}
+
+            {/* Share bar below the title/meta row and above the markdown content */}
+            <div className="py-2 pb-4 border-b border-dashed border-gray-200 dark:border-white/5">
+              {renderShareBar()}
             </div>
-          )}
-        </article>
-      )}
-    </div>
+
+            {/* Two-column layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-8">
+              {/* Left Column: Main content area */}
+              <div className="space-y-6 min-w-0">
+                {/* Rendered HTML */}
+                <div 
+                  className="blog-content leading-relaxed text-sm sm:text-base space-y-4"
+                  dangerouslySetInnerHTML={{ __html: htmlContent }} 
+                />
+
+                {/* Share bar repeated at the very bottom of the post after the content */}
+                <div className="py-4 border-t border-b border-dashed border-gray-200 dark:border-white/5">
+                  {renderShareBar()}
+                </div>
+
+                {/* Related Tools CTA Box */}
+                {recommendations.length > 0 && (
+                  <div className={`p-6 ${t.panelBg} border ${t.border} rounded-2xl space-y-4 mt-12`}>
+                    <div className="space-y-1">
+                      <h3 className={`text-base font-black ${t.textPrimary} tracking-tight flex items-center gap-2`}>
+                        <Icons.Wrench className="w-4 h-4 text-orange-500" />
+                        Try Related Web Utilities
+                      </h3>
+                      <p className={`text-xs ${t.textSecondary}`}>
+                        Execute these tasks right now entirely inside your browser sandbox.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {recommendations.map((tool) => {
+                        const ToolIcon = Icons[tool.icon as keyof typeof Icons] || Icons.Wrench;
+                        return (
+                          <div 
+                            key={tool.id} 
+                            className={`p-4 rounded-xl border ${t.border} ${t.cardBg} ${t.cardHover} transition-all duration-200 flex flex-col justify-between gap-3`}
+                          >
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                                  <ToolIcon className="w-4 h-4" />
+                                </div>
+                                <h4 className={`text-xs font-bold ${t.textPrimary}`}>{tool.name}</h4>
+                              </div>
+                              <p className={`text-[11px] ${t.textSecondary} leading-normal`}>
+                                {tool.description}
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => onOpenTool(tool.id)}
+                              className="w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2 rounded-lg cursor-pointer transition-colors mt-1"
+                            >
+                              Launch Tool
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* You might also like section */}
+                {relatedPosts.length > 0 && (
+                  <div className={`rounded-2xl border p-6 space-y-4 ${
+                    isDark ? 'bg-[#0f0f0f] border-white/5' : 'bg-white border-gray-200'
+                  }`}>
+                    <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      You might also like
+                    </h3>
+                    <div className="space-y-3">
+                      {relatedPosts.map(post => (
+                        <button
+                          key={post.slug}
+                          type="button"
+                          onClick={() => onOpenPost(post.slug)}
+                          className={`w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all ${
+                            isDark 
+                              ? 'border-white/5 hover:border-orange-500/20 hover:bg-white/2' 
+                              : 'border-gray-100 hover:border-orange-200 hover:bg-orange-50/30'
+                          }`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-xs font-bold leading-snug ${
+                              isDark ? 'text-gray-200' : 'text-gray-800'
+                            }`}>{post.title}</p>
+                            <p className={`text-[11px] mt-1 ${
+                              isDark ? 'text-gray-500' : 'text-gray-400'
+                            }`}>{post.readTime} · {post.category}</p>
+                          </div>
+                          <Icons.ChevronRight className={`w-4 h-4 shrink-0 mt-0.5 ${
+                            isDark ? 'text-gray-600' : 'text-gray-300'
+                          }`} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Table of Contents Sidebar */}
+              <aside className="hidden lg:block">
+                <div className={`sticky top-24 rounded-2xl border p-4 space-y-1 ${
+                  isDark 
+                    ? 'bg-[#0f0f0f] border-white/5' 
+                    : 'bg-white border-gray-200'
+                }`}>
+                  <p className={`text-[10px] font-bold font-mono uppercase tracking-widest mb-3 ${
+                    isDark ? 'text-gray-500' : 'text-gray-400'
+                  }`}>On this page</p>
+                  {headings.map((h) => (
+                    <a
+                      key={h.id}
+                      href={`#${h.id}`}
+                      className={`block text-xs py-1 px-2 rounded-lg transition-all ${
+                        isDark 
+                          ? 'text-gray-400 hover:text-white hover:bg-white/5' 
+                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                      }`}
+                    >
+                      {h.text}
+                    </a>
+                  ))}
+                </div>
+              </aside>
+            </div>
+          </article>
+        )}
+      </div>
+    </>
   );
 }

@@ -23,65 +23,241 @@ import {
   Activity,
   Calculator
 } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
-export function CalculatorTools({ activeToolId }: { activeToolId: string }) {
+const exportResultsAsPDF = (title: string, results: { label: string; value: string }[]) => {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) return;
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${title} — Rocket Web Tools</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+          padding: 40px; 
+          color: #111;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .header { 
+          border-bottom: 2px solid #f97316; 
+          padding-bottom: 16px; 
+          margin-bottom: 24px; 
+        }
+        .brand { 
+          font-size: 11px; 
+          font-weight: 700; 
+          text-transform: uppercase; 
+          letter-spacing: 0.1em; 
+          color: #f97316; 
+          margin-bottom: 6px;
+          font-family: monospace;
+        }
+        .title { 
+          font-size: 22px; 
+          font-weight: 900; 
+          color: #111;
+        }
+        .date { 
+          font-size: 11px; 
+          color: #888; 
+          margin-top: 4px;
+          font-family: monospace;
+        }
+        .results { margin-top: 8px; }
+        .result-row { 
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center;
+          padding: 12px 16px; 
+          border-radius: 8px;
+          margin-bottom: 8px;
+        }
+        .result-row:nth-child(odd) { background: #f8f8f8; }
+        .result-row:nth-child(even) { background: #fff; border: 1px solid #f0f0f0; }
+        .result-label { 
+          font-size: 13px; 
+          color: #555; 
+          font-weight: 500;
+        }
+        .result-value { 
+          font-size: 14px; 
+          font-weight: 800; 
+          color: #111;
+          text-align: right;
+        }
+        .footer { 
+          margin-top: 32px; 
+          padding-top: 16px; 
+          border-top: 1px solid #eee;
+          font-size: 10px; 
+          color: #aaa; 
+          text-align: center;
+          font-family: monospace;
+        }
+        @media print {
+          body { padding: 20px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="brand">🚀 Rocket Web Tools</div>
+        <div class="title">${title}</div>
+        <div class="date">Generated on ${new Date().toLocaleDateString('en-US', { 
+          year: 'numeric', month: 'long', day: 'numeric', 
+          hour: '2-digit', minute: '2-digit' 
+        })}</div>
+      </div>
+      <div class="results">
+        ${results.map(r => `
+          <div class="result-row">
+            <span class="result-label">${r.label}</span>
+            <span class="result-value">${r.value}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="footer">
+        rocketwebtools.com — Free browser-based calculators. Results are for estimation purposes only.
+      </div>
+      <script>
+        window.onload = () => { window.print(); }
+      </script>
+    </body>
+    </html>
+  `;
+  
+  printWindow.document.write(html);
+  printWindow.document.close();
+};
+
+const copyResultsToClipboard = (title: string, results: { label: string; value: string }[]) => {
+  const text = `${title} — Rocket Web Tools\n${'─'.repeat(40)}\n${
+    results.map(r => `${r.label}: ${r.value}`).join('\n')
+  }\n${'─'.repeat(40)}\nGenerated on ${new Date().toLocaleDateString()}`;
+  navigator.clipboard.writeText(text);
+};
+
+const ExportBar = ({ 
+  title, 
+  results, 
+  isDark 
+}: { 
+  title: string; 
+  results: { label: string; value: string }[];
+  isDark: boolean;
+}) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    copyResultsToClipboard(title, results);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className={`flex items-center gap-2 flex-wrap pt-4 mt-4 border-t ${
+      isDark ? 'border-white/5' : 'border-gray-100'
+    }`}>
+      <span className={`text-[10px] font-mono font-bold uppercase tracking-widest mr-1 ${
+        isDark ? 'text-gray-500' : 'text-gray-400'
+      }`}>Export</span>
+
+      <button
+        type="button"
+        onClick={() => exportResultsAsPDF(title, results)}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          isDark
+            ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8'
+            : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}
+      >
+        <Icons.Printer className="w-3.5 h-3.5" />
+        Print / Save PDF
+      </button>
+
+      <button
+        type="button"
+        onClick={handleCopy}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+          copied
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+            : isDark
+              ? 'bg-white/3 border-white/8 text-gray-300 hover:text-white hover:bg-white/8'
+              : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+        }`}
+      >
+        {copied
+          ? <><Icons.Check className="w-3.5 h-3.5" /> Copied!</>
+          : <><Icons.Copy className="w-3.5 h-3.5" /> Copy Results</>
+        }
+      </button>
+    </div>
+  );
+};
+
+export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId: string; isDark?: boolean }) {
   if (activeToolId === 'age-calc') {
-    return <AgeCalculator />;
+    return <AgeCalculator isDark={isDark} />;
   }
   if (activeToolId === 'percentage-calc') {
-    return <PercentageCalculator />;
+    return <PercentageCalculator isDark={isDark} />;
   }
   if (activeToolId === 'average-calc') {
-    return <AverageCalculator />;
+    return <AverageCalculator isDark={isDark} />;
   }
   if (activeToolId === 'confidence-interval-calc') {
     return <ConfidenceIntervalCalculator />;
   }
   if (activeToolId === 'sales-tax-calc') {
-    return <SalesTaxCalculator />;
+    return <SalesTaxCalculator isDark={isDark} />;
   }
   if (activeToolId === 'margin-calc') {
-    return <MarginCalculator />;
+    return <MarginCalculator isDark={isDark} />;
   }
   if (activeToolId === 'probability-calc') {
     return <ProbabilityCalculator />;
   }
   if (activeToolId === 'paypal-calc') {
-    return <PaypalFeeCalculator />;
+    return <PaypalFeeCalculator isDark={isDark} />;
   }
   if (activeToolId === 'discount-calc') {
-    return <DiscountCalculator />;
+    return <DiscountCalculator isDark={isDark} />;
   }
   if (activeToolId === 'cpm-calc') {
     return <CpmCalculator />;
   }
   if (activeToolId === 'loan-calc') {
-    return <LoanCalculator />;
+    return <LoanCalculator isDark={isDark} />;
   }
   if (activeToolId === 'gst-calc') {
-    return <GstCalculator />;
+    return <GstCalculator isDark={isDark} />;
   }
   if (activeToolId === 'days-calc') {
-    return <DaysCalculator />;
+    return <DaysCalculator isDark={isDark} />;
   }
   if (activeToolId === 'hours-calc') {
-    return <HoursCalculator />;
+    return <HoursCalculator isDark={isDark} />;
   }
   if (activeToolId === 'month-calc') {
     return <MonthCalculator />;
   }
   if (activeToolId === 'stripe-calc') {
-    return <StripeFeeCalculator />;
+    return <StripeFeeCalculator isDark={isDark} />;
   }
   if (activeToolId === 'calorie-calc' || activeToolId === 'tdee-calc') {
-    return <CalorieAndTdeeCalculator />;
+    return <CalorieAndTdeeCalculator isDark={isDark} activeToolId={activeToolId} />;
   }
 
   return null;
 }
 
 // 1. AGE CALCULATOR (ENHANCED STATE AND CHINESE ZODIAC)
-function AgeCalculator() {
+function AgeCalculator({ isDark }: { isDark: boolean }) {
   const [birthdate, setBirthdate] = useState('');
   const [stats, setStats] = useState<{
     years: number;
@@ -280,6 +456,16 @@ function AgeCalculator() {
                   </div>
                 </div>
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Age Calculator Results"
+                results={[
+                  { label: 'Age', value: `${stats.years} years, ${stats.months} months, ${stats.days} days` },
+                  { label: 'Total Days Lived', value: stats.totalDays.toLocaleString() },
+                  { label: 'Total Hours Lived', value: stats.totalHours.toLocaleString() },
+                  { label: 'Zodiac Sign', value: stats.zodiac },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -294,7 +480,7 @@ function AgeCalculator() {
 }
 
 // 2. PERCENTAGE CALCULATOR (MULTIPLE MODE SOLVER)
-function PercentageCalculator() {
+function PercentageCalculator({ isDark }: { isDark: boolean }) {
   // Mode A: What is X% of Y?
   const [aPct, setAPct] = useState('');
   const [aVal, setAVal] = useState('');
@@ -364,6 +550,20 @@ function PercentageCalculator() {
       setDResult(null);
     }
   };
+
+  let activeResult: { val: string; mode: string } | null = null;
+  if (aResult !== null) {
+    activeResult = { val: Number(aResult.toFixed(4)).toString(), mode: `What is ${aPct}% of ${aVal}?` };
+  } else if (bResult !== null) {
+    activeResult = { val: `${Number(bResult.toFixed(4))}%`, mode: `${bVal1} is what percent of ${bVal2}?` };
+  } else if (cResult !== null) {
+    activeResult = { 
+      val: `${cResult.type === 'increase' ? '+' : cResult.type === 'decrease' ? '-' : ''}${Number(cResult.change.toFixed(4))}%`, 
+      mode: `Percentage change from ${cVal1} to ${cVal2}` 
+    };
+  } else if (dResult !== null) {
+    activeResult = { val: Number(dResult.toFixed(4)).toString(), mode: `${dOp === 'add' ? 'Add' : 'Subtract'} ${dPct}% from ${dVal}` };
+  }
 
   return (
     <div className="space-y-6" id="percentage-calc-comp">
@@ -519,12 +719,22 @@ function PercentageCalculator() {
           </div>
         </div>
       </div>
+      {activeResult && (
+        <ExportBar
+          isDark={isDark}
+          title="Percentage Calculator Results"
+          results={[
+            { label: 'Calculated Value', value: activeResult.val },
+            { label: 'Mode / Equation', value: activeResult.mode },
+          ]}
+        />
+      )}
     </div>
   );
 }
 
 // 3. AVERAGE CALCULATOR (CENTRAL TENDENCY AND SPREAD METRICS)
-function AverageCalculator() {
+function AverageCalculator({ isDark }: { isDark: boolean }) {
   const [inputStr, setInputStr] = useState('');
   const [metrics, setMetrics] = useState<{
     mean: number;
@@ -701,6 +911,18 @@ function AverageCalculator() {
                   <span className="text-white max-w-[280px] truncate block" title={metrics.sorted.join(', ')}>{metrics.sorted.join(', ')}</span>
                 </div>
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Average Calculator Results"
+                results={[
+                  { label: 'Mean', value: metrics.mean.toFixed(4) },
+                  { label: 'Median', value: metrics.median.toFixed(4) },
+                  { label: 'Mode', value: metrics.mode },
+                  { label: 'Standard Deviation', value: metrics.stdDev.toFixed(4) },
+                  { label: 'Min', value: metrics.min.toString() },
+                  { label: 'Max', value: metrics.max.toString() },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -862,7 +1084,7 @@ function ConfidenceIntervalCalculator() {
 }
 
 // 5. SALES TAX CALCULATOR (WITH DISCOUNT AND DETAILED TARIFF REVIEWS)
-function SalesTaxCalculator() {
+function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
   const [price, setPrice] = useState('');
   const [taxRate, setTaxRate] = useState('');
   const [discount, setDiscount] = useState('');
@@ -976,6 +1198,16 @@ function SalesTaxCalculator() {
                   <span className="text-indigo-400 font-black text-base">${result.grandTotal.toFixed(2)}</span>
                 </div>
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Sales Tax Calculator Results"
+                results={[
+                  { label: 'Original Price', value: `$${result.originalPrice.toFixed(2)}` },
+                  { label: 'Tax Amount', value: `$${result.taxApplied.toFixed(2)}` },
+                  { label: 'Final Price', value: `$${result.grandTotal.toFixed(2)}` },
+                  { label: 'Tax Rate', value: `${parseFloat(taxRate) || 0}%` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -990,7 +1222,7 @@ function SalesTaxCalculator() {
 }
 
 // 6. MARGIN CALCULATOR (FOR SMALL BUSINESS SALES CONV)
-function MarginCalculator() {
+function MarginCalculator({ isDark }: { isDark: boolean }) {
   const [cost, setCost] = useState('');
   const [revenue, setRevenue] = useState('');
   const [marginPct, setMarginPct] = useState('');
@@ -1144,6 +1376,17 @@ function MarginCalculator() {
               <div className="border-t border-white/5 pt-4 text-xs font-sans text-gray-400 leading-relaxed">
                 <p>For inventory acquired at <span className="text-white font-bold">${results.costVal.toFixed(2)}</span>, offering them at a sale value of <span className="text-white font-bold">${results.rev.toFixed(2)}</span> results in <span className="text-white font-bold">${results.profit.toFixed(2)}</span> net earnings per transaction. This triggers a retail markup value equivalent to <span className="text-white font-bold">{results.markup.toFixed(2)}%</span> on standard bookkeeping entries.</p>
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Margin Calculator Results"
+                results={[
+                  { label: 'Revenue', value: `$${results.rev.toFixed(2)}` },
+                  { label: 'Cost', value: `$${results.costVal.toFixed(2)}` },
+                  { label: 'Gross Profit', value: `$${results.profit.toFixed(2)}` },
+                  { label: 'Profit Margin', value: `${results.margin.toFixed(2)}%` },
+                  { label: 'Markup', value: `${results.markup.toFixed(2)}%` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -1274,7 +1517,7 @@ function ProbabilityCalculator() {
 }
 
 // 8. PAYPAL FEE CALCULATOR (UP TO DATE MERCHANT AND DOMESTIC RATES)
-function PaypalFeeCalculator() {
+function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('2.99'); // Default standard merchant rate is 2.99%
   const [fixedFee, setFixedFee] = useState('0.49'); // Default standard domestic fixed fee standard is $0.49
@@ -1420,6 +1663,16 @@ function PaypalFeeCalculator() {
                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1 font-sans">Invoice Ledger Explanation</p>
                 {fees.explain}
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="PayPal Fee Calculator Results"
+                results={[
+                  { label: mode === 'receive' ? 'Amount to Charge' : 'Amount to Send', value: `$${fees.rawAmt.toFixed(2)}` },
+                  { label: 'Calculated Fee', value: `$${fees.feeVal.toFixed(2)}` },
+                  { label: mode === 'receive' ? 'Amount Received' : 'Amount Recipient Gets', value: `$${fees.disbursed.toFixed(2)}` },
+                  { label: 'Fee Rate', value: `${rate}% + $${fixedFee}` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -1434,7 +1687,7 @@ function PaypalFeeCalculator() {
 }
 
 // 9. DISCOUNT CALCULATOR
-function DiscountCalculator() {
+function DiscountCalculator({ isDark }: { isDark: boolean }) {
   const [price, setPrice] = useState('');
   const [discount1, setDiscount1] = useState('');
   const [discount2, setDiscount2] = useState(''); // Stackable/double discount
@@ -1584,6 +1837,16 @@ function DiscountCalculator() {
                   <span className="text-white font-bold">+${result.taxVal.toFixed(2)}</span>
                 </div>
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Discount Calculator Results"
+                results={[
+                  { label: 'Original Price', value: `$${result.original.toFixed(2)}` },
+                  { label: 'Discount Amount', value: `$${result.totalSavings.toFixed(2)}` },
+                  { label: 'Final Price', value: `$${result.finalTotal.toFixed(2)}` },
+                  { label: 'Discount Percentage', value: `${parseFloat(discount1) || 0}%${parseFloat(discount2) ? ' + ' + discount2 + '%' : ''}` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -1801,7 +2064,7 @@ function CpmCalculator() {
 }
 
 // 11. LOAN CALCULATOR SUPPORTING COMPLETE AMORTIZATION SCHEDULE TABLE
-function LoanCalculator() {
+function LoanCalculator({ isDark }: { isDark: boolean }) {
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('');
   const [term, setTerm] = useState('');
@@ -1993,6 +2256,18 @@ function LoanCalculator() {
                   <p className="text-[10px] text-gray-500 text-center font-mono italic">Showing the first 12 months. Choose "Show Full Schedule" to see all remaining months.</p>
                 )}
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="Loan Calculator Results"
+                results={[
+                  { label: 'Monthly Payment', value: `$${schedule.monthlyPayment.toFixed(2)}` },
+                  { label: 'Total Interest', value: `$${schedule.totalInterest.toFixed(2)}` },
+                  { label: 'Total Payment', value: `$${schedule.totalPayment.toFixed(2)}` },
+                  { label: 'Principal Amount', value: `$${parseFloat(amount) || 0}` },
+                  { label: 'Annual Interest Rate', value: `${parseFloat(rate) || 0}%` },
+                  { label: 'Loan Term', value: `${parseFloat(term) || 0} ${termType}` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
@@ -2007,7 +2282,7 @@ function LoanCalculator() {
 }
 
 // 12. GST TAX CALCULATOR (ADD / REMOVE GST TARIFFS)
-function GstCalculator() {
+function GstCalculator({ isDark }: { isDark: boolean }) {
   const [price, setPrice] = useState('');
   const [gstRate, setGstRate] = useState('18');
   const [mode, setMode] = useState<'add' | 'remove'>('add');
@@ -2154,6 +2429,16 @@ function GstCalculator() {
                   ? ` yields a net GST surcharge component equal to $${result.gstAmount.toFixed(2)}, aggregating to a gross final purchase price of $${result.finalPrice.toFixed(2)}.` 
                   : ` extracts an embedded net GST portion of $${result.gstAmount.toFixed(2)}, leaving a net baseline product value of $${result.finalPrice.toFixed(2)}.`}
               </div>
+              <ExportBar
+                isDark={isDark}
+                title="GST Calculator Results"
+                results={[
+                  { label: 'Original Amount', value: `$${result.original.toFixed(2)}` },
+                  { label: 'GST Amount', value: `$${result.gstAmount.toFixed(2)}` },
+                  { label: 'Total Amount', value: `$${(mode === 'add' ? result.finalPrice : result.original).toFixed(2)}` },
+                  { label: 'GST Rate', value: `${gstRate}%` },
+                ]}
+              />
             </div>
           ) : (
             <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
