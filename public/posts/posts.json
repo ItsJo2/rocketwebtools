@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "how-to-format-json-like-a-pro",
+    "title": "How to Format JSON Like a Pro",
+    "date": "2026-06-20",
+    "category": "Developer Tools",
+    "excerpt": "Malformed JSON is one of the most common causes of bugs in web development. Learn how to format, validate, and debug JSON efficiently directly in your browser.",
+    "readTime": "5 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["JSON", "Developer Tools", "Formatting"]
+  },
+  {
+    "slug": "best-free-image-converter-tools",
+    "title": "The Best Free Image Converter Tools in 2026",
+    "date": "2026-06-15",
+    "category": "Image Tools",
+    "excerpt": "Converting images between PNG, JPEG, WebP, and other formats doesn't require software installs. Here's how to do it entirely in your browser for free.",
+    "readTime": "4 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["Image Tools", "PNG", "WebP", "Converter"]
+  },
+  {
+    "slug": "understanding-base64-encoding",
+    "title": "Understanding Base64 Encoding: What It Is and When to Use It",
+    "date": "2026-06-10",
+    "category": "Developer Tools",
+    "excerpt": "Base64 is everywhere — in emails, data URIs, APIs, and authentication tokens. This guide explains what it is, how it works, and when you should actually use it.",
+    "readTime": "6 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["Base64", "Encoding", "Developer Tools"]
+  },
+  {
+    "slug": "how-to-generate-secure-passwords",
+    "title": "How to Generate and Manage Secure Passwords in 2026",
+    "date": "2026-06-05",
+    "category": "Security",
+    "excerpt": "Weak passwords are still the number one cause of account breaches. Learn what makes a password truly secure and how to generate strong ones instantly in your browser.",
+    "readTime": "5 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["Password", "Security", "Privacy"]
+  },
+  {
+    "slug": "stripe-vs-paypal-fees-comparison",
+    "title": "Stripe vs PayPal Fees: A Complete 2026 Comparison",
+    "date": "2026-05-28",
+    "category": "Finance Tools",
+    "excerpt": "Choosing the wrong payment processor can cost your business thousands per year. We break down every fee structure so you can make the right decision.",
+    "readTime": "7 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["Stripe", "PayPal", "Fees", "E-commerce"]
+  },
+  {
+    "slug": "what-is-a-qr-code-and-how-to-create-one",
+    "title": "What Is a QR Code and How to Create One for Free",
+    "date": "2026-05-20",
+    "category": "General Utilities",
+    "excerpt": "QR codes are used everywhere from restaurant menus to business cards. Learn how they work and how to generate custom QR codes instantly without any app.",
+    "readTime": "4 min",
+    "author": "Rocket Web Tools Team",
+    "tags": ["QR Code", "Generator", "Utilities"]
+  }
+]
