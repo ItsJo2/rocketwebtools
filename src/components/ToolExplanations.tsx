@@ -47,27 +47,6 @@ export function ToolExplanation({ toolId, category = 'all', name, description, i
       useCases: 'Useful for network engineers auditing file downloads against original vendor checksums, system developers verifying database password hash structures, and cybersecurity pupils studying cryptographic integrity standards.',
       seoFocus: 'SHA-256 hash generator offline, calculate SHA-512 checksum online, cryptographic hash tool, SHA-1 checksum calculator, browser-side hashing block, secure text hashing.'
     },
-    'ai-rephrase': {
-      title: 'AI Voice Style & Translator',
-      overview: 'Our AI Voice Style & Translator bridges the gap between raw textual drafts and polished content styles. Powered by leading-edge large language models, this tool dynamically adapts to your contextual commands, rephrasing, translating, or stylistic tuning of emails, articles, and documentation blocks instantly.',
-      howItWorks: 'The application interacts with server-side proxy routes that safely pass your paragraph blocks and target requirements to the advanced Google Gemini model APIs. It uses professional stylistic system prompts to direct the response vocabulary, ensuring natural flow, proper grammar, and professional syntactic structures.',
-      useCases: 'Essential for digital marketers polishing blog copy for diverse demographics, business specialists converting rough drafts into professional emails, and copywriters translating international documents while preserving natural phrasing.',
-      seoFocus: 'AI rephraser tool, rewrite paragraphs online, translate languages with AI, style tone converter, Gemini rephrase assistant, professional vocabulary enhancer.'
-    },
-    'ai-regex': {
-      title: 'AI Regex Architect',
-      overview: 'Regular expressions (Regex) are incredibly powerful for matching and extracting patterns from unstructured text, but they are notoriously difficult to write and read. The AI Regex Architect acts as your personal compiler assistant, automatically generating complex Regex patterns from simple English descriptions.',
-      howItWorks: 'The AI service interprets your instructions (such as "extract all emails containing .org") and translates them into standard regular expression tokens (such as matching boundaries, character groups, and repetitions). It also provides detailed, step-by-step breakdowns of what each element in the generated pattern represents.',
-      useCases: 'Invaluable for web forms validation setups, data scientists cleaning raw dataset dumps, and QA testers designing targeted automated test suites containing string assertions.',
-      seoFocus: 'AI regex generator online, regular expression builder, translate English to regex, explain regex patterns, matching characters helper, regex tester tool.'
-    },
-    'ai-code': {
-      title: 'AI Code Annotator',
-      overview: 'Documenting code is a critical aspect of software engineering that is frequently overlooked due to time constraints. Our AI Code Annotator resolves this bottleneck by automatically injecting descriptive docstrings, inline comments, and robust type declarations directly into your Javascript or TypeScript blocks.',
-      howItWorks: 'By analyzing the syntactic flow of your code (variables, loops, conditional pathways, and function signatures), the underlying Gemini model identifies the logic and generates clear inline documentation and type assertions following modern industrial standards (e.g., JSDoc syntax rules).',
-      useCases: 'Perfect for junior developers looking to explain legacy systems, senior engineers auditing complex microservices for documentation compliance, and team members preparing components for open-source releases.',
-      seoFocus: 'AI code comments generator, JSDoc docstring builder, annotate TypeScript inline, automated code documentation, explain Javascript functions, coding helper.'
-    },
     'image-enlarger': {
       title: 'Image Enlarger & Upscaler',
       overview: 'Rescaling digital imagery often results in pixelation or blurry artifacts. Our Image Enlarger & Upscaler uses responsive client-side canvas interpolations to enlarge images while preserving fine details. By avoiding server-side processing queues, it handles raw graphic assets instantly and privately within your browser.',

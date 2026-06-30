@@ -211,7 +211,7 @@ export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId:
     return <AverageCalculator isDark={isDark} />;
   }
   if (activeToolId === 'confidence-interval-calc') {
-    return <ConfidenceIntervalCalculator />;
+    return <ConfidenceIntervalCalculator isDark={isDark} />;
   }
   if (activeToolId === 'sales-tax-calc') {
     return <SalesTaxCalculator isDark={isDark} />;
@@ -220,7 +220,7 @@ export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId:
     return <MarginCalculator isDark={isDark} />;
   }
   if (activeToolId === 'probability-calc') {
-    return <ProbabilityCalculator />;
+    return <ProbabilityCalculator isDark={isDark} />;
   }
   if (activeToolId === 'paypal-calc') {
     return <PaypalFeeCalculator isDark={isDark} />;
@@ -229,7 +229,7 @@ export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId:
     return <DiscountCalculator isDark={isDark} />;
   }
   if (activeToolId === 'cpm-calc') {
-    return <CpmCalculator />;
+    return <CpmCalculator isDark={isDark} />;
   }
   if (activeToolId === 'loan-calc') {
     return <LoanCalculator isDark={isDark} />;
@@ -244,7 +244,7 @@ export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId:
     return <HoursCalculator isDark={isDark} />;
   }
   if (activeToolId === 'month-calc') {
-    return <MonthCalculator />;
+    return <MonthCalculator isDark={isDark} />;
   }
   if (activeToolId === 'stripe-calc') {
     return <StripeFeeCalculator isDark={isDark} />;
@@ -258,6 +258,23 @@ export function CalculatorTools({ activeToolId, isDark = true }: { activeToolId:
 
 // 1. AGE CALCULATOR (ENHANCED STATE AND CHINESE ZODIAC)
 function AgeCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [birthdate, setBirthdate] = useState('');
   const [stats, setStats] = useState<{
     years: number;
@@ -303,7 +320,6 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
       "Rat 🐀", "Ox 🐂", "Tiger 🐅", "Rabbit 🐇", "Dragon 🐉", "Snake 🐍", 
       "Horse 🐎", "Goat 🐐", "Monkey 🐒", "Rooster 🐓", "Dog 🐕", "Pig 🐖"
     ];
-    // Year 4 was Year of the Rat
     const index = (year - 4) % 12;
     return animals[index >= 0 ? index : index + 12];
   };
@@ -338,7 +354,6 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
     const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
     const totalMinutes = Math.floor(diffTime / (1000 * 60));
 
-    // Next birthday countdown
     const nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
     if (nextBday < today) {
       nextBday.setFullYear(today.getFullYear() + 1);
@@ -363,23 +378,27 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="age-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Multi-Metric Age Calculator
         </h2>
-        <p className="text-sm text-gray-400">Evaluate exact year-month-day variables, total live duration milestones, and traditional cosmic zodiac mappings.</p>
+        <p className={`text-sm ${t.textMuted}`}>Evaluate exact year-month-day variables, total live duration milestones, and traditional cosmic zodiac mappings.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit`}>
           <div>
-            <label className="text-xs font-semibold text-gray-400 block mb-1.5">Enter Birthdate:</label>
+            <label className={`text-xs font-semibold ${t.textMuted} block mb-1.5`}>Enter Birthdate:</label>
             <input
               type="date"
-              className="w-full p-2.5 border border-white/10 rounded-lg text-xs font-semibold text-white bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500`}
               value={birthdate}
               onChange={(e) => setBirthdate(e.target.value)}
             />
@@ -399,15 +418,15 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
         <div className="lg:col-span-2">
           {stats ? (
             <div className="space-y-6">
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-[#1a1a1a] border border-white/5 rounded-lg text-center">
-                    <span className="text-[10px] font-bold text-gray-400 block uppercase font-mono">Exact Age</span>
-                    <p className="text-base font-black text-white mt-1">{stats.years} Yrs, {stats.months} Mos, {stats.days} Days</p>
+                  <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg text-center`}>
+                    <span className={`text-[10px] font-bold ${t.textFaint} block uppercase font-mono`}>Exact Age</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{stats.years} Yrs, {stats.months} Mos, {stats.days} Days</p>
                   </div>
 
-                  <div className="p-4 bg-[#1a1a1a] border border-white/5 rounded-lg text-center">
-                    <span className="text-[10px] font-bold text-gray-400 block uppercase font-mono">Day of Week Born</span>
+                  <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg text-center`}>
+                    <span className={`text-[10px] font-bold ${t.textFaint} block uppercase font-mono`}>Day of Week Born</span>
                     <p className="text-base font-black text-indigo-300 mt-1">{stats.dayOfWeek}</p>
                   </div>
 
@@ -418,39 +437,39 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
                     </p>
                   </div>
 
-                  <div className="p-4 bg-[#1a1a1a] border border-white/5 rounded-lg text-center">
-                    <span className="text-[10px] font-bold text-gray-400 block uppercase font-mono">Zodiac Constellation</span>
-                    <p className="text-sm font-bold text-gray-200 mt-1">{stats.zodiac}</p>
+                  <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg text-center`}>
+                    <span className={`text-[10px] font-bold ${t.textFaint} block uppercase font-mono`}>Zodiac Constellation</span>
+                    <p className={`text-sm font-bold ${t.textMuted} mt-1`}>{stats.zodiac}</p>
                   </div>
 
-                  <div className="p-4 bg-[#1a1a1a] border border-white/5 rounded-lg text-center">
-                    <span className="text-[10px] font-bold text-gray-400 block uppercase font-mono">Chinese Zodiac Animal</span>
-                    <p className="text-sm font-bold text-gray-200 mt-1">{stats.chineseZodiac}</p>
+                  <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg text-center`}>
+                    <span className={`text-[10px] font-bold ${t.textFaint} block uppercase font-mono`}>Chinese Zodiac Animal</span>
+                    <p className={`text-sm font-bold ${t.textMuted} mt-1`}>{stats.chineseZodiac}</p>
                   </div>
 
-                  <div className="p-4 bg-[#1a1a1a] border border-white/5 rounded-lg text-center">
-                    <span className="text-[10px] font-bold text-gray-400 block uppercase font-mono">Next Milestone Age</span>
-                    <p className="text-base font-black text-white mt-1">Turning {stats.years + 1}</p>
+                  <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg text-center`}>
+                    <span className={`text-[10px] font-bold ${t.textFaint} block uppercase font-mono`}>Next Milestone Age</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>Turning {stats.years + 1}</p>
                   </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-4">
-                  <h4 className="text-xs font-bold text-gray-300 uppercase font-mono mb-3">Equivalent Cumulative Metrics</h4>
+                <div className={`border-t ${t.border} pt-4`}>
+                  <h4 className={`text-xs font-bold ${t.textMuted} uppercase font-mono mb-3`}>Equivalent Cumulative Metrics</h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                    <div className="p-2.5 bg-white/5 rounded border border-white/5">
-                      <span className="text-[9px] font-bold text-gray-450 block font-mono">TOTAL WEEKS</span>
+                    <div className={`p-2.5 ${t.controlBg} rounded border ${t.border}`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>TOTAL WEEKS</span>
                       <p className="text-sm font-extrabold text-indigo-400 font-mono mt-0.5">{stats.totalWeeks.toLocaleString()}</p>
                     </div>
-                    <div className="p-2.5 bg-white/5 rounded border border-white/5">
-                      <span className="text-[9px] font-bold text-gray-450 block font-mono">TOTAL DAYS</span>
+                    <div className={`p-2.5 ${t.controlBg} rounded border ${t.border}`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>TOTAL DAYS</span>
                       <p className="text-sm font-extrabold text-indigo-400 font-mono mt-0.5">{stats.totalDays.toLocaleString()}</p>
                     </div>
-                    <div className="p-2.5 bg-white/5 rounded border border-white/5">
-                      <span className="text-[9px] font-bold text-gray-450 block font-mono">TOTAL HOURS</span>
+                    <div className={`p-2.5 ${t.controlBg} rounded border ${t.border}`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>TOTAL HOURS</span>
                       <p className="text-sm font-extrabold text-indigo-400 font-mono mt-0.5">{stats.totalHours.toLocaleString()}</p>
                     </div>
-                    <div className="p-2.5 bg-white/5 rounded border border-white/5">
-                      <span className="text-[9px] font-bold text-gray-450 block font-mono">TOTAL MINUTES</span>
+                    <div className={`p-2.5 ${t.controlBg} rounded border ${t.border}`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>TOTAL MINUTES</span>
                       <p className="text-[11px] font-extrabold text-indigo-400 font-mono mt-1 break-all">{stats.totalMinutes.toLocaleString()}</p>
                     </div>
                   </div>
@@ -468,9 +487,9 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Calendar className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Provide a validated birthday coordinate on the left side to compile age records.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Calendar className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Provide a validated birthday coordinate on the left side to compile age records.</p>
             </div>
           )}
         </div>
@@ -481,22 +500,35 @@ function AgeCalculator({ isDark }: { isDark: boolean }) {
 
 // 2. PERCENTAGE CALCULATOR (MULTIPLE MODE SOLVER)
 function PercentageCalculator({ isDark }: { isDark: boolean }) {
-  // Mode A: What is X% of Y?
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [aPct, setAPct] = useState('');
   const [aVal, setAVal] = useState('');
   const [aResult, setAResult] = useState<number | null>(null);
 
-  // Mode B: X is what % of Y?
   const [bVal1, setBVal1] = useState('');
   const [bVal2, setBVal2] = useState('');
   const [bResult, setBResult] = useState<number | null>(null);
 
-  // Mode C: Percentage change from X to Y?
   const [cVal1, setCVal1] = useState('');
   const [cVal2, setCVal2] = useState('');
   const [cResult, setCResult] = useState<{ change: number; type: 'increase' | 'decrease' | 'none' } | null>(null);
 
-  // Mode D: Add/Sub X% to/from Y?
   const [dOp, setDOp] = useState<'add' | 'subtract'>('add');
   const [dPct, setDPct] = useState('');
   const [dVal, setDVal] = useState('');
@@ -565,37 +597,41 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
     activeResult = { val: Number(dResult.toFixed(4)).toString(), mode: `${dOp === 'add' ? 'Add' : 'Subtract'} ${dPct}% from ${dVal}` };
   }
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="percentage-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Standard Percentage Solver
         </h2>
-        <p className="text-sm text-gray-400">Perform ratios, fractional splits, percentile addition/subtraction, and incremental rate change analysis.</p>
+        <p className={`text-sm ${t.textMuted}`}>Perform ratios, fractional splits, percentile addition/subtraction, and incremental rate change analysis.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
         {/* Type A: What is X% of Y */}
-        <div className="bg-[#141414] border border-white/5 p-4 rounded-xl space-y-3">
-          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-            <span className="text-[10px] uppercase font-bold text-gray-400 block font-mono">solver 1: fractional weight</span>
+        <div className={`${t.panelBg} p-4 rounded-xl space-y-3`}>
+          <div className={`flex justify-between items-center pb-2 border-b ${t.border}`}>
+            <span className={`text-[10px] uppercase font-bold ${t.textFaint} block font-mono`}>solver 1: fractional weight</span>
             <span className="text-[10px] font-mono text-indigo-400">What is X% of Y?</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">Percentage (X %)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>Percentage (X %)</label>
               <input
                 type="number" step="any" placeholder="e.g. 15"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={aPct} onChange={(e) => setAPct(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">Base Target (Y)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>Base Target (Y)</label>
               <input
                 type="number" step="any" placeholder="e.g. 250"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={aVal} onChange={(e) => setAVal(e.target.value)}
               />
             </div>
@@ -609,25 +645,25 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
         </div>
 
         {/* Type B: X is what percent of Y */}
-        <div className="bg-[#141414] border border-white/5 p-4 rounded-xl space-y-3">
-          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-            <span className="text-[10px] uppercase font-bold text-gray-400 block font-mono">solver 2: comparative share</span>
+        <div className={`${t.panelBg} p-4 rounded-xl space-y-3`}>
+          <div className={`flex justify-between items-center pb-2 border-b ${t.border}`}>
+            <span className={`text-[10px] uppercase font-bold ${t.textFaint} block font-mono`}>solver 2: comparative share</span>
             <span className="text-[10px] font-mono text-indigo-400">X is what percent of Y?</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">Value (X)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>Value (X)</label>
               <input
                 type="number" step="any" placeholder="e.g. 50"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={bVal1} onChange={(e) => setBVal1(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">Total (Y)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>Total (Y)</label>
               <input
                 type="number" step="any" placeholder="e.g. 200"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={bVal2} onChange={(e) => setBVal2(e.target.value)}
               />
             </div>
@@ -641,25 +677,25 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
         </div>
 
         {/* Type C: Percentage change from X to Y */}
-        <div className="bg-[#141414] border border-white/5 p-4 rounded-xl space-y-3">
-          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-            <span className="text-[10px] uppercase font-bold text-gray-400 block font-mono">solver 3: increment delta</span>
+        <div className={`${t.panelBg} p-4 rounded-xl space-y-3`}>
+          <div className={`flex justify-between items-center pb-2 border-b ${t.border}`}>
+            <span className={`text-[10px] uppercase font-bold ${t.textFaint} block font-mono`}>solver 3: increment delta</span>
             <span className="text-[10px] font-mono text-indigo-400">% Change from X to Y?</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">From Value (Old X)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>From Value (Old X)</label>
               <input
                 type="number" step="any" placeholder="e.g. 80"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={cVal1} onChange={(e) => setCVal1(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">To Value (New Y)</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>To Value (New Y)</label>
               <input
                 type="number" step="any" placeholder="e.g. 120"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={cVal2} onChange={(e) => setCVal2(e.target.value)}
               />
             </div>
@@ -676,16 +712,16 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
         </div>
 
         {/* Type D: Add or Subtract % */}
-        <div className="bg-[#141414] border border-white/5 p-4 rounded-xl space-y-3">
-          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-            <span className="text-[10px] uppercase font-bold text-gray-400 block font-mono">solver 4: percentage offset</span>
+        <div className={`${t.panelBg} p-4 rounded-xl space-y-3`}>
+          <div className={`flex justify-between items-center pb-2 border-b ${t.border}`}>
+            <span className={`text-[10px] uppercase font-bold ${t.textFaint} block font-mono`}>solver 4: percentage offset</span>
             <span className="text-[10px] font-mono text-indigo-400">Add/Subtract % from base</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1">Operator Offset</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} block mb-1`}>Operator Offset</label>
               <select
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                className={`w-full p-2 ${t.selectBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                 value={dOp} onChange={(e) => setDOp(e.target.value as 'add' | 'subtract')}
               >
                 <option value="add">Add (+)</option>
@@ -694,18 +730,18 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
             </div>
             <div className="grid grid-cols-2 gap-1 px-1">
               <div>
-                <label className="text-[9px] font-bold text-gray-400 block mb-1">X %</label>
+                <label className={`text-[9px] font-bold ${t.textMuted} block mb-1`}>X %</label>
                 <input
                   type="number" step="any" placeholder="10"
-                  className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                  className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                   value={dPct} onChange={(e) => setDPct(e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-[9px] font-bold text-gray-400 block mb-1">Base Y</label>
+                <label className={`text-[9px] font-bold ${t.textMuted} block mb-1`}>Base Y</label>
                 <input
                   type="number" step="any" placeholder="150"
-                  className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded text-xs text-white outline-none focus:border-indigo-500 font-mono"
+                  className={`w-full p-2 ${t.inputBg} rounded text-xs outline-none focus:border-indigo-500 font-mono`}
                   value={dVal} onChange={(e) => setDVal(e.target.value)}
                 />
               </div>
@@ -735,6 +771,23 @@ function PercentageCalculator({ isDark }: { isDark: boolean }) {
 
 // 3. AVERAGE CALCULATOR (CENTRAL TENDENCY AND SPREAD METRICS)
 function AverageCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [inputStr, setInputStr] = useState('');
   const [metrics, setMetrics] = useState<{
     mean: number;
@@ -751,7 +804,6 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
   } | null>(null);
 
   const handleAnalyze = () => {
-    // Regex matches space, comma, newline or semicolon separation
     const numbers = inputStr
       .split(/[\s,;\n]+/)
       .map(v => parseFloat(v))
@@ -767,11 +819,9 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
     const sum = numbers.reduce((acc, current) => acc + current, 0);
     const mean = sum / n;
 
-    // Median
     const mid = Math.floor(n / 2);
     const median = n % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 
-    // Mode
     const freq: Record<number, number> = {};
     let maxFreq = 0;
     numbers.forEach(num => {
@@ -786,14 +836,12 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
     }
     const modeString = modes.length > 0 ? modes.join(', ') : 'No repeated mode (all unique)';
 
-    // Spread parameters
     const min = sorted[0];
     const max = sorted[n - 1];
     const range = max - min;
 
-    // Variance & Standard Deviation
     const sqDiffSum = numbers.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0);
-    const variance = sqDiffSum / (n > 1 ? n - 1 : 1); // Sample Variance
+    const variance = sqDiffSum / (n > 1 ? n - 1 : 1);
     const stdDev = Math.sqrt(variance);
 
     setMetrics({
@@ -811,22 +859,26 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="average-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Average & Central Tendency Analyzer
         </h2>
-        <p className="text-sm text-gray-400">Determine statistical mean, median, sample standard deviations, variance parameters, modes, and range values.</p>
+        <p className={`text-sm ${t.textMuted}`}>Determine statistical mean, median, sample standard deviations, variance parameters, modes, and range values.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit`}>
           <div>
-            <label className="text-xs font-semibold text-gray-400 block mb-1.5">Input Number Collection (comma/space separated):</label>
+            <label className={`text-xs font-semibold ${t.textMuted} block mb-1.5`}>Input Number Collection (comma/space separated):</label>
             <textarea
-              className="w-full h-32 p-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-xs leading-relaxed text-white font-mono placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 resize-none"
+              className={`w-full h-32 p-3 ${t.textareaBg} rounded-lg text-xs leading-relaxed font-mono placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 resize-none`}
               placeholder="e.g. 12, 15, 23, 42, 16, 23, 8"
               value={inputStr}
               onChange={(e) => setInputStr(e.target.value)}
@@ -846,69 +898,69 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
             <button
               type="button"
               onClick={() => { setInputStr(''); setMetrics(null); }}
-              className="p-2.5 text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/5 text-gray-450 rounded-lg transition-colors cursor-pointer"
+              className={`p-2.5 text-xs font-bold ${t.controlBg} hover:bg-white/10 border ${t.border} ${t.textMuted} rounded-lg transition-colors cursor-pointer`}
               title="Clear inputs"
             >
-              <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+              <Trash2 className={`w-3.5 h-3.5 ${t.textMuted}`} />
             </button>
           </div>
         </div>
 
         <div className="lg:col-span-2">
           {metrics ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-              <h4 className="text-xs font-bold text-indigo-400 uppercase font-mono pb-2 border-b border-white/5">Statistical Assessment Reports</h4>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+              <h4 className={`text-xs font-bold text-indigo-400 uppercase font-mono pb-2 border-b ${t.border}`}>Statistical Assessment Reports</h4>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[10px] font-bold text-gray-400 block font-mono">ARITHMETIC MEAN</span>
-                  <p className="text-base font-black text-white mt-1 font-mono">{Number(metrics.mean.toFixed(4))}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[10px] font-bold ${t.textFaint} block font-mono`}>ARITHMETIC MEAN</span>
+                  <p className={`text-base font-black ${t.heading} mt-1 font-mono`}>{Number(metrics.mean.toFixed(4))}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[10px] font-bold text-gray-400 block font-mono">MEDIAN (MIDPOINT)</span>
-                  <p className="text-base font-black text-white mt-1 font-mono">{Number(metrics.median.toFixed(4))}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[10px] font-bold ${t.textFaint} block font-mono`}>MEDIAN (MIDPOINT)</span>
+                  <p className={`text-base font-black ${t.heading} mt-1 font-mono`}>{Number(metrics.median.toFixed(4))}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[10px] font-bold text-gray-400 block font-mono">SAMPLE STD DEV</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[10px] font-bold ${t.textFaint} block font-mono`}>SAMPLE STD DEV</span>
                   <p className="text-base font-black text-indigo-455 text-indigo-300 mt-1 font-mono">{Number(metrics.stdDev.toFixed(4))}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[10px] font-bold text-gray-400 block font-mono">SAMPLE VARIANCE</span>
-                  <p className="text-base font-black text-white mt-1 font-mono">{Number(metrics.variance.toFixed(4))}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[10px] font-bold ${t.textFaint} block font-mono`}>SAMPLE VARIANCE</span>
+                  <p className={`text-base font-black ${t.heading} mt-1 font-mono`}>{Number(metrics.variance.toFixed(4))}</p>
                 </div>
               </div>
 
-              <div className="border-t border-white/5 pt-4 text-xs space-y-3 font-mono text-[11px] text-gray-300">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/3 p-3 rounded border border-white/5">
+              <div className={`border-t ${t.border} pt-4 text-xs space-y-3 font-mono text-[11px] ${t.textMuted}`}>
+                <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${t.controlBg} p-3 rounded border ${t.border}`}>
                   <div>
-                    <span className="text-[9px] text-gray-500 block">ELEMENT COUNT</span>
-                    <span className="font-bold font-mono text-white text-xs">{metrics.count}</span>
+                    <span className={`text-[9px] ${t.textFaint} block`}>ELEMENT COUNT</span>
+                    <span className={`font-bold font-mono ${t.heading} text-xs`}>{metrics.count}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 block">SUM TOTAL</span>
-                    <span className="font-bold font-mono text-white text-xs">{metrics.sum}</span>
+                    <span className={`text-[9px] ${t.textFaint} block`}>SUM TOTAL</span>
+                    <span className={`font-bold font-mono ${t.heading} text-xs`}>{metrics.sum}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 block">MINIMUM VALUE</span>
-                    <span className="font-bold font-mono text-white text-xs">{metrics.min}</span>
+                    <span className={`text-[9px] ${t.textFaint} block`}>MINIMUM VALUE</span>
+                    <span className={`font-bold font-mono ${t.heading} text-xs`}>{metrics.min}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 block">MAXIMUM VALUE</span>
-                    <span className="font-bold font-mono text-white text-xs">{metrics.max}</span>
+                    <span className={`text-[9px] ${t.textFaint} block`}>MAXIMUM VALUE</span>
+                    <span className={`font-bold font-mono ${t.heading} text-xs`}>{metrics.max}</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center text-[10px] py-1 border-b border-white/5">
-                  <span className="text-gray-400">Mode values (peaks):</span>
+                <div className={`flex justify-between items-center text-[10px] py-1 border-b ${t.border}`}>
+                  <span className={t.textFaint}>Mode values (peaks):</span>
                   <span className="text-emerald-400 font-bold">{metrics.mode}</span>
                 </div>
-                <div className="flex justify-between items-center text-[10px] py-1 border-b border-white/5">
-                  <span className="text-gray-400">Standard range (Max - Min):</span>
-                  <span className="text-white font-bold">{metrics.range}</span>
+                <div className={`flex justify-between items-center text-[10px] py-1 border-b ${t.border}`}>
+                  <span className={t.textFaint}>Standard range (Max - Min):</span>
+                  <span className={`${t.heading} font-bold`}>{metrics.range}</span>
                 </div>
                 <div className="flex justify-between items-center text-[10px] py-1">
-                  <span className="text-gray-400">Ordered sequence (sorted ascending):</span>
-                  <span className="text-white max-w-[280px] truncate block" title={metrics.sorted.join(', ')}>{metrics.sorted.join(', ')}</span>
+                  <span className={t.textFaint}>Ordered sequence (sorted ascending):</span>
+                  <span className={`${t.heading} max-w-[280px] truncate block`} title={metrics.sorted.join(', ')}>{metrics.sorted.join(', ')}</span>
                 </div>
               </div>
               <ExportBar
@@ -925,9 +977,9 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Sigma className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Submit numbers formatted with spaces or commas to resolve central values.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Sigma className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Submit numbers formatted with spaces or commas to resolve central values.</p>
             </div>
           )}
         </div>
@@ -937,11 +989,28 @@ function AverageCalculator({ isDark }: { isDark: boolean }) {
 }
 
 // 4. CONFIDENCE INTERVAL CALCULATOR (WITH DETAILED VERBALIZED STATEMENT)
-function ConfidenceIntervalCalculator() {
+function ConfidenceIntervalCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [mean, setMean] = useState('');
   const [stdDev, setStdDev] = useState('');
   const [sampleN, setSampleN] = useState('');
-  const [level, setLevel] = useState('95'); // 90%, 95%, 99%
+  const [level, setLevel] = useState('95');
   const [report, setReport] = useState<{
     zMultiplier: number;
     marginOfError: number;
@@ -962,12 +1031,10 @@ function ConfidenceIntervalCalculator() {
       return;
     }
 
-    // Standard Z multipliers mapping for key values
-    let z = 1.95996; // default 95%
+    let z = 1.95996;
     if (pct === 90) z = 1.64485;
     else if (pct === 99) z = 2.57583;
 
-    // Standard error = stdDev / sqrt(N)
     const stdErr = s / Math.sqrt(n);
     const margin = z * stdErr;
     const lowerLimit = m - margin;
@@ -985,49 +1052,53 @@ function ConfidenceIntervalCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="confidence-interval-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Confidence Interval Statistics Solver
         </h2>
-        <p className="text-sm text-gray-400">Resolve population margins based on standard deviation factors, sample density counts, and normal distribution indices.</p>
+        <p className={`text-sm ${t.textMuted}`}>Resolve population margins based on standard deviation factors, sample density counts, and normal distribution indices.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Sample Mean (X̄)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Sample Mean (X̄)</label>
             <input
               type="number" step="any" placeholder="e.g. 120"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={mean} onChange={(e) => setMean(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Standard Deviation (S)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Standard Deviation (S)</label>
             <input
               type="number" step="any" placeholder="e.g. 15.5"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={stdDev} onChange={(e) => setStdDev(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Sample Size (N)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Sample Size (N)</label>
             <input
               type="number" min="2" placeholder="e.g. 50"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={sampleN} onChange={(e) => setSampleN(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Desired Confidence Level</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Desired Confidence Level</label>
             <select
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono"
+              className={`w-full p-2.5 ${t.selectBg} rounded-lg font-mono`}
               value={level} onChange={(e) => setLevel(e.target.value)}
             >
               <option value="90">90% Confidence Interval (Z = 1.645)</option>
@@ -1048,33 +1119,33 @@ function ConfidenceIntervalCalculator() {
 
         <div className="lg:col-span-2">
           {report ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Compiled Margin Report</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Compiled Margin Report</span>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-mono">MARGIN OF ERROR (E)</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>MARGIN OF ERROR (E)</span>
                   <p className="text-base font-black text-rose-400 mt-1 font-mono">±{report.marginOfError.toFixed(4)}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-mono">LOWER LIMIT BOUND</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>LOWER LIMIT BOUND</span>
                   <p className="text-base font-black text-emerald-400 mt-1 font-mono">{report.lower.toFixed(4)}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-mono">UPPER LIMIT BOUND</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-mono`}>UPPER LIMIT BOUND</span>
                   <p className="text-base font-black text-emerald-400 mt-1 font-mono">{report.upper.toFixed(4)}</p>
                 </div>
               </div>
 
-              <div className="bg-white/3 border border-white/5 p-4 rounded-lg font-mono text-xs leading-relaxed text-gray-300">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Verbalized Interpretation</p>
+              <div className={`${t.controlBg} border ${t.border} p-4 rounded-lg font-mono text-xs leading-relaxed ${t.textMuted}`}>
+                <p className={`text-[10px] font-bold ${t.textFaint} uppercase tracking-wide mb-1`}>Verbalized Interpretation</p>
                 {report.explain}
               </div>
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Compass className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Specify the standard deviation and sample bounds on the left side to compile intervals.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Compass className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Specify the standard deviation and sample bounds on the left side to compile intervals.</p>
             </div>
           )}
         </div>
@@ -1085,6 +1156,23 @@ function ConfidenceIntervalCalculator() {
 
 // 5. SALES TAX CALCULATOR (WITH DISCOUNT AND DETAILED TARIFF REVIEWS)
 function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [price, setPrice] = useState('');
   const [taxRate, setTaxRate] = useState('');
   const [discount, setDiscount] = useState('');
@@ -1120,41 +1208,45 @@ function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="sales-tax-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Multi-Rate Sales Tax & Discount Solver
         </h2>
-        <p className="text-sm text-gray-400">Calculate net final purchases by applying percentage values, custom markdowns, and local regional tariffs.</p>
+        <p className={`text-sm ${t.textMuted}`}>Calculate net final purchases by applying percentage values, custom markdowns, and local regional tariffs.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Base Price ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Base Price ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 99.99"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={price} onChange={(e) => setPrice(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Sales Tax Rate (%)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Sales Tax Rate (%)</label>
             <input
               type="number" step="any" placeholder="e.g. 8.25"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={taxRate} onChange={(e) => setTaxRate(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Optional Markdown/Discount (%)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Optional Markdown/Discount (%)</label>
             <input
               type="number" step="any" placeholder="e.g. 15"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={discount} onChange={(e) => setDiscount(e.target.value)}
             />
           </div>
@@ -1171,25 +1263,25 @@ function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {result ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Financial Statement Receipt</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Financial Statement Receipt</span>
               
-              <div className="space-y-2 bg-[#101010] p-4 rounded-lg border border-white/5 font-mono text-xs">
-                <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-gray-500">Gross Initial Price:</span>
-                  <span className="text-white font-bold">${result.originalPrice.toFixed(2)}</span>
+              <div className={`space-y-2 ${t.controlBg} p-4 rounded-lg border ${t.border} font-mono text-xs`}>
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
+                  <span className={t.textFaint}>Gross Initial Price:</span>
+                  <span className={`${t.heading} font-bold`}>${result.originalPrice.toFixed(2)}</span>
                 </div>
                 {result.discountApplied > 0 && (
-                  <div className="flex justify-between py-1 border-b border-white/5">
+                  <div className="flex justify-between py-1 border-b ${t.border}">
                     <span className="text-emerald-500">Markdown applied (Discount):</span>
                     <span className="text-emerald-400 font-bold">-${result.discountApplied.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-gray-500">Taxable Net Amount:</span>
-                  <span className="text-white font-bold">${result.discountedPrice.toFixed(2)}</span>
+                <div className="flex justify-between py-1 border-b ${t.border}">
+                  <span className={t.textFaint}>Taxable Net Amount:</span>
+                  <span className={`${t.heading} font-bold`}>${result.discountedPrice.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-white/5">
+                <div className="flex justify-between py-1 border-b ${t.border}">
                   <span className="text-rose-405 text-rose-400">Regional Tariffs (Tax):</span>
                   <span className="text-rose-400 font-bold">+${result.taxApplied.toFixed(2)}</span>
                 </div>
@@ -1210,9 +1302,9 @@ function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Coins className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Provide pricing figures on the left coordinates to format purchase receipts.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Coins className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Provide pricing figures on the left coordinates to format purchase receipts.</p>
             </div>
           )}
         </div>
@@ -1223,6 +1315,23 @@ function SalesTaxCalculator({ isDark }: { isDark: boolean }) {
 
 // 6. MARGIN CALCULATOR (FOR SMALL BUSINESS SALES CONV)
 function MarginCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [cost, setCost] = useState('');
   const [revenue, setRevenue] = useState('');
   const [marginPct, setMarginPct] = useState('');
@@ -1266,7 +1375,6 @@ function MarginCalculator({ isDark }: { isDark: boolean }) {
         alert("Margin percentage must be on a normal coordinate of 0 to 99.9%.");
         return;
       }
-      // Revenue = cost / (1 - (margin / 100))
       const targetRev = rawCost / (1 - (targetMg / 100));
       const profit = targetRev - rawCost;
       const markup = rawCost > 0 ? (profit / rawCost) * 100 : 0;
@@ -1281,59 +1389,63 @@ function MarginCalculator({ isDark }: { isDark: boolean }) {
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="margin-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Standard Margin & Markup Solver
         </h2>
-        <p className="text-sm text-gray-400">Assess gross profit lines, required sale prices, markup percentages, and business retail coordinates.</p>
+        <p className={`text-sm ${t.textMuted}`}>Assess gross profit lines, required sale prices, markup percentages, and business retail coordinates.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setMode('with-rev'); setResults(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'with-rev' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'with-rev' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Cost + Revenue
             </button>
             <button
               type="button"
               onClick={() => { setMode('with-margin'); setResults(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'with-margin' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'with-margin' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Cost + Target Margin
             </button>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Inventory Cost ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Inventory Cost ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 45.00"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={cost} onChange={(e) => setCost(e.target.value)}
             />
           </div>
 
           {mode === 'with-rev' ? (
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Target Sale Revenue ($)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Target Sale Revenue ($)</label>
               <input
                 type="number" step="any" placeholder="e.g. 75.00"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={revenue} onChange={(e) => setRevenue(e.target.value)}
               />
             </div>
           ) : (
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Target Profit Margin (%)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Target Profit Margin (%)</label>
               <input
                 type="number" step="any" placeholder="e.g. 40"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={marginPct} onChange={(e) => setMarginPct(e.target.value)}
               />
             </div>
@@ -1351,30 +1463,30 @@ function MarginCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {results ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block font-mono">Business Profitability Matrix</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block font-mono`}>Business Profitability Matrix</span>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">NET PROFIT</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>NET PROFIT</span>
                   <p className="text-sm font-black text-emerald-400 mt-1">${results.profit.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">GROSS MARGIN</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>GROSS MARGIN</span>
                   <p className="text-sm font-black text-indigo-300 mt-1">{results.margin.toFixed(2)}%</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">MARKUP %</span>
-                  <p className="text-sm font-black text-white mt-1">{results.markup.toFixed(2)}%</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>MARKUP %</span>
+                  <p className="text-sm font-black ${t.heading} mt-1">{results.markup.toFixed(2)}%</p>
                 </div>
-                <div className="p-3 bg-[#1a1a1a] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">RECOMMENDED SALE</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>RECOMMENDED SALE</span>
                   <p className="text-[11px] font-black text-amber-400 mt-1 break-all">${results.rev.toFixed(2)}</p>
                 </div>
               </div>
 
-              <div className="border-t border-white/5 pt-4 text-xs font-sans text-gray-400 leading-relaxed">
-                <p>For inventory acquired at <span className="text-white font-bold">${results.costVal.toFixed(2)}</span>, offering them at a sale value of <span className="text-white font-bold">${results.rev.toFixed(2)}</span> results in <span className="text-white font-bold">${results.profit.toFixed(2)}</span> net earnings per transaction. This triggers a retail markup value equivalent to <span className="text-white font-bold">{results.markup.toFixed(2)}%</span> on standard bookkeeping entries.</p>
+              <div className={`border-t ${t.border} pt-4 text-xs font-sans ${t.textMuted} leading-relaxed`}>
+                <p>For inventory acquired at <span className={`${t.heading} font-bold`}>${results.costVal.toFixed(2)}</span>, offering them at a sale value of <span className={`${t.heading} font-bold`}>${results.rev.toFixed(2)}</span> results in <span className={`${t.heading} font-bold`}>${results.profit.toFixed(2)}</span> net earnings per transaction. This triggers a retail markup value equivalent to <span className={`${t.heading} font-bold`}>{results.markup.toFixed(2)}%</span> on standard bookkeeping entries.</p>
               </div>
               <ExportBar
                 isDark={isDark}
@@ -1389,9 +1501,9 @@ function MarginCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <DollarSign className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Select a computation layout format on the left coordinates to assess metrics.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <DollarSign className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Select a computation layout format on the left coordinates to assess metrics.</p>
             </div>
           )}
         </div>
@@ -1401,7 +1513,24 @@ function MarginCalculator({ isDark }: { isDark: boolean }) {
 }
 
 // 7. PROBABILITY CALCULATOR (FOR KEY DICES, COINS & EVENTS)
-function ProbabilityCalculator() {
+function ProbabilityCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [probA, setProbA] = useState('');
   const [probB, setProbB] = useState('');
   const [results, setResults] = useState<{
@@ -1436,32 +1565,36 @@ function ProbabilityCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="probability-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Probability & Intersection Event Solver
         </h2>
-        <p className="text-sm text-gray-400">Analyze compound occurrence structures, independent factor intersections, and mutual exclusion matrices.</p>
+        <p className={`text-sm ${t.textMuted}`}>Analyze compound occurrence structures, independent factor intersections, and mutual exclusion matrices.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Probability of Event A: P(A)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Probability of Event A: P(A)</label>
             <input
               type="number" step="any" min="0" max="1" placeholder="e.g. 0.5 (or 50%)"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={probA} onChange={(e) => setProbA(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Probability of Event B: P(B)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Probability of Event B: P(B)</label>
             <input
               type="number" step="any" min="0" max="1" placeholder="e.g. 0.4 (or 40%)"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={probB} onChange={(e) => setProbB(e.target.value)}
             />
           </div>
@@ -1478,25 +1611,25 @@ function ProbabilityCalculator() {
 
         <div className="lg:col-span-2">
           {results ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Compound Occurrence Formulas</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Compound Occurrence Formulas</span>
               
-              <div className="font-mono text-xs space-y-2 bg-[#101010] p-4 rounded-lg border border-white/5">
-                <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-gray-500 font-sans">P(Not occurring A):</span>
-                  <span className="text-white font-bold">{Number(results.notA.toFixed(4))} ({(results.notA * 100).toFixed(2)}%)</span>
+              <div className={`font-mono text-xs space-y-2 ${t.controlBg} p-4 rounded-lg border ${t.border}`}>
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
+                  <span className={`${t.textFaint} font-sans`}>P(Not occurring A):</span>
+                  <span className={`${t.heading} font-bold`}>{Number(results.notA.toFixed(4))} ({(results.notA * 100).toFixed(2)}%)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-gray-500 font-sans">P(Not occurring B):</span>
-                  <span className="text-white font-bold">{Number(results.notB.toFixed(4))} ({(results.notB * 100).toFixed(2)}%)</span>
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
+                  <span className={`${t.textFaint} font-sans`}>P(Not occurring B):</span>
+                  <span className={`${t.heading} font-bold`}>{Number(results.notB.toFixed(4))} ({(results.notB * 100).toFixed(2)}%)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-white/5">
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
                   <span className="text-emerald-455 text-emerald-400 font-sans">Both A AND B happen (P(A ∩ B) - Independent):</span>
                   <span className="text-emerald-400 font-bold">{Number(results.andIndependent.toFixed(4))} ({(results.andIndependent * 100).toFixed(2)}%)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-gray-500 font-sans">Either A OR B happens (Mutually Exclusive):</span>
-                  <span className="text-white font-bold">{Number(results.orMutuallyExclusive.toFixed(4))} ({(results.orMutuallyExclusive * 100).toFixed(2)}%)</span>
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
+                  <span className={`${t.textFaint} font-sans`}>Either A OR B happens (Mutually Exclusive):</span>
+                  <span className={`${t.heading} font-bold`}>{Number(results.orMutuallyExclusive.toFixed(4))} ({(results.orMutuallyExclusive * 100).toFixed(2)}%)</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-indigo-300 font-sans font-bold">Either A OR B happens (P(A ∪ B) - Independent):</span>
@@ -1505,9 +1638,9 @@ function ProbabilityCalculator() {
               </div>
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Dices className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Provide probability indices between 0 and 1.0 to compute compound state matrices.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Dices className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Provide probability indices between 0 and 1.0 to compute compound state matrices.</p>
             </div>
           )}
         </div>
@@ -1518,9 +1651,26 @@ function ProbabilityCalculator() {
 
 // 8. PAYPAL FEE CALCULATOR (UP TO DATE MERCHANT AND DOMESTIC RATES)
 function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [amount, setAmount] = useState('');
-  const [rate, setRate] = useState('2.99'); // Default standard merchant rate is 2.99%
-  const [fixedFee, setFixedFee] = useState('0.49'); // Default standard domestic fixed fee standard is $0.49
+  const [rate, setRate] = useState('2.99');
+  const [fixedFee, setFixedFee] = useState('0.49');
   const [mode, setMode] = useState<'receive' | 'send'>('receive');
 
   const [fees, setFees] = useState<{
@@ -1541,9 +1691,6 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
     }
 
     if (mode === 'receive') {
-      // Receive mode: how much should client invoice or ask for to receive exactly rawAmt?
-      // Net = Ask * (1 - rate / 100) - fixed
-      // Ask = (Net + fixed) / (1 - rate / 100)
       const denominator = 1 - (rawRate / 100);
       if (denominator <= 0) {
         alert("The rate percentage cannot equal or exceed 100%!");
@@ -1559,7 +1706,6 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
         explain: `In order to clear a clean disbursed balance of exactly $${rawAmt.toFixed(2)} after fees, you must request or charge exactly $${askAmount.toFixed(2)}. This accounts for a deducted commission fee of $${feeVal.toFixed(2)} (${rawRate}% plus a $${rawFixed} fixed transaction fee).`
       });
     } else {
-      // Send mode: client sends rawAmt, how much triggers in fees, and what is disbursed?
       const feeVal = (rawAmt * (rawRate / 100)) + rawFixed;
       const disbursed = Math.max(0, rawAmt - feeVal);
 
@@ -1572,58 +1718,62 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="paypal-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Paypal Merchant Fee Compiler
         </h2>
-        <p className="text-sm text-gray-400">Calculate net money-back ratios, invoice target requests, and flat domestic or global processing tariff variables.</p>
+        <p className={`text-sm ${t.textMuted}`}>Calculate net money-back ratios, invoice target requests, and flat domestic or global processing tariff variables.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setMode('receive'); setFees(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'receive' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'receive' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               To Receive Exactly
             </button>
             <button
               type="button"
               onClick={() => { setMode('send'); setFees(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'send' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer ${mode === 'send' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               When Sending Exactly
             </button>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Target Base Amount ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Target Base Amount ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 150.00"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={amount} onChange={(e) => setAmount(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Fee Rate (%)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Fee Rate (%)</label>
               <input
                 type="number" step="any" placeholder="2.99"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={rate} onChange={(e) => setRate(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Fixed Fee ($)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Fixed Fee ($)</label>
               <input
                 type="number" step="any" placeholder="0.49"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={fixedFee} onChange={(e) => setFixedFee(e.target.value)}
               />
             </div>
@@ -1641,26 +1791,26 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {fees ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block font-mono">Deduction Ledger Balance</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block font-mono`}>Deduction Ledger Balance</span>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
-                <div className="p-3 bg-white/5 border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">GROSS ASK AMOUNT</span>
-                  <p className="text-base font-black text-white mt-1 break-all">${fees.rawAmt.toFixed(2)}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>GROSS ASK AMOUNT</span>
+                  <p className={`text-base font-black ${t.heading} mt-1 break-all`}>${fees.rawAmt.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-white/5 border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">PAYPAL PORTION FEE</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>PAYPAL PORTION FEE</span>
                   <p className="text-base font-black text-rose-400 mt-1 break-all">-${fees.feeVal.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-emerald-955/10 border border-emerald-500/10 rounded-lg text-center bg-[#1a241a]/30">
-                  <span className="text-[9px] font-bold text-emerald-455 block font-sans">FINAL CLIPPED NET</span>
+                <div className={`p-3 ${t.controlBg} border-emerald-500/10 rounded-lg text-center bg-[#1a241a]/30`}>
+                  <span className={`text-[9px] font-bold text-emerald-455 block font-sans`}>FINAL CLIPPED NET</span>
                   <p className="text-base font-black text-emerald-400 mt-1 break-all">${fees.disbursed.toFixed(2)}</p>
                 </div>
               </div>
 
-              <div className="bg-[#101010] border border-white/5 p-4 rounded-lg font-mono text-xs leading-relaxed text-gray-300">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1 font-sans">Invoice Ledger Explanation</p>
+              <div className={`${t.controlBg} border ${t.border} p-4 rounded-lg font-mono text-xs leading-relaxed ${t.textMuted}`}>
+                <p className={`text-[10px] font-bold ${t.textFaint} uppercase tracking-wide mb-1 font-sans`}>Invoice Ledger Explanation</p>
                 {fees.explain}
               </div>
               <ExportBar
@@ -1675,9 +1825,9 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <CreditCard className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Specify the raw funds payload parameters on the left controls to format the invoice logic.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <CreditCard className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Specify the raw funds payload parameters on the left controls to format the invoice logic.</p>
             </div>
           )}
         </div>
@@ -1688,9 +1838,26 @@ function PaypalFeeCalculator({ isDark }: { isDark: boolean }) {
 
 // 9. DISCOUNT CALCULATOR
 function DiscountCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [price, setPrice] = useState('');
   const [discount1, setDiscount1] = useState('');
-  const [discount2, setDiscount2] = useState(''); // Stackable/double discount
+  const [discount2, setDiscount2] = useState('');
   const [taxRate, setTaxRate] = useState('');
   const [result, setResult] = useState<{
     original: number;
@@ -1732,51 +1899,55 @@ function DiscountCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="discount-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Standard & Stacked Discount Solver
         </h2>
-        <p className="text-sm text-gray-400">Calculate net final purchases after double-tiered discount reductions and sales taxes.</p>
+        <p className={`text-sm ${t.textMuted}`}>Calculate net final purchases after double-tiered discount reductions and sales taxes.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Base Original Price ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Base Original Price ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 120.00"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none focus:border-indigo-505 focus:border-indigo-500"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none focus:border-indigo-505 focus:border-indigo-500`}
               value={price} onChange={(e) => setPrice(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Discount 1 (%)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Discount 1 (%)</label>
               <input
                 type="number" step="any" placeholder="e.g. 20"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={discount1} onChange={(e) => setDiscount1(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Discount 2 (%)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Discount 2 (%)</label>
               <input
                 type="number" step="any" placeholder="e.g. 10"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={discount2} onChange={(e) => setDiscount2(e.target.value)}
               />
             </div>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Subsequent Sales Tax (%)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Subsequent Sales Tax (%)</label>
             <input
               type="number" step="any" placeholder="e.g. 8.25"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={taxRate} onChange={(e) => setTaxRate(e.target.value)}
             />
           </div>
@@ -1793,48 +1964,48 @@ function DiscountCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {result ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Pricing Adjustment Ledger</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Pricing Adjustment Ledger</span>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL CASH SAVED</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL CASH SAVED</span>
                   <p className="text-base font-black text-emerald-400 mt-1">${result.totalSavings.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">TAX APPLIED</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TAX APPLIED</span>
                   <p className="text-base font-black text-rose-400 mt-1">+${result.taxVal.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-indigo-950/20 border border-indigo-500/10 rounded-lg">
-                  <span className="text-[9px] font-bold text-indigo-400 block font-sans">FINAL BUY PRICE</span>
-                  <p className="text-base font-black text-white mt-1">${result.finalTotal.toFixed(2)}</p>
+                <div className={`p-3 ${t.controlBg} border-indigo-500/10 rounded-lg`}>
+                  <span className={`text-[9px] font-bold text-indigo-400 block font-sans`}>FINAL BUY PRICE</span>
+                  <p className={`text-base font-black ${t.heading} mt-1`}>${result.finalTotal.toFixed(2)}</p>
                 </div>
               </div>
 
-              <div className="space-y-2 bg-[#101010] p-4 rounded-lg border border-white/5 font-mono text-xs text-gray-300">
-                <div className="flex justify-between py-1 border-b border-white/5">
+              <div className={`space-y-2 ${t.controlBg} p-4 rounded-lg border ${t.border} font-mono text-xs ${t.textMuted}`}>
+                <div className={`flex justify-between py-1 border-b ${t.border}`}>
                   <span>Gross Initial Cost:</span>
-                  <span className="text-white font-bold">${result.original.toFixed(2)}</span>
+                  <span className={`${t.heading} font-bold`}>${result.original.toFixed(2)}</span>
                 </div>
                 {result.savingsVal1 > 0 && (
-                  <div className="flex justify-between py-1 border-b border-white/5">
+                  <div className="flex justify-between py-1 border-b ${t.border}">
                     <span className="text-emerald-500">First Discount ({discount1}%):</span>
                     <span className="text-emerald-400 font-bold">-${result.savingsVal1.toFixed(2)}</span>
                   </div>
                 )}
                 {result.savingsVal2 > 0 && (
-                  <div className="flex justify-between py-1 border-b border-white/5">
+                  <div className="flex justify-between py-1 border-b ${t.border}">
                     <span className="text-emerald-500">Second Stackable Discount ({discount2}%):</span>
                     <span className="text-emerald-400 font-bold">-${result.savingsVal2.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between py-1 border-b border-white/5">
+                <div className="flex justify-between py-1 border-b ${t.border}">
                   <span>Pre-tax Item Total:</span>
-                  <span className="text-white font-bold">${result.salePrice.toFixed(2)}</span>
+                  <span className={`${t.heading} font-bold`}>${result.salePrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Sales Tax ({taxRate}%):</span>
-                  <span className="text-white font-bold">+${result.taxVal.toFixed(2)}</span>
+                  <span className={`${t.heading} font-bold`}>+${result.taxVal.toFixed(2)}</span>
                 </div>
               </div>
               <ExportBar
@@ -1849,9 +2020,9 @@ function DiscountCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Tag className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Provide base pricing elements on the left parameters to compile the net checkout costs.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Tag className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Provide base pricing elements on the left parameters to compile the net checkout costs.</p>
             </div>
           )}
         </div>
@@ -1861,7 +2032,24 @@ function DiscountCalculator({ isDark }: { isDark: boolean }) {
 }
 
 // 10. CPM CALCULATOR
-function CpmCalculator() {
+function CpmCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [calcMode, setCalcMode] = useState<'cpm' | 'cost' | 'impressions'>('cpm');
   const [cost, setCost] = useState('');
   const [impressions, setImpressions] = useState('');
@@ -1918,37 +2106,41 @@ function CpmCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="cpm-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Advertising CPM Campaign Solver
         </h2>
-        <p className="text-sm text-gray-400">Resolve Cost Per Mille (CPM), impressions quantities, total ad budgets, and click conversion metrics.</p>
+        <p className={`text-sm ${t.textMuted}`}>Resolve Cost Per Mille (CPM), impressions quantities, total ad budgets, and click conversion metrics.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setCalcMode('cpm'); setResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'cpm' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'cpm' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Solve CPM
             </button>
             <button
               type="button"
               onClick={() => { setCalcMode('cost'); setResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'cost' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'cost' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Solve Cost
             </button>
             <button
               type="button"
               onClick={() => { setCalcMode('impressions'); setResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'impressions' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'impressions' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Solve Imp.
             </button>
@@ -1956,10 +2148,10 @@ function CpmCalculator() {
 
           {calcMode !== 'cost' && (
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Total Budget Cost ($)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Total Budget Cost ($)</label>
               <input
                 type="number" step="any" placeholder="e.g. 500.00"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={cost} onChange={(e) => setCost(e.target.value)}
               />
             </div>
@@ -1967,10 +2159,10 @@ function CpmCalculator() {
 
           {calcMode !== 'impressions' && (
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Ad Impressions Volume</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Ad Impressions Volume</label>
               <input
                 type="number" placeholder="e.g. 50000"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={impressions} onChange={(e) => setImpressions(e.target.value)}
               />
             </div>
@@ -1978,20 +2170,20 @@ function CpmCalculator() {
 
           {calcMode !== 'cpm' && (
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Cost Per Mille (CPM) ($)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Cost Per Mille (CPM) ($)</label>
               <input
                 type="number" step="any" placeholder="e.g. 10.00"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={cpm} onChange={(e) => setCpm(e.target.value)}
               />
             </div>
           )}
 
-          <div className="border-t border-white/5 pt-3">
-            <label className="text-gray-405 font-bold block mb-1 text-indigo-400">Optional Clicks Received (CPC metrics)</label>
+          <div className={`border-t ${t.border} pt-3`}>
+            <label className={`${t.textMuted} font-bold block mb-1 text-indigo-400`}>Optional Clicks Received (CPC metrics)</label>
             <input
               type="number" placeholder="e.g. 125"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={clicks} onChange={(e) => setClicks(e.target.value)}
             />
           </div>
@@ -2008,36 +2200,36 @@ function CpmCalculator() {
 
         <div className="lg:col-span-2">
           {result ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Compiled Campaign Output</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Compiled Campaign Output</span>
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg col-span-2 md:col-span-1">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">RESOLVED CPM</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg col-span-2 md:col-span-1`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>RESOLVED CPM</span>
                   <p className="text-sm font-black text-indigo-305 text-indigo-300 mt-1">${result.cpm.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL COST</span>
-                  <p className="text-sm font-black text-white mt-1">${result.cost.toFixed(2)}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL COST</span>
+                  <p className={`text-sm font-black ${t.heading} mt-1`}>${result.cost.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">IMPRESSIONS</span>
-                  <p className="text-sm font-black text-white mt-1">{result.impressions.toLocaleString()}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>IMPRESSIONS</span>
+                  <p className={`text-sm font-black ${t.heading} mt-1`}>{result.impressions.toLocaleString()}</p>
                 </div>
               </div>
 
               {(result.cpc !== null || result.ctr !== null) && (
-                <div className="border-t border-white/5 pt-4">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase font-mono block mb-2">Calculated Engagement KPI Metrics</span>
+                <div className={`border-t ${t.border} pt-4`}>
+                  <span className={`text-[10px] font-bold text-amber-400 uppercase font-mono block mb-2`}>Calculated Engagement KPI Metrics</span>
                   <div className="grid grid-cols-2 gap-4 text-center font-mono">
-                    <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                      <span className="text-[9px] font-bold text-gray-500 block font-sans">COST PER CLICK (CPC)</span>
+                    <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>COST PER CLICK (CPC)</span>
                       <p className="text-xs font-black text-amber-400 mt-1">
                         {result.cpc !== null ? `$${result.cpc.toFixed(4)}` : 'N/A'}
                       </p>
                     </div>
-                    <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                      <span className="text-[9px] font-bold text-gray-500 block font-sans">CLICK-THROUGH RATE (CTR)</span>
+                    <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                      <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>CLICK-THROUGH RATE (CTR)</span>
                       <p className="text-xs font-black text-emerald-400 mt-1">
                         {result.ctr !== null ? `${result.ctr.toFixed(3)}%` : 'N/A'}
                       </p>
@@ -2046,15 +2238,15 @@ function CpmCalculator() {
                 </div>
               )}
 
-              <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                Evaluating a budget of <span className="text-white font-bold">${result.cost.toFixed(2)}</span> with <span className="text-white font-bold">{result.impressions.toLocaleString()}</span> impressions sets your ad cost rate at <span className="text-white font-bold">${result.cpm.toFixed(2)}</span> CPM. 
+              <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                Evaluating a budget of <span className={`${t.heading} font-bold`}>${result.cost.toFixed(2)}</span> with <span className={`${t.heading} font-bold`}>{result.impressions.toLocaleString()}</span> impressions sets your ad cost rate at <span className={`${t.heading} font-bold`}>${result.cpm.toFixed(2)}</span> CPM. 
                 {result.ctr !== null && ` Out of these views, receiving ${clicks} clicks results in a CTR of ${result.ctr.toFixed(2)}% with each click valuing at an average CPC index of $${result.cpc?.toFixed(2)}.`}
               </div>
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <TrendingUp className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Specify target media metrics on the left panel to execute advertising CPM structures.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <TrendingUp className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Specify target media metrics on the left panel to execute advertising CPM structures.</p>
             </div>
           )}
         </div>
@@ -2065,6 +2257,23 @@ function CpmCalculator() {
 
 // 11. LOAN CALCULATOR SUPPORTING COMPLETE AMORTIZATION SCHEDULE TABLE
 function LoanCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('');
   const [term, setTerm] = useState('');
@@ -2135,49 +2344,53 @@ function LoanCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="loan-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Loan Amortization Schedule Solver
         </h2>
-        <p className="text-sm text-gray-400">Calculate regular monthly installments, lifetime interest costs, and generate complete balance schedules.</p>
+        <p className={`text-sm ${t.textMuted}`}>Calculate regular monthly installments, lifetime interest costs, and generate complete balance schedules.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Loan Amount/Principal ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Loan Amount/Principal ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 250000"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={amount} onChange={(e) => setAmount(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Annual Interest Rate (APR %)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Annual Interest Rate (APR %)</label>
             <input
               type="number" step="any" placeholder="e.g. 5.5"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={rate} onChange={(e) => setRate(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Term Length</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Term Length</label>
               <input
                 type="number" placeholder="e.g. 30"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={term} onChange={(e) => setTerm(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Period Unit</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Period Unit</label>
               <select
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono"
+                className={`w-full p-2.5 ${t.selectBg} rounded-lg font-mono`}
                 value={termType} onChange={(e) => setTermType(e.target.value as any)}
               >
                 <option value="years">Years</option>
@@ -2198,40 +2411,40 @@ function LoanCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {schedule ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Financial Amortization Summary</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Financial Amortization Summary</span>
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg col-span-2 md:col-span-1">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">MONTHLY PAYMENT</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg col-span-2 md:col-span-1`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>MONTHLY PAYMENT</span>
                   <p className="text-base font-black text-[#5e94f3] mt-1">${schedule.monthlyPayment.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">LIFETIME INTEREST</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>LIFETIME INTEREST</span>
                   <p className="text-base font-black text-rose-400 mt-1">${schedule.totalInterest.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL PRINCIPAL+INT</span>
-                  <p className="text-base font-black text-white mt-1">${schedule.totalPayment.toFixed(2)}</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL PRINCIPAL+INT</span>
+                  <p className={`text-base font-black ${t.heading} mt-1`}>${schedule.totalPayment.toFixed(2)}</p>
                 </div>
               </div>
 
-              <div className="border-t border-white/5 pt-4 space-y-3">
+              <div className={`border-t ${t.border} pt-4 space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-indigo-400 font-mono">Monthly Amortization Schedule</span>
+                  <span className={`text-xs font-bold text-indigo-400 font-mono`}>Monthly Amortization Schedule</span>
                   <button
                     type="button"
                     onClick={() => setExpanded(!expanded)}
-                    className="p-1 px-3 text-[10px] bg-white/5 border border-white/10 rounded text-gray-300 hover:bg-white/10 cursor-pointer"
+                    className={`p-1 px-3 text-[10px] ${t.controlBg} border ${t.border} rounded ${t.textMuted} hover:bg-white/10 cursor-pointer`}
                   >
                     {expanded ? "Collapse List" : "Show Full Schedule"}
                   </button>
                 </div>
 
-                <div className="overflow-x-auto max-h-72 overflow-y-auto border border-white/10 rounded-lg bg-[#111]">
+                <div className={`overflow-x-auto max-h-72 overflow-y-auto border ${t.border} rounded-lg ${t.controlBg}`}>
                   <table className="w-full text-left border-collapse text-[11px] font-mono">
                     <thead>
-                      <tr className="bg-white/5 text-gray-400 border-b border-white/5 font-mono text-[9px] uppercase font-bold">
+                      <tr className={`${t.controlBg} ${t.textFaint} border-b ${t.border} font-mono text-[9px] uppercase font-bold`}>
                         <th className="p-2">Month</th>
                         <th className="p-2">Payment</th>
                         <th className="p-2">Principal Portion</th>
@@ -2241,19 +2454,19 @@ function LoanCalculator({ isDark }: { isDark: boolean }) {
                     </thead>
                     <tbody>
                       {schedule.rows.slice(0, expanded ? undefined : 12).map((row) => (
-                        <tr key={row.period} className="border-b border-white/3 hover:bg-white/3 text-gray-300">
-                          <td className="p-2 font-bold text-white">{row.period}</td>
+                        <tr key={row.period} className={`border-b ${t.border} hover:bg-white/3 ${t.textMuted}`}>
+                          <td className={`p-2 font-bold ${t.heading}`}>{row.period}</td>
                           <td className="p-2">${row.payment.toFixed(2)}</td>
                           <td className="p-2 text-emerald-400">${row.principal.toFixed(2)}</td>
                           <td className="p-2 text-rose-455 text-rose-400">${row.interest.toFixed(2)}</td>
-                          <td className="p-2 text-right text-white font-bold">${row.balance.toFixed(2)}</td>
+                          <td className={`p-2 text-right ${t.heading} font-bold`}>${row.balance.toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
                 {!expanded && schedule.rows.length > 12 && (
-                  <p className="text-[10px] text-gray-500 text-center font-mono italic">Showing the first 12 months. Choose "Show Full Schedule" to see all remaining months.</p>
+                  <p className={`text-[10px] ${t.textFaint} text-center font-mono italic`}>Showing the first 12 months. Choose "Show Full Schedule" to see all remaining months.</p>
                 )}
               </div>
               <ExportBar
@@ -2270,9 +2483,9 @@ function LoanCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Home className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Specify the principal amount, interest parameters, and term length to assemble amortization lists.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Home className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Specify the principal amount, interest parameters, and term length to assemble amortization lists.</p>
             </div>
           )}
         </div>
@@ -2283,6 +2496,23 @@ function LoanCalculator({ isDark }: { isDark: boolean }) {
 
 // 12. GST TAX CALCULATOR (ADD / REMOVE GST TARIFFS)
 function GstCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [price, setPrice] = useState('');
   const [gstRate, setGstRate] = useState('18');
   const [mode, setMode] = useState<'add' | 'remove'>('add');
@@ -2324,64 +2554,68 @@ function GstCalculator({ isDark }: { isDark: boolean }) {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="gst-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           GST Goods & Services Tax Solver
         </h2>
-        <p className="text-sm text-gray-400">Apply GST additions, extract inclusive tax margins, and split total net pricing parameters.</p>
+        <p className={`text-sm ${t.textMuted}`}>Apply GST additions, extract inclusive tax margins, and split total net pricing parameters.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setMode('add'); setResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${mode === 'add' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${mode === 'add' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Add GST (+)
             </button>
             <button
               type="button"
               onClick={() => { setMode('remove'); setResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${mode === 'remove' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${mode === 'remove' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Remove GST (-)
             </button>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">
+            <label className={`${t.textMuted} font-semibold block mb-1`}>
               {mode === 'add' ? "Base Cost (Tax Exclusive) ($)" : "Gross Cost (Tax Inclusive) ($)"}
             </label>
             <input
               type="number" step="any" placeholder="e.g. 500.00"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={price} onChange={(e) => setPrice(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">GST Rate (%)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>GST Rate (%)</label>
             <input
               type="number" step="any" placeholder="18"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={gstRate} onChange={(e) => setGstRate(e.target.value)}
             />
           </div>
 
           <div className="space-y-1.5">
-            <span className="text-[10px] text-gray-500 font-bold block">Standard GST Presets:</span>
+            <span className={`text-[10px] ${t.textFaint} font-bold block`}>Standard GST Presets:</span>
             <div className="grid grid-cols-4 gap-1">
               {['5', '12', '18', '28'].map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => handleCalculate(r)}
-                  className={`p-1.5 font-mono text-[10px] font-bold border rounded transition-colors cursor-pointer ${gstRate === r ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-[#1a1a1a] text-gray-400 border-white/5 hover:bg-white/5'}`}
+                  className={`p-1.5 font-mono text-[10px] font-bold border rounded transition-colors cursor-pointer ${gstRate === r ? 'bg-indigo-600 text-white border-indigo-600' : `${t.controlBg} ${t.textMuted} ${t.border} hover:bg-white/5`}`}
                 >
                   {r}%
                 </button>
@@ -2401,30 +2635,30 @@ function GstCalculator({ isDark }: { isDark: boolean }) {
 
         <div className="lg:col-span-2">
           {result ? (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">GST Split Ledger Report</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>GST Split Ledger Report</span>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">NET EXCLUDING TAX</span>
-                  <p className="text-sm font-black text-white mt-1">
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>NET EXCLUDING TAX</span>
+                  <p className={`text-sm font-black ${t.heading} mt-1`}>
                     ${(mode === 'add' ? result.original : result.finalPrice).toFixed(2)}
                   </p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">GST TAX VALUE</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>GST TAX VALUE</span>
                   <p className="text-sm font-black text-rose-400 mt-1">${result.gstAmount.toFixed(2)}</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">GROSS INCLUDING TAX</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>GROSS INCLUDING TAX</span>
                   <p className="text-sm font-black text-emerald-400 mt-1">
                     ${(mode === 'add' ? result.finalPrice : result.original).toFixed(2)}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                Appraising a baseline of <span className="text-white font-bold">${result.original.toFixed(2)}</span> under a <span className="text-white font-bold">{gstRate}%</span> GST rate 
+              <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                Appraising a baseline of <span className={`${t.heading} font-bold`}>${result.original.toFixed(2)}</span> under a <span className={`${t.heading} font-bold`}>{gstRate}%</span> GST rate 
                 {mode === 'add' 
                   ? ` yields a net GST surcharge component equal to $${result.gstAmount.toFixed(2)}, aggregating to a gross final purchase price of $${result.finalPrice.toFixed(2)}.` 
                   : ` extracts an embedded net GST portion of $${result.gstAmount.toFixed(2)}, leaving a net baseline product value of $${result.finalPrice.toFixed(2)}.`}
@@ -2441,9 +2675,9 @@ function GstCalculator({ isDark }: { isDark: boolean }) {
               />
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-              <Coins className="w-10 h-10 mb-2 text-gray-650" />
-              <p className="text-xs">Provide transaction prices and select your GST parameters to generate tax statements.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+              <Coins className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+              <p className={`text-xs ${t.textMuted}`}>Provide transaction prices and select your GST parameters to generate tax statements.</p>
             </div>
           )}
         </div>
@@ -2453,14 +2687,27 @@ function GstCalculator({ isDark }: { isDark: boolean }) {
 }
 
 // 13. DAYS CALCULATOR
-function DaysCalculator() {
+function DaysCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [calcMode, setCalcMode] = useState<'diff' | 'offset'>('diff');
-  
-  // Date grid
   const [date1, setDate1] = useState('');
   const [date2, setDate2] = useState('');
-
-  // Offset states
   const [startDate, setStartDate] = useState('');
   const [daysOffset, setDaysOffset] = useState('');
 
@@ -2488,14 +2735,13 @@ function DaysCalculator() {
     const diffTime = Math.abs(d2.getTime() - d1.getTime());
     const calendarDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // Calculate Business Days
     let businessDays = 0;
     const tempDate = new Date(Math.min(d1.getTime(), d2.getTime()));
     const targetTime = Math.max(d1.getTime(), d2.getTime());
 
     while (tempDate.getTime() <= targetTime) {
       const day = tempDate.getDay();
-      if (day !== 0 && day !== 6) { // Skip Sunday (0) and Saturday (6)
+      if (day !== 0 && day !== 6) {
         businessDays++;
       }
       tempDate.setDate(tempDate.getDate() + 1);
@@ -2531,30 +2777,34 @@ function DaysCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="days-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Days & Timeline Calendar Solver
         </h2>
-        <p className="text-sm text-gray-400">Resolve exact day counts between selected calendars, workweek days ratios, or project deadlines offset.</p>
+        <p className={`text-sm ${t.textMuted}`}>Resolve exact day counts between selected calendars, workweek days ratios, or project deadlines offset.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setCalcMode('diff'); setDiffResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'diff' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'diff' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Days Between
             </button>
             <button
               type="button"
               onClick={() => { setCalcMode('offset'); setOffsetResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'offset' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'offset' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Add/Sub Days
             </button>
@@ -2563,19 +2813,19 @@ function DaysCalculator() {
           {calcMode === 'diff' ? (
             <>
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Start Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Start Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={date1} onChange={(e) => setDate1(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">End Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>End Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={date2} onChange={(e) => setDate2(e.target.value)}
                 />
               </div>
@@ -2592,19 +2842,19 @@ function DaysCalculator() {
           ) : (
             <>
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Starting Benchmark Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Starting Benchmark Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={startDate} onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Days Offset (positive or negative)</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Days Offset (positive or negative)</label>
                 <input
                   type="number" placeholder="e.g. 45 or -30"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={daysOffset} onChange={(e) => setDaysOffset(e.target.value)}
                 />
               </div>
@@ -2624,62 +2874,62 @@ function DaysCalculator() {
         <div className="lg:col-span-2">
           {calcMode === 'diff' ? (
             diffResult ? (
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Evaluated Calendar Span</span>
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Evaluated Calendar Span</span>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center font-mono">
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">CALENDAR DAYS</span>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>CALENDAR DAYS</span>
                     <p className="text-base font-black text-indigo-400 mt-1">{diffResult.calendarDays}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">BUSINESS DAYS</span>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>BUSINESS DAYS</span>
                     <p className="text-base font-black text-emerald-400 mt-1">{diffResult.businessDays}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">WEEKS COUNT</span>
-                    <p className="text-base font-black text-white mt-1">{diffResult.weeks.toFixed(2)}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>WEEKS COUNT</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{diffResult.weeks.toFixed(2)}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">EST. MONTHS</span>
-                    <p className="text-base font-black text-white mt-1">{diffResult.months.toFixed(2)}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>EST. MONTHS</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{diffResult.months.toFixed(2)}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                  The interval between the requested benchmark dates spans exactly <span className="text-white font-bold">{diffResult.calendarDays} calendar days</span>, which includes <span className="text-white font-bold">{diffResult.businessDays} standard business workdays</span> (excluding Saturdays and Sundays). This translates visually to about <span className="text-white font-bold">{diffResult.weeks.toFixed(1)} weeks</span> of duration.
+                <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                  The interval between the requested benchmark dates spans exactly <span className={`${t.heading} font-bold`}>{diffResult.calendarDays} calendar days</span>, which includes <span className={`${t.heading} font-bold`}>{diffResult.businessDays} standard business workdays</span> (excluding Saturdays and Sundays). This translates visually to about <span className={`${t.heading} font-bold`}>{diffResult.weeks.toFixed(1)} weeks</span> of duration.
                 </div>
               </div>
             ) : (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-                <CalendarDays className="w-10 h-10 mb-2 text-gray-650" />
-                <p className="text-xs">Specify standard start and end calendar dates on the left coordinates to resolve spans.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+                <CalendarDays className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+                <p className={`text-xs ${t.textMuted}`}>Specify standard start and end calendar dates on the left coordinates to resolve spans.</p>
               </div>
             )
           ) : (
             offsetResult ? (
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Resulting Offset Date Target</span>
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Resulting Offset Date Target</span>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center font-mono">
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">COMPUTED TARGET DATE</span>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>COMPUTED TARGET DATE</span>
                     <p className="text-base font-black text-[#6366f1] mt-1">{offsetResult.newDate}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">WEEKDAY NAME</span>
-                    <p className="text-base font-black text-white mt-1">{offsetResult.dayOfWeek}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>WEEKDAY NAME</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{offsetResult.dayOfWeek}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                  Applying a dynamic offset of <span className="text-white font-bold">{daysOffset} days</span> starting from <span className="text-white font-bold">{startDate}</span> translates the physical tracking coordinate directly to <span className="text-white font-bold">{offsetResult.newDate}</span>, which settles on a <span className="text-white font-bold">{offsetResult.dayOfWeek}</span>.
+                <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                  Applying a dynamic offset of <span className={`${t.heading} font-bold`}>{daysOffset} days</span> starting from <span className={`${t.heading} font-bold`}>{startDate}</span> translates the physical tracking coordinate directly to <span className={`${t.heading} font-bold`}>{offsetResult.newDate}</span>, which settles on a <span className={`${t.heading} font-bold`}>{offsetResult.dayOfWeek}</span>.
                 </div>
               </div>
             ) : (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-                <CalendarDays className="w-10 h-10 mb-2 text-gray-650" />
-                <p className="text-xs">Specify baseline starting date and desired numeric buffer size on the left parameters.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+                <CalendarDays className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+                <p className={`text-xs ${t.textMuted}`}>Specify baseline starting date and desired numeric buffer size on the left parameters.</p>
               </div>
             )
           )}
@@ -2690,10 +2940,25 @@ function DaysCalculator() {
 }
 
 // 14. HOURS CALCULATOR
-function HoursCalculator() {
-  const [calcMode, setCalcMode] = useState<'duration' | 'timesheet'>('duration');
+function HoursCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
 
-  // Duration mode
+  const [calcMode, setCalcMode] = useState<'duration' | 'timesheet'>('duration');
   const [time1, setTime1] = useState('');
   const [time2, setTime2] = useState('');
   const [unpaidBreak, setUnpaidBreak] = useState('0');
@@ -2703,7 +2968,6 @@ function HoursCalculator() {
     decimal: number;
   } | null>(null);
 
-  // Timesheet mode
   const [timesheetRows, setTimesheetRows] = useState<Array<{ id: number; hours: string; minutes: string }>>([
     { id: 1, hours: '8', minutes: '0' },
   ]);
@@ -2734,7 +2998,7 @@ function HoursCalculator() {
     let mins2 = h2 * 60 + m2;
 
     if (mins2 < mins1) {
-      mins2 += 24 * 60; // Safe cross-midnight coverage
+      mins2 += 24 * 60;
     }
 
     const breakMins = parseInt(unpaidBreak, 10) || 0;
@@ -2764,30 +3028,34 @@ function HoursCalculator() {
 
   const timesheetTotal = getTimesheetAggregation();
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="hours-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Hours & Freelance Timesheet Compiler
         </h2>
-        <p className="text-sm text-gray-400">Resolve exact timings gaps, convert hours format to decimals and aggregate complex billable timesheets.</p>
+        <p className={`text-sm ${t.textMuted}`}>Resolve exact timings gaps, convert hours format to decimals and aggregate complex billable timesheets.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setCalcMode('duration'); setDurResult(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'duration' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'duration' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Time Gap Code
             </button>
             <button
               type="button"
               onClick={() => { setCalcMode('timesheet'); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'timesheet' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'timesheet' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Timesheet Sum
             </button>
@@ -2796,28 +3064,28 @@ function HoursCalculator() {
           {calcMode === 'duration' ? (
             <>
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Start Hour (Clock In)</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Start Hour (Clock In)</label>
                 <input
                   type="time"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={time1} onChange={(e) => setTime1(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">End Hour (Clock Out)</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>End Hour (Clock Out)</label>
                 <input
                   type="time"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={time2} onChange={(e) => setTime2(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Unpaid Break Duration (minutes)</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Unpaid Break Duration (minutes)</label>
                 <input
                   type="number" placeholder="e.g. 45"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={unpaidBreak} onChange={(e) => setUnpaidBreak(e.target.value)}
                 />
               </div>
@@ -2833,19 +3101,19 @@ function HoursCalculator() {
             </>
           ) : (
             <div className="space-y-3">
-              <span className="text-[10px] text-gray-500 font-bold block mb-1">Timesheet Cards List:</span>
+              <span className={`text-[10px] ${t.textFaint} font-bold block mb-1`}>Timesheet Cards List:</span>
               <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                 {timesheetRows.map((row) => (
                   <div key={row.id} className="flex gap-2 items-center">
                     <input
                       type="number" placeholder="Hrs"
-                      className="w-16 p-2 bg-[#1a1a1a] border border-white/10 rounded text-white text-center font-mono text-xs"
+                      className={`w-16 p-2 ${t.inputBg} rounded text-white text-center font-mono text-xs`}
                       value={row.hours} onChange={(e) => handleRowChange(row.id, 'hours', e.target.value)}
                     />
-                    <span className="text-gray-600 font-bold">:</span>
+                    <span className={`${t.textFaint} font-bold`}>:</span>
                     <input
                       type="number" placeholder="Min"
-                      className="w-16 p-2 bg-[#1a1a1a] border border-white/10 rounded text-white text-center font-mono text-xs"
+                      className={`w-16 p-2 ${t.inputBg} rounded text-white text-center font-mono text-xs`}
                       value={row.minutes} onChange={(e) => handleRowChange(row.id, 'minutes', e.target.value)}
                     />
                     <button
@@ -2875,47 +3143,47 @@ function HoursCalculator() {
         <div className="lg:col-span-2">
           {calcMode === 'duration' ? (
             durResult ? (
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Compiled Duration Values</span>
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Compiled Duration Values</span>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center font-mono">
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-indigo-500">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">TIMELINE FORMAT</span>
-                    <p className="text-base font-black text-white mt-1">{durResult.hours} hours, {durResult.minutes} minutes</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-indigo-500`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TIMELINE FORMAT</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{durResult.hours} hours, {durResult.minutes} minutes</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-emerald-500">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">DIGITAL DECIMAL HOURS</span>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-emerald-500`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>DIGITAL DECIMAL HOURS</span>
                     <p className="text-base font-black text-emerald-400 mt-1">{durResult.decimal.toFixed(4)} hrs</p>
                   </div>
                 </div>
 
-                <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                  Clocking in at <span className="text-white font-bold">{time1}</span> and leaving at <span className="text-white font-bold">{time2}</span>, after deducting an unpaid resting break equivalent to <span className="text-white font-bold">{unpaidBreak} minutes</span>, records a total balance of <span className="text-white font-bold">{durResult.hours} hours and {durResult.minutes} minutes</span>. For billing and billing payroll records, this represents exactly <span className="text-white font-bold">{durResult.decimal.toFixed(2)} billable hours</span>.
+                <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                  Clocking in at <span className={`${t.heading} font-bold`}>{time1}</span> and leaving at <span className={`${t.heading} font-bold`}>{time2}</span>, after deducting an unpaid resting break equivalent to <span className={`${t.heading} font-bold`}>{unpaidBreak} minutes</span>, records a total balance of <span className={`${t.heading} font-bold`}>{durResult.hours} hours and {durResult.minutes} minutes</span>. For billing and billing payroll records, this represents exactly <span className={`${t.heading} font-bold`}>{durResult.decimal.toFixed(2)} billable hours</span>.
                 </div>
               </div>
             ) : (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-                <Clock className="w-10 h-10 mb-2 text-gray-650" />
-                <p className="text-xs">Select target Clock In & Clock Out milestones to resolve active shift gaps.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+                <Clock className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+                <p className={`text-xs ${t.textMuted}`}>Select target Clock In & Clock Out milestones to resolve active shift gaps.</p>
               </div>
             )
           ) : (
-            <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-              <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Timesheet Aggregate Balance</span>
+            <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+              <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Timesheet Aggregate Balance</span>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center font-mono">
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">AGGREGATED WORK TIMINGS</span>
-                  <p className="text-base font-black text-white mt-1">{timesheetTotal.hours} hrs, {timesheetTotal.minutes} mins</p>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>AGGREGATED WORK TIMINGS</span>
+                  <p className={`text-base font-black ${t.heading} mt-1`}>{timesheetTotal.hours} hrs, {timesheetTotal.minutes} mins</p>
                 </div>
-                <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                  <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL DECIMAL QUANTIFICATION</span>
+                <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                  <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL DECIMAL QUANTIFICATION</span>
                   <p className="text-base font-black text-emerald-400 mt-1">{timesheetTotal.decimal.toFixed(4)} decimal hrs</p>
                 </div>
               </div>
 
-              <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                Compilers are aggregating <span className="text-white font-bold">{timesheetRows.length} shift cards</span>. The accumulated sum volume matches exactly <span className="text-white font-bold">{timesheetTotal.hours} hours and {timesheetTotal.minutes} minutes</span>, representing a total coefficient of <span className="text-white font-bold">{timesheetTotal.decimal.toFixed(2)} active decimal hours</span> on accounting databases.
+              <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                Compilers are aggregating <span className={`${t.heading} font-bold`}>{timesheetRows.length} shift cards</span>. The accumulated sum volume matches exactly <span className={`${t.heading} font-bold`}>{timesheetTotal.hours} hours and {timesheetTotal.minutes} minutes</span>, representing a total coefficient of <span className={`${t.heading} font-bold`}>{timesheetTotal.decimal.toFixed(2)} active decimal hours</span> on accounting databases.
               </div>
             </div>
           )}
@@ -2926,7 +3194,24 @@ function HoursCalculator() {
 }
 
 // 15. MONTH CALCULATOR
-function MonthCalculator() {
+function MonthCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [calcMode, setCalcMode] = useState<'diff' | 'offset'>('diff');
   const [date1, setDate1] = useState('');
   const [date2, setDate2] = useState('');
@@ -3001,30 +3286,34 @@ function MonthCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="month-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Month Milestone & Business Quarter Solver
         </h2>
-        <p className="text-sm text-gray-400">Evaluate timeline month-span counts, calculate financial quarters, and apply offset periods cleanly.</p>
+        <p className={`text-sm ${t.textMuted}`}>Evaluate timeline month-span counts, calculate financial quarters, and apply offset periods cleanly.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit text-xs">
-          <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit text-xs`}>
+          <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
             <button
               type="button"
               onClick={() => { setCalcMode('diff'); setDiffMsg(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'diff' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'diff' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Months Difference
             </button>
             <button
               type="button"
               onClick={() => { setCalcMode('offset'); setOffsetMsg(null); }}
-              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'offset' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+              className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${calcMode === 'offset' ? 'bg-indigo-600 text-white' : t.textMuted}`}
             >
               Month Shifter
             </button>
@@ -3033,19 +3322,19 @@ function MonthCalculator() {
           {calcMode === 'diff' ? (
             <>
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Start Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Start Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={date1} onChange={(e) => setDate1(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">End Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>End Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={date2} onChange={(e) => setDate2(e.target.value)}
                 />
               </div>
@@ -3062,19 +3351,19 @@ function MonthCalculator() {
           ) : (
             <>
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Benchmark Start Date</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Benchmark Start Date</label>
                 <input
                   type="date"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={startDate} onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="text-gray-400 font-semibold block mb-1">Months Offset magnitude (+/-)</label>
+                <label className={`${t.textMuted} font-semibold block mb-1`}>Months Offset magnitude (+/-)</label>
                 <input
                   type="number" placeholder="e.g. 6 or -12"
-                  className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                  className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                   value={monthsOffset} onChange={(e) => setMonthsOffset(e.target.value)}
                 />
               </div>
@@ -3094,63 +3383,63 @@ function MonthCalculator() {
         <div className="lg:col-span-2">
           {calcMode === 'diff' ? (
             diffMsg ? (
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Compiled Month Timeline Difference</span>
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Compiled Month Timeline Difference</span>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center font-mono">
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-indigo-500">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">FULL MONTHS</span>
-                    <p className="text-base font-black text-white mt-1">{diffMsg.months}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-indigo-500`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>FULL MONTHS</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{diffMsg.months}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">DAYS REMAINDER</span>
-                    <p className="text-base font-black text-white mt-1">{diffMsg.daysRemainder}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>DAYS REMAINDER</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{diffMsg.daysRemainder}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-emerald-500">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">QUARTERS RATIO</span>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-emerald-500`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>QUARTERS RATIO</span>
                     <p className="text-base font-black text-emerald-400 mt-1">{diffMsg.quarters.toFixed(2)}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL DAYS</span>
-                    <p className="text-base font-black text-white mt-1">{diffMsg.totalDays}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL DAYS</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{diffMsg.totalDays}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                  The interval covers an aggregate difference of <span className="text-white font-bold">{diffMsg.months} full calendar months</span> and <span className="text-white font-bold">{diffMsg.daysRemainder} days</span>. On standard economic records, this matches <span className="text-white font-bold">{diffMsg.quarters.toFixed(2)} physical business quarters</span>, representing a gross day total of <span className="text-white font-bold">{diffMsg.totalDays} calendar days</span>.
+                <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                  The interval covers an aggregate difference of <span className={`${t.heading} font-bold`}>{diffMsg.months} full calendar months</span> and <span className={`${t.heading} font-bold`}>{diffMsg.daysRemainder} days</span>. On standard economic records, this matches <span className={`${t.heading} font-bold`}>{diffMsg.quarters.toFixed(2)} physical business quarters</span>, representing a gross day total of <span className={`${t.heading} font-bold`}>{diffMsg.totalDays} calendar days</span>.
                 </div>
               </div>
             ) : (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-                <CalendarRange className="w-10 h-10 mb-2 text-gray-650" />
-                <p className="text-xs">Specify timeline calendar targets to parse comparative monthly milestones.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+                <CalendarRange className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+                <p className={`text-xs ${t.textMuted}`}>Specify timeline calendar targets to parse comparative monthly milestones.</p>
               </div>
             )
           ) : (
             offsetMsg ? (
-              <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Shifted Calendar Target</span>
+              <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Shifted Calendar Target</span>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-indigo-500 col-span-2">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">CALCULATED TARGET DATE</span>
-                    <p className="text-base font-black text-white mt-1">{offsetMsg.newDate}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-indigo-500 col-span-2`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>CALCULATED TARGET DATE</span>
+                    <p className={`text-base font-black ${t.heading} mt-1`}>{offsetMsg.newDate}</p>
                   </div>
-                  <div className="p-3 bg-[#111] border border-white/5 rounded-lg">
-                    <span className="text-[9px] font-bold text-gray-500 block font-sans">QUARTER LABEL</span>
-                    <p className="text-sm font-black text-white mt-1">{offsetMsg.quarter}</p>
+                  <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                    <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>QUARTER LABEL</span>
+                    <p className={`text-sm font-black ${t.heading} mt-1`}>{offsetMsg.quarter}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#101010] p-4 border border-white/5 rounded-lg font-mono text-xs text-gray-400 leading-relaxed">
-                  Shifting the starting date forward/backwards by <span className="text-white font-bold">{monthsOffset} months</span> evaluates the target milestone coordinates to <span className="text-white font-bold">{offsetMsg.newDate}</span>, residing inside <span className="text-white font-bold">{offsetMsg.quarter}</span>. 
+                <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg font-mono text-xs ${t.textMuted} leading-relaxed`}>
+                  Shifting the starting date forward/backwards by <span className={`${t.heading} font-bold`}>{monthsOffset} months</span> evaluates the target milestone coordinates to <span className={`${t.heading} font-bold`}>{offsetMsg.newDate}</span>, residing inside <span className={`${t.heading} font-bold`}>{offsetMsg.quarter}</span>. 
                   {offsetMsg.isLeap ? " The resulting destination year is a Leap Year (366 days)." : " The resulting destination year is a standard 365-day calendar cycle."}
                 </div>
               </div>
             ) : (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[220px]">
-                <CalendarRange className="w-10 h-10 mb-2 text-gray-650" />
-                <p className="text-xs">Provide a target baseline date and month shifter coefficients to resolve bounds.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[220px]`}>
+                <CalendarRange className={`w-10 h-10 mb-2 ${t.textFaint}`} />
+                <p className={`text-xs ${t.textMuted}`}>Provide a target baseline date and month shifter coefficients to resolve bounds.</p>
               </div>
             )
           )}
@@ -3161,7 +3450,24 @@ function MonthCalculator() {
 }
 
 // 16. STRIPE FEE CALCULATOR
-function StripeFeeCalculator() {
+function StripeFeeCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [amountInput, setAmountInput] = useState('100');
   const [feePercent, setFeePercent] = useState('2.9');
   const [fixedFee, setFixedFee] = useState('0.30');
@@ -3169,68 +3475,67 @@ function StripeFeeCalculator() {
 
   const amount = parseFloat(amountInput) || 0;
   const rawRate = (parseFloat(feePercent) || 0) / 100;
-  const extraRate = intlCard ? 0.015 : 0; // standard international surcharge 1.5%
+  const extraRate = intlCard ? 0.015 : 0;
   const rate = rawRate + extraRate;
   const fixed = parseFloat(fixedFee) || 0;
 
-  // Calculations
   const calculatedFee = (amount * rate) + fixed;
   const netAmount = Math.max(0, amount - calculatedFee);
 
-  // Target amount to charge to receive exactly "amount"
-  // net = charge - (charge * rate + fixed)
-  // net + fixed = charge * (1 - rate)
-  // charge = (net + fixed) / (1 - rate)
   const targetToCharge = rate >= 1 ? 0 : (amount + fixed) / (1 - rate);
   const targetFee = (targetToCharge * rate) + fixed;
 
+  const badgeClass = isDark
+    ? 'bg-[#635bff]/20 text-[#7a73ff] border-[#635bff]/30'
+    : 'bg-indigo-50 text-indigo-600 border-indigo-200';
+
   return (
     <div className="space-y-6" id="stripe-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-[#635bff]/20 text-[#7a73ff] border border-[#635bff]/30 rounded">STRIPE SERVICE</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>STRIPE SERVICE</span>
           Stripe Payment Fee & Invoice Premium Solver
         </h2>
-        <p className="text-sm text-gray-400">Identify precise stripe transaction charges, payout deductions and exact request invoicing metrics dynamically.</p>
+        <p className={`text-sm ${t.textMuted}`}>Identify precise stripe transaction charges, payout deductions and exact request invoicing metrics dynamically.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans text-xs">
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit">
-          <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider font-mono block">Transaction Rules Parameters</span>
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit`}>
+          <span className={`text-[10px] uppercase font-bold ${t.textFaint} tracking-wider font-mono block`}>Transaction Rules Parameters</span>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Base Transaction Amount ($)</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Base Transaction Amount ($)</label>
             <input
               type="number" step="any" placeholder="e.g. 100.00"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={amountInput} onChange={(e) => setAmountInput(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Fee Percentage (%)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Fee Percentage (%)</label>
               <input
                 type="number" step="any"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={feePercent} onChange={(e) => setFeePercent(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Fixed Cost Fee ($)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Fixed Cost Fee ($)</label>
               <input
                 type="number" step="any"
-                className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+                className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
                 value={fixedFee} onChange={(e) => setFixedFee(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="p-3 bg-[#111] border border-white/5 rounded-lg flex items-center justify-between">
+          <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg flex items-center justify-between`}>
             <div className="space-y-0.5">
-              <span className="font-bold text-white block">International Gateway</span>
-              <p className="text-[10px] text-gray-500">Adds an additional 1.5% inter-region card rate fee.</p>
+              <span className={`${t.heading} font-bold block`}>International Gateway</span>
+              <p className={`text-[10px] ${t.textFaint}`}>Adds an additional 1.5% inter-region card rate fee.</p>
             </div>
             <input
               type="checkbox"
@@ -3241,36 +3546,36 @@ function StripeFeeCalculator() {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-            <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">Transaction Breakdown Statistics</span>
+          <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+            <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>Transaction Breakdown Statistics</span>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
-              <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-[#635bff]">
-                <span className="text-[9px] font-bold text-gray-500 block font-sans">ORIGINAL INVOICE</span>
-                <p className="text-sm font-black text-white mt-1">${amount.toFixed(2)}</p>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-[#635bff]`}>
+                <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>ORIGINAL INVOICE</span>
+                <p className={`text-sm font-black ${t.heading} mt-1`}>${amount.toFixed(2)}</p>
               </div>
-              <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-red-500">
-                <span className="text-[9px] font-bold text-gray-500 block font-sans">STRIPE FEE</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-red-500`}>
+                <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>STRIPE FEE</span>
                 <p className="text-sm font-black text-rose-400 mt-1">-${calculatedFee.toFixed(2)}</p>
               </div>
-              <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-emerald-500">
-                <span className="text-[9px] font-bold text-gray-500 block font-sans">NET CASHOUT PAYOUT</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-emerald-500`}>
+                <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>NET CASHOUT PAYOUT</span>
                 <p className="text-sm font-black text-emerald-400 mt-1">${netAmount.toFixed(2)}</p>
               </div>
             </div>
 
-            <div className="bg-indigo-950/10 border border-indigo-500/10 rounded-xl p-4 space-y-3">
-              <span className="text-[10px] font-semibold text-indigo-400 uppercase font-mono block">Exact Invoice Goal Calculator</span>
-              <p className="text-gray-400 text-xs font-sans leading-relaxed">
+            <div className={`${t.controlBg} border-indigo-500/10 rounded-xl p-4 space-y-3`}>
+              <span className={`text-[10px] font-semibold text-indigo-400 uppercase font-mono block`}>Exact Invoice Goal Calculator</span>
+              <p className={`${t.textMuted} text-xs font-sans leading-relaxed`}>
                 If you request your client to pay exactly <span className="text-emerald-400 font-bold">${amount.toFixed(2)}</span> cash-in hand, you must invoice them for a gross transaction of:
               </p>
-              <div className="flex items-center justify-between bg-black/30 p-3 rounded-lg border border-white/5 font-mono">
+              <div className={`flex items-center justify-between ${t.controlBg} p-3 rounded-lg border ${t.border} font-mono`}>
                 <div>
-                  <span className="text-[9px] text-gray-500 font-sans block">TOTAL GROSS CHARGE REQUIRED</span>
-                  <p className="text-base font-black text-white mt-0.5">${targetToCharge.toFixed(2)}</p>
+                  <span className={`text-[9px] ${t.textFaint} font-sans block`}>TOTAL GROSS CHARGE REQUIRED</span>
+                  <p className={`text-base font-black ${t.heading} mt-0.5`}>${targetToCharge.toFixed(2)}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[9px] text-gray-500 font-sans block">DEDUCTIBLE FEES</span>
+                  <span className={`text-[9px] ${t.textFaint} font-sans block`}>DEDUCTIBLE FEES</span>
                   <p className="text-xs font-bold text-rose-400 mt-0.5">-${targetFee.toFixed(2)}</p>
                 </div>
               </div>
@@ -3283,12 +3588,29 @@ function StripeFeeCalculator() {
 }
 
 // 17. UNIFIED CALORIE & TDEE CALCULATOR
-function CalorieAndTdeeCalculator() {
+function CalorieAndTdeeCalculator({ isDark, activeToolId }: { isDark: boolean; activeToolId: string }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [gender, setGender] = useState<'m' | 'f'>('m');
   const [weight, setWeight] = useState('70');
   const [height, setHeight] = useState('175');
   const [age, setAge] = useState('25');
-  const [activity, setActivity] = useState('1.375'); // Lightly active
+  const [activity, setActivity] = useState('1.375');
   const [bodyFat, setBodyFat] = useState('');
   const [macroStyle, setMacroStyle] = useState<'moderate' | 'low-carb' | 'high-carb'>('moderate');
 
@@ -3298,7 +3620,6 @@ function CalorieAndTdeeCalculator() {
   const act = parseFloat(activity) || 1.2;
   const bf = parseFloat(bodyFat) || 0;
 
-  // BMR resolution - Katch-McArdle or Mifflin
   let bmr = 0;
   let calculationMethod = 'Mifflin-St Jeor';
   
@@ -3314,7 +3635,6 @@ function CalorieAndTdeeCalculator() {
 
   const tdee = bmr * act;
 
-  // Macro Splits setup
   let proteinRatio = 0.35;
   let carbRatio = 0.35;
   let fatRatio = 0.30;
@@ -3329,40 +3649,42 @@ function CalorieAndTdeeCalculator() {
     fatRatio = 0.25;
   }
 
-  // Weight (grams) conversion: Protein (4 kcal/g), Carb (4 kcal/g), Fat (9 kcal/g)
   const proteinGrams = (tdee * proteinRatio) / 4;
   const carbGrams = (tdee * carbRatio) / 4;
   const fatGrams = (tdee * fatRatio) / 9;
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="unified-calorie-tdee-calc-comp">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">CALCULATOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CALCULATOR</span>
           Unified Calorie & TDEE Metabolic Solver
         </h2>
-        <p className="text-sm text-gray-400">Estimate cellular resting metabolism (BMR), actual active expenditure (TDEE), and align precise dietary macros.</p>
+        <p className={`text-sm ${t.textMuted}`}>Estimate cellular resting metabolism (BMR), actual active expenditure (TDEE), and align precise dietary macros.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans text-xs">
-        {/* Left Inputs Card */}
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-4 h-fit">
-          <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider font-mono block">Biometrics & Composition</span>
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-4 h-fit`}>
+          <span className={`text-[10px] uppercase font-bold ${t.textFaint} tracking-wider font-mono block`}>Biometrics & Composition</span>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Gender</label>
-            <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded border border-white/5">
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Gender</label>
+            <div className={`flex gap-2 p-1 ${t.controlBg} rounded border ${t.border}`}>
               <button
                 type="button"
                 onClick={() => setGender('m')}
-                className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${gender === 'm' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+                className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${gender === 'm' ? 'bg-indigo-600 text-white' : t.textMuted}`}
               >
                 Male
               </button>
               <button
                 type="button"
                 onClick={() => setGender('f')}
-                className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${gender === 'f' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+                className={`flex-1 p-1.5 font-bold rounded text-center cursor-pointer transition-colors ${gender === 'f' ? 'bg-indigo-600 text-white' : t.textMuted}`}
               >
                 Female
               </button>
@@ -3371,50 +3693,50 @@ function CalorieAndTdeeCalculator() {
 
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Weight (kg)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Weight (kg)</label>
               <input
                 type="number"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none text-center"
+                className={`w-full p-2 ${t.inputBg} rounded-lg font-mono outline-none text-center`}
                 value={weight} onChange={(e) => setWeight(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Height (cm)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Height (cm)</label>
               <input
                 type="number"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none text-center"
+                className={`w-full p-2 ${t.inputBg} rounded-lg font-mono outline-none text-center`}
                 value={height} onChange={(e) => setHeight(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-gray-400 font-semibold block mb-1">Age (Years)</label>
+              <label className={`${t.textMuted} font-semibold block mb-1`}>Age (Years)</label>
               <input
                 type="number"
-                className="w-full p-2 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none text-center"
+                className={`w-full p-2 ${t.inputBg} rounded-lg font-mono outline-none text-center`}
                 value={age} onChange={(e) => setAge(e.target.value)}
               />
             </div>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">
-              Body Fat Percentage (%) <span className="text-gray-650 font-normal">(optional)</span>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>
+              Body Fat Percentage (%) <span className={`${t.textFaint} font-normal`}>(optional)</span>
             </label>
             <input
               type="number" 
               placeholder="Estimate using Mifflin-St Jeor"
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-mono outline-none"
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg font-mono outline-none`}
               value={bodyFat} onChange={(e) => setBodyFat(e.target.value)}
             />
-            <p className="text-[10px] text-gray-450 mt-1 italic">
+            <p className={`text-[10px] ${t.textFaint} mt-1 italic`}>
               Providing body fat enables precise Lean Body Mass (LBM) calculations using Katch-McArdle formula.
             </p>
           </div>
 
           <div>
-            <label className="text-gray-400 font-semibold block mb-1">Activity Level / Routine</label>
+            <label className={`${t.textMuted} font-semibold block mb-1`}>Activity Level / Routine</label>
             <select
-              className="w-full p-2.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white font-sans outline-none"
+              className={`w-full p-2.5 ${t.selectBg} rounded-lg font-sans outline-none`}
               value={activity} onChange={(e) => setActivity(e.target.value)}
             >
               <option value="1.2">Sedentary (No workouts / desk bound)</option>
@@ -3426,91 +3748,88 @@ function CalorieAndTdeeCalculator() {
           </div>
         </div>
 
-        {/* Right Output Dash */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-[#161616] border border-white/10 p-5 rounded-xl space-y-5">
-            <span className="text-[10px] font-bold text-indigo-400 uppercase font-mono block">
+          <div className={`${t.controlBg} border ${t.border} p-5 rounded-xl space-y-5`}>
+            <span className={`text-[10px] font-bold text-indigo-400 uppercase font-mono block`}>
               Daily Metabolism Evaluation &bull; {calculationMethod} Method
             </span>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center font-mono">
-              <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-indigo-500">
-                <span className="text-[9px] font-bold text-gray-500 block font-sans">BASAL METABOLIC RATE (BMR)</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-indigo-500`}>
+                <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>BASAL METABOLIC RATE (BMR)</span>
                 <p className="text-lg font-black text-indigo-400 mt-1">{bmr.toFixed(0)} kcal/day</p>
-                <span className="text-[9px] text-gray-500">Resting background cellular burn</span>
+                <span className={`text-[9px] ${t.textFaint}`}>Resting background cellular burn</span>
               </div>
-              <div className="p-3 bg-[#111] border border-white/5 rounded-lg border-l-2 border-l-emerald-500">
-                <span className="text-[9px] font-bold text-gray-500 block font-sans">TOTAL ACTIVE ENERGY (TDEE)</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg border-l-2 border-l-emerald-500`}>
+                <span className={`text-[9px] font-bold ${t.textFaint} block font-sans`}>TOTAL ACTIVE ENERGY (TDEE)</span>
                 <p className="text-lg font-black text-emerald-400 mt-1">{tdee.toFixed(0)} kcal/day</p>
-                <span className="text-[9px] text-gray-500">Active maintenance energy threshold</span>
+                <span className={`text-[9px] ${t.textFaint}`}>Active maintenance energy threshold</span>
               </div>
             </div>
 
-            {/* Nutrition Target Vectors */}
-            <div className="p-4 bg-black/40 border border-white/5 rounded-lg space-y-3 font-sans">
-              <span className="text-[10px] font-bold text-white uppercase font-mono block">Nutritional Target Vectors</span>
+            <div className={`p-4 ${t.controlBg} border ${t.border} rounded-lg space-y-3 font-sans`}>
+              <span className={`text-[10px] font-bold ${t.heading} uppercase font-mono block`}>Nutritional Target Vectors</span>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 font-mono text-xs">
-                <div className="flex justify-between items-center p-2.5 bg-[#1b1b1b] rounded border border-white/5">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-2 font-mono text-xs ${t.textMuted}`}>
+                <div className={`flex justify-between items-center p-2.5 ${t.controlBg} rounded border ${t.border}`}>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block border border-indigo-400"></span>
                     <span>Maintenance Limit</span>
                   </div>
-                  <span className="font-bold text-white">{tdee.toFixed(0)} kcal</span>
+                  <span className={`${t.heading} font-bold`}>{tdee.toFixed(0)} kcal</span>
                 </div>
 
-                <div className="flex justify-between items-center p-2.5 bg-[#1b1b1b] rounded border border-white/5">
+                <div className={`flex justify-between items-center p-2.5 ${t.controlBg} rounded border ${t.border}`}>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block border border-emerald-400"></span>
                     <span>Mild Loss (-0.25 kg/wk)</span>
                   </div>
-                  <span className="font-bold text-emerald-400">{(tdee - 250).toFixed(0)} kcal</span>
+                  <span className="text-emerald-400 font-bold">{(tdee - 250).toFixed(0)} kcal</span>
                 </div>
 
-                <div className="flex justify-between items-center p-2.5 bg-[#1b1b1b] rounded border border-white/5">
+                <div className={`flex justify-between items-center p-2.5 ${t.controlBg} rounded border ${t.border}`}>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block border border-yellow-400"></span>
                     <span>Standard Cut (-0.5 kg/wk)</span>
                   </div>
-                  <span className="font-bold text-yellow-400">{(tdee - 500).toFixed(0)} kcal</span>
+                  <span className="text-yellow-400 font-bold">{(tdee - 500).toFixed(0)} kcal</span>
                 </div>
 
-                <div className="flex justify-between items-center p-2.5 bg-[#1b1b1b] rounded border border-white/5">
+                <div className={`flex justify-between items-center p-2.5 ${t.controlBg} rounded border ${t.border}`}>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block border border-red-450"></span>
                     <span>Bulk Surplus Gain (+0.5 kg/wk)</span>
                   </div>
-                  <span className="font-bold text-rose-400">{(tdee + 500).toFixed(0)} kcal</span>
+                  <span className="text-rose-400 font-bold">{(tdee + 500).toFixed(0)} kcal</span>
                 </div>
               </div>
             </div>
 
-            {/* Macros Section */}
-            <div className="bg-[#111] border border-white/5 rounded-xl p-4 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className={`${t.controlBg} border ${t.border} rounded-xl p-4 space-y-4`}>
+              <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2`}>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold text-white uppercase font-mono block">Nutritional Macronutrient Alignment</span>
-                  <p className="text-[10px] text-gray-500">Based on target TDEE maintenance values</p>
+                  <span className={`text-[10px] font-bold ${t.heading} uppercase font-mono block`}>Nutritional Macronutrient Alignment</span>
+                  <p className={`text-[10px] ${t.textFaint}`}>Based on target TDEE maintenance values</p>
                 </div>
-                <div className="flex bg-[#1a1a1a] p-1 rounded border border-white/5 gap-1 self-start sm:self-auto">
+                <div className={`flex ${t.controlBg} p-1 rounded border ${t.border} gap-1 self-start sm:self-auto`}>
                   <button
                     type="button"
                     onClick={() => setMacroStyle('moderate')}
-                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'moderate' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'moderate' ? 'bg-indigo-600 text-white' : t.textMuted}`}
                   >
                     Balanced Split (35/35/30)
                   </button>
                   <button
                     type="button"
                     onClick={() => setMacroStyle('low-carb')}
-                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'low-carb' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'low-carb' ? 'bg-indigo-600 text-white' : t.textMuted}`}
                   >
                     Low Carb Cuts (45/20/35)
                   </button>
                   <button
                     type="button"
                     onClick={() => setMacroStyle('high-carb')}
-                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'high-carb' ? 'bg-indigo-600 text-white' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded text-[10px] font-bold cursor-pointer transition-colors ${macroStyle === 'high-carb' ? 'bg-indigo-600 text-white' : t.textMuted}`}
                   >
                     High Carb Bulk (30/45/25)
                   </button>
@@ -3518,29 +3837,28 @@ function CalorieAndTdeeCalculator() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono">
-                <div className="bg-[#151515] p-3 text-center rounded-lg border border-white/5">
-                  <span className="text-[8px] font-semibold text-gray-500 block font-sans">PROTEIN ({(proteinRatio * 100)}%)</span>
+                <div className={`${t.controlBg} p-3 text-center rounded-lg border ${t.border}`}>
+                  <span className={`text-[8px] font-semibold ${t.textFaint} block font-sans`}>PROTEIN ({(proteinRatio * 100)}%)</span>
                   <p className="text-sm font-bold text-indigo-400 mt-1">{proteinGrams.toFixed(0)}g</p>
-                  <span className="text-[9px] text-gray-550 font-normal">{(tdee * proteinRatio).toFixed(0)} kcal</span>
+                  <span className={`text-[9px] ${t.textFaint} font-normal`}>{(tdee * proteinRatio).toFixed(0)} kcal</span>
                 </div>
 
-                <div className="bg-[#151515] p-3 text-center rounded-lg border border-white/5">
-                  <span className="text-[8px] font-semibold text-gray-500 block font-sans">CARBS ({(carbRatio * 100)}%)</span>
+                <div className={`${t.controlBg} p-3 text-center rounded-lg border ${t.border}`}>
+                  <span className={`text-[8px] font-semibold ${t.textFaint} block font-sans`}>CARBS ({(carbRatio * 100)}%)</span>
                   <p className="text-sm font-bold text-yellow-400 mt-1">{carbGrams.toFixed(0)}g</p>
-                  <span className="text-[9px] text-gray-550 font-normal">{(tdee * carbRatio).toFixed(0)} kcal</span>
+                  <span className={`text-[9px] ${t.textFaint} font-normal`}>{(tdee * carbRatio).toFixed(0)} kcal</span>
                 </div>
 
-                <div className="bg-[#151515] p-3 text-center rounded-lg border border-white/5">
-                  <span className="text-[8px] font-semibold text-gray-500 block font-sans">FAT ({(fatRatio * 100)}%)</span>
+                <div className={`${t.controlBg} p-3 text-center rounded-lg border ${t.border}`}>
+                  <span className={`text-[8px] font-semibold ${t.textFaint} block font-sans`}>FAT ({(fatRatio * 100)}%)</span>
                   <p className="text-sm font-bold text-emerald-400 mt-1">{fatGrams.toFixed(0)}g</p>
-                  <span className="text-[9px] text-gray-550 font-normal">{(tdee * fatRatio).toFixed(0)} kcal</span>
+                  <span className={`text-[9px] ${t.textFaint} font-normal`}>{(tdee * fatRatio).toFixed(0)} kcal</span>
                 </div>
               </div>
             </div>
 
-            {/* Explanation/Insight Box */}
-            <div className="bg-[#101010] p-4 border border-white/5 rounded-lg text-gray-400 text-xs leading-relaxed font-sans">
-              Based on the biological coordinates configured ({weight}kg, {height}cm, {age}yo, biological sex: {gender === 'm' ? 'Male' : 'Female'}), your body expends roughly <span className="text-indigo-400 font-bold font-mono">{bmr.toFixed(0)} kcal</span> simply maintaining basic life systems at complete rest. Integrating your physical routine index pushes your daily expenditure threshold to <span className="text-emerald-400 font-bold font-mono">{tdee.toFixed(0)} kcal</span>. To facilitate standard body composition cuts, consume <span className="text-yellow-400 font-bold font-mono">{(tdee - 500).toFixed(0)} kcal</span> daily with a split of <span className="text-white font-bold font-mono">{proteinGrams.toFixed(0)}g</span> protein, <span className="text-white font-bold font-mono">{carbGrams.toFixed(0)}g</span> carbohydrate, and <span className="text-white font-bold font-mono">{fatGrams.toFixed(0)}g</span> dietary fat.
+            <div className={`${t.controlBg} p-4 border ${t.border} rounded-lg ${t.textMuted} text-xs leading-relaxed font-sans`}>
+              Based on the biological coordinates configured ({weight}kg, {height}cm, {age}yo, biological sex: {gender === 'm' ? 'Male' : 'Female'}), your body expends roughly <span className="text-indigo-400 font-bold font-mono">{bmr.toFixed(0)} kcal</span> simply maintaining basic life systems at complete rest. Integrating your physical routine index pushes your daily expenditure threshold to <span className="text-emerald-400 font-bold font-mono">{tdee.toFixed(0)} kcal</span>. To facilitate standard body composition cuts, consume <span className="text-yellow-400 font-bold font-mono">{(tdee - 500).toFixed(0)} kcal</span> daily with a split of <span className={`${t.heading} font-bold font-mono`}>{proteinGrams.toFixed(0)}g</span> protein, <span className={`${t.heading} font-bold font-mono`}>{carbGrams.toFixed(0)}g</span> carbohydrate, and <span className={`${t.heading} font-bold font-mono`}>{fatGrams.toFixed(0)}g</span> dietary fat.
             </div>
           </div>
         </div>
@@ -3548,4 +3866,3 @@ function CalorieAndTdeeCalculator() {
     </div>
   );
 }
-

@@ -1,5 +1,75 @@
 [
   {
+    "slug": "how-to-convert-images-to-webp",
+    "title": "How to Convert Images to WebP (And Why You Should)",
+    "date": "2026-06-29",
+    "category": "Image Tools",
+    "excerpt": "WebP delivers better compression than JPEG and PNG with no visible quality loss. Here's why it matters for your website and how to convert images for free in your browser.",
+    "readTime": "5 min",
+    "author": "Rocket Web Tools Team",
+    "tags": [
+      "WebP",
+      "Image Converter",
+      "Web Performance"
+    ]
+  },
+  {
+    "slug": "utm-parameters-complete-guide",
+    "title": "UTM Parameters: The Complete Guide for Marketers",
+    "date": "2026-06-27",
+    "category": "Marketing Tools",
+    "excerpt": "UTM parameters tell you exactly where your traffic comes from. Learn what each parameter means, when to use them, and how to build clean tracking URLs without mistakes.",
+    "readTime": "6 min",
+    "author": "Rocket Web Tools Team",
+    "tags": [
+      "UTM",
+      "Google Analytics",
+      "Marketing"
+    ]
+  },
+  {
+    "slug": "what-is-a-jwt-token",
+    "title": "What Is a JWT Token and How Does It Work?",
+    "date": "2026-06-25",
+    "category": "Developer Tools",
+    "excerpt": "JWT tokens are used in almost every modern web app for authentication. This guide explains what they are, how they're structured, and how to decode and inspect them.",
+    "readTime": "6 min",
+    "author": "Rocket Web Tools Team",
+    "tags": [
+      "JWT",
+      "Authentication",
+      "Developer Tools"
+    ]
+  },
+  {
+    "slug": "css-gradients-complete-guide",
+    "title": "CSS Gradients: A Complete Guide with Examples",
+    "date": "2026-06-22",
+    "category": "Design Tools",
+    "excerpt": "CSS gradients let you create smooth color transitions without a single image file. Learn linear, radial, and conic gradients with copy-paste examples for any project.",
+    "readTime": "5 min",
+    "author": "Rocket Web Tools Team",
+    "tags": [
+      "CSS",
+      "Gradients",
+      "Design Tools"
+    ]
+  },
+  {
+    "slug": "how-to-calculate-loan-payments",
+    "title": "How to Calculate Loan Payments Manually (and With a Free Tool)",
+    "date": "2026-06-20",
+    "category": "Finance Tools",
+    "excerpt": "Understanding how loan payments are calculated helps you compare offers, spot bad deals, and plan your finances. Here's the math explained simply, with a free calculator.",
+    "readTime": "5 min",
+    "author": "Rocket Web Tools Team",
+    "tags": [
+      "Loan Calculator",
+      "Finance",
+      "Interest"
+    ]
+  },
+  {
     "slug": "how-to-format-json-like-a-pro",
     "title": "How to Format JSON Like a Pro",
     "date": "2026-06-20",

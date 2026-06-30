@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react';
 
 interface BinaryToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
 // 24 binary converter tool definitions
@@ -233,7 +234,7 @@ const CONVERTERS_CONFIG: Record<string, {
   }
 };
 
-export function BinaryTools({ activeToolId }: BinaryToolsProps) {
+export function BinaryTools({ activeToolId, isDark }: BinaryToolsProps) {
   const config = CONVERTERS_CONFIG[activeToolId] || CONVERTERS_CONFIG['txt-to-bin'];
 
   const [inputVal, setInputVal] = useState<string>('');
@@ -291,6 +292,21 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
     window.dispatchEvent(new Event('popstate'));
   };
 
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0c0c0e] border-white/5 text-emerald-400' : 'bg-gray-50 border-gray-200 text-emerald-600',
+    stepCard: isDark ? 'bg-[#0d0d0f] border-white/5' : 'bg-gray-50 border-gray-200',
+    stepBg: isDark ? 'bg-[#09090a] border-white/5' : 'bg-gray-50 border-gray-200',
+    label: isDark ? 'text-gray-500' : 'text-gray-400',
+    copyBtn: isDark ? 'text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/5' : 'text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 border-gray-200',
+    sampleBtn: isDark ? 'text-gray-400 hover:text-emerald-400 bg-white/5 border-white/5' : 'text-gray-500 hover:text-emerald-600 bg-gray-100 border-gray-200',
+  };
+
   // Convert custom base play values
   const handlePlaygroundChange = (type: 'dec' | 'bin' | 'oct' | 'hex', val: string) => {
     const cleaned = val.trim();
@@ -345,9 +361,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider font-mono">UTF-8 Character Byte Mapping</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
               {chars.map((char, index) => (
-                <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
-                  <span className="text-gray-400">'{char}' &rarr; {codes[index]}</span>
-                  <strong className="text-white">{binaries[index]}</strong>
+                <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
+                  <span className={isDark ? "text-gray-400" : "text-gray-600"}>'{char}' &rarr; {codes[index]}</span>
+                  <strong className={isDark ? "text-white" : "text-gray-900"}>{binaries[index]}</strong>
                 </div>
               ))}
             </div>
@@ -379,7 +395,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider font-mono font-bold">Bit Chunks to Glyph Transcription</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
               {blocks.map((b, idx) => (
-                <div key={idx} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+                <div key={idx} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span className="text-gray-500">{b}</span>
                   <strong className="text-emerald-400">&rarr; '{characters[idx] || '?'}'</strong>
                 </div>
@@ -403,7 +419,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider font-mono">Nibble Breakdown (Base-16 &rarr; Base-2)</h4>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-[11px] font-mono">
               {Array.from(cleanHex).map((char, index) => (
-                <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded text-center">
+                <div key={index} className={`p-2 border rounded text-center ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span className="text-cyan-400 font-bold text-xs">{char}</span>
                   <div className="text-[10px] text-gray-500 font-mono mt-0.5">({parseInt(char, 16)})</div>
                   <div className="mt-1 text-white font-bold text-[10px]">{binaries[index]}</div>
@@ -448,7 +464,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             )}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
               {nibbles.map((nib, index) => (
-                <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between items-center">
+                <div key={index} className={`p-2 border rounded flex justify-between items-center ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span className="text-gray-450">{nib}</span>
                   <span className="text-xs text-gray-600 font-bold">&rarr;</span>
                   <strong className="text-indigo-400 text-xs">{hexDigits[index]}</strong>
@@ -478,9 +494,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-amber-500 uppercase tracking-wider font-mono">ASCII Standard Map Matrix</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
               {codes.map((val, i) => (
-                <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+                <div key={i} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span className="text-gray-400">ASCII {val} (char: '{String.fromCharCode(val)}')</span>
-                  <strong className="text-white">{binaries[i]}</strong>
+                  <strong className={isDark ? "text-white" : "text-gray-900"}>{binaries[i]}</strong>
                 </div>
               ))}
             </div>
@@ -509,7 +525,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-amber-500 uppercase tracking-wider font-mono">Register Code Translation Matrix</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
               {blocks.map((block, i) => (
-                <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between items-center text-[10px]">
+                <div key={i} className={`p-2 border rounded flex justify-between items-center text-[10px] ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span className="text-gray-500">{block}</span>
                   <span className="text-gray-4s text-amber-500 font-bold">&rarr; Code {codes[i]}</span>
                   <strong className="text-white">'{chars[i]}'</strong>
@@ -549,7 +565,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
           const steps = (
             <div className="space-y-2 font-mono text-xs">
               <h4 className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Mixed Decimal Math Stack</h4>
-              <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1 text-gray-300">
+              <div className={`p-3 border rounded-lg space-y-1 ${isDark ? "bg-[#0d0d0f] border-white/5 text-gray-300" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
                 <p><span className="text-gray-500">Integer:</span> {intVal} &rarr; <strong>{intBin}</strong></p>
                 <p className="text-gray-500 mt-2">Fraction Binary Synthesis:</p>
                 {fracSteps.map((s, idx) => (
@@ -579,9 +595,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
           const steps = (
             <div className="space-y-2 font-mono text-xs">
               <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Base-2 Division Algorithm (Remainders read bottom-to-top)</h4>
-              <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1 text-gray-400">
+              <div className={`p-3 border rounded-lg space-y-1 ${isDark ? "bg-[#0d0d0f] border-white/5 text-gray-400" : "bg-gray-50 border-gray-200 text-gray-600"}`}>
                 {stepsArr.map((s, idx) => (
-                  <div key={idx} className="border-b border-white/5 pb-1 last:border-0">{s}</div>
+                  <div key={idx} className={`border-b pb-1 last:border-0 ${isDark ? 'border-white/5' : 'border-gray-200'}`}>{s}</div>
                 ))}
               </div>
             </div>
@@ -609,14 +625,14 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
           const steps = (
             <div className="space-y-2 font-mono text-[11px] text-gray-400">
               <h4 className="text-[10px] font-bold text-teal-400 uppercase tracking-wider">Dynamic Place-Value Summations</h4>
-              <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1">
+              <div className={`p-3 border rounded-lg space-y-1 ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <p><span className="text-gray-500">Integer base decimal:</span> {intDec}</p>
                 <div className="space-y-1 mt-1 text-[10px]">
                   {powerSteps.map((p, idx) => (
                     <div key={idx} dangerouslySetInnerHTML={{ __html: p }} />
                   ))}
                 </div>
-                <p className="pt-2 border-t border-white/5 text-white font-bold">Sum: {(intDec + fracDec).toString()}</p>
+                <p className={`pt-2 border-t font-bold ${isDark ? 'border-white/5 text-white' : 'border-gray-200 text-gray-900'}`}>Sum: {(intDec + fracDec).toString()}</p>
               </div>
             </div>
           );
@@ -658,7 +674,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
             {Array.from(raw).map((char, index) => (
-              <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span className="text-gray-400">'{char}' &rarr;</span>
                 <strong className="text-purple-400">{codes[index]}</strong>
               </div>
@@ -675,7 +691,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
             {codes.map((code, index) => (
-              <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span className="text-gray-500">Code {code} &rarr;</span>
                 <strong className="text-white">'{String.fromCharCode(code)}'</strong>
               </div>
@@ -734,9 +750,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="space-y-2 font-mono text-xs">
             <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Hexadecimal division remainders</h4>
-            <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1 text-gray-400">
+            <div className={`p-3 border rounded-lg space-y-1 ${isDark ? "bg-[#0d0d0f] border-white/5 text-gray-400" : "bg-gray-50 border-gray-200 text-gray-600"}`}>
               {stepsArr.map((s, idx) => (
-                <div key={idx} className="border-b border-white/5 pb-1 last:border-0">{s}</div>
+                <div key={idx} className={`border-b pb-1 last:border-0 ${isDark ? 'border-white/5' : 'border-gray-200'}`}>{s}</div>
               ))}
             </div>
           </div>
@@ -752,8 +768,8 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-[11px] font-mono text-center">
             {Array.from(octStr).map((d, i) => (
-              <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded">
-                <span className="text-gray-500 font-bold block">Octal {d}</span>
+              <div key={i} className={`p-2 border rounded ${isDark ? 'bg-[#0d0d0f] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                <span className={`font-bold block ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Octal {d}</span>
                 <span className="text-sky-400 font-mono text-xs font-bold block mt-1">{binaries[i]}</span>
               </div>
             ))}
@@ -781,7 +797,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <h4 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Binary Group-of-3 Triplet Conversions</h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {chunks.map((chk, index) => (
-                <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+                <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                   <span>{chk}</span>
                   <strong className="text-blue-400">&rarr; Octal {octals[index]}</strong>
                 </div>
@@ -837,7 +853,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="space-y-2 font-mono text-xs text-gray-400">
             <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Base-8 Continual Division Remainder Track</h4>
-            <div className="space-y-1 p-3 bg-[#0d0d0f] rounded-lg">
+            <div className={`space-y-1 p-3 rounded-lg ${isDark ? 'bg-[#0d0d0f]' : 'bg-gray-50 border border-gray-200'}`}>
               {stepsArr.map((v, i) => (
                 <p key={i} className="border-b border-light/5 pb-0.5">{v}</p>
               ))}
@@ -855,9 +871,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const octStr = decNum.toString(8);
 
         const steps = (
-          <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1 text-xs font-mono text-gray-400">
-            <p><span className="text-gray-500">Step 1: Convert Hex to Integer:</span> {hexStr}<sub>(16)</sub> &rarr; {decNum}<sub>(10)</sub></p>
-            <p><span className="text-gray-500">Step 2: Convert Integer to Octal:</span> {decNum}<sub>(10)</sub> &rarr; <strong>{octStr}<sub>(8)</sub></strong></p>
+          <div className={`p-3 border rounded-lg space-y-1 text-xs font-mono ${isDark ? 'bg-[#0d0d0f] border-white/5 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600'}`}>
+            <p><span className={isDark ? 'text-gray-500' : 'text-gray-400'}>Step 1: Convert Hex to Integer:</span> {hexStr}<sub>(16)</sub> &rarr; {decNum}<sub>(10)</sub></p>
+            <p><span className={isDark ? 'text-gray-500' : 'text-gray-400'}>Step 2: Convert Integer to Octal:</span> {decNum}<sub>(10)</sub> &rarr; <strong>{octStr}<sub>(8)</sub></strong></p>
           </div>
         );
 
@@ -871,9 +887,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const hexStr = decNum.toString(16).toUpperCase();
 
         const steps = (
-          <div className="p-3 bg-[#0d0d0f] border border-white/5 rounded-lg space-y-1 text-xs font-mono text-gray-400">
-            <p><span className="text-gray-500">Step 1: Convert Octal to Integer:</span> {octStr}<sub>(8)</sub> &rarr; {decNum}<sub>(10)</sub></p>
-            <p><span className="text-gray-500">Step 2: Convert Integer to Hexidecimal:</span> {decNum}<sub>(10)</sub> &rarr; <strong>{hexStr}<sub>(16)</sub></strong></p>
+          <div className={`p-3 border rounded-lg space-y-1 text-xs font-mono ${isDark ? 'bg-[#0d0d0f] border-white/5 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600'}`}>
+            <p><span className={isDark ? 'text-gray-500' : 'text-gray-400'}>Step 1: Convert Octal to Integer:</span> {octStr}<sub>(8)</sub> &rarr; {decNum}<sub>(10)</sub></p>
+            <p><span className={isDark ? 'text-gray-500' : 'text-gray-400'}>Step 2: Convert Integer to Hexidecimal:</span> {decNum}<sub>(10)</sub> &rarr; <strong>{hexStr}<sub>(16)</sub></strong></p>
           </div>
         );
         return { output: hexStr, stepsElement: steps };
@@ -887,7 +903,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
             {chars.map((char, index) => (
-              <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span>'{char}'</span>
                 <span className="text-sky-400">{codes[index]}<sub>(10)</sub> &rarr; <strong>{octvals[index]}<sub>(8)</sub></strong></span>
               </div>
@@ -905,7 +921,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
             {octCodes.map((c, i) => (
-              <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={i} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span>Octal {c.toString(8)} &rarr; Code {c}</span>
                 <strong className="text-white">'{String.fromCharCode(c)}'</strong>
               </div>
@@ -923,7 +939,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
             {chars.map((c, i) => (
-              <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={i} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span className="text-gray-500">'{c}'</span>
                 <strong className="text-[#bfdbfe]">{hexStr[i]}</strong>
               </div>
@@ -953,7 +969,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
             {chunks.map((chk, i) => (
-              <div key={i} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={i} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span className="text-gray-500">0x{chk}</span>
                 <strong className="text-white">'{characters[i]}'</strong>
               </div>
@@ -969,7 +985,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
             {Array.from(raw).map((char, index) => (
-              <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span>'{char}'</span>
                 <strong className="text-emerald-400">{codes[index]}</strong>
               </div>
@@ -986,7 +1002,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         const steps = (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono text-[10px]">
             {codes.map((code, index) => (
-              <div key={index} className="p-2 bg-[#0d0d0f] border border-white/5 rounded flex justify-between">
+              <div key={index} className={`p-2 border rounded flex justify-between ${isDark ? "bg-[#0d0d0f] border-white/5" : "bg-gray-50 border-gray-200"}`}>
                 <span>Decimal {code} &rarr;</span>
                 <strong className="text-white">'{String.fromCharCode(code)}'</strong>
               </div>
@@ -1005,14 +1021,14 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
   return (
     <div className="space-y-6">
       {/* Primary Conversion Panel */}
-      <div id="binary-main-panel" className="relative p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+      <div id="binary-main-panel" className={`relative p-6 border rounded-2xl shadow-xl space-y-6 ${t.panelBg}`}>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
+            <h2 className={`text-base font-semibold tracking-tight flex items-center gap-2 select-none ${t.heading}`}>
               <Icons.Binary className="w-5 h-5 text-emerald-400" />
               {config.title}
             </h2>
-            <p className="text-xs text-gray-400 mt-1">{config.explanation}</p>
+            <p className={`text-xs mt-1 ${t.textMuted}`}>{config.explanation}</p>
           </div>
           <button
             onClick={handleSwap}
@@ -1026,9 +1042,9 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
         {/* Input Box and Output Box in grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-              <span>{config.fromLabel}</span>
-              <span>{inputVal.length} Characters • {new Blob([inputVal]).size} Bytes</span>
+            <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest">
+              <span className={t.label}>{config.fromLabel}</span>
+              <span className={t.label}>{inputVal.length} Characters • {new Blob([inputVal]).size} Bytes</span>
             </div>
             <div className="relative">
               <textarea
@@ -1036,12 +1052,12 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={config.placeholder}
                 rows={6}
-                className="w-full p-4 bg-[#09090b] border border-white/5 rounded-xl text-[13px] text-white font-mono placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 focus:border-emerald-500/40 transition-colors"
+                className={`w-full p-4 border rounded-xl text-[13px] font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500/20 focus:border-emerald-500/40 transition-colors ${t.inputBg}`}
               />
               {inputVal && (
                 <button
                   onClick={() => setInputVal('')}
-                  className="absolute right-3 top-3 text-gray-500 hover:text-white p-1 hover:bg-white/5 rounded transition-all"
+                  className={`absolute right-3 top-3 p-1 rounded transition-all ${isDark ? 'text-gray-500 hover:text-white hover:bg-white/5' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
                   title="Clear input"
                 >
                   <Icons.X className="w-4 h-4" />
@@ -1051,7 +1067,7 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
             <div className="flex flex-wrap gap-2 pt-1">
               <button
                 onClick={() => setInputVal(config.sampleInput)}
-                className="text-[10px] font-mono text-gray-400 hover:text-emerald-400 bg-white/5 p-1.5 px-3 rounded border border-white/5 transition-colors"
+                className={`text-[10px] font-mono p-1.5 px-3 rounded border transition-colors ${t.sampleBtn}`}
               >
                 Insert Sample Data
               </button>
@@ -1059,22 +1075,22 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-              <span>{config.toLabel}</span>
-              <span>Converted Result</span>
+            <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest">
+              <span className={t.label}>{config.toLabel}</span>
+              <span className={t.label}>Converted Result</span>
             </div>
             <textarea
               readOnly
               value={outputVal}
               placeholder="Conversion outcome generates instantly..."
               rows={6}
-              className="w-full p-4 bg-[#0c0c0e] border border-white/5 rounded-xl text-[13px] text-emerald-400 font-mono focus:outline-none placeholder:text-gray-700"
+              className={`w-full p-4 border rounded-xl text-[13px] font-mono focus:outline-none ${t.outputBg} ${isDark ? 'placeholder:text-gray-700' : 'placeholder:text-gray-400'}`}
             />
             <div className="flex justify-end gap-2 pt-1">
               {outputVal && !outputVal.startsWith('Conversion Error') && (
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-1.5 text-[10px] font-mono text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-1.5 px-3 rounded border border-white/5 transition-colors"
+                  className={`flex items-center gap-1.5 text-[10px] font-mono p-1.5 px-3 rounded border transition-colors ${t.copyBtn}`}
                 >
                   {copied ? (
                     <>
@@ -1095,12 +1111,12 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
 
         {/* Step-by-Step Breakdown section */}
         {stepsList && (
-          <div className="border-t border-white/5 pt-5 space-y-3">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+          <div className={`border-t pt-5 space-y-3 ${t.border}`}>
+            <div className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest ${t.textFaint}`}>
               <Icons.Sparkles className="w-3.5 h-3.5 text-emerald-400" />
               <span>Real-time Logical Breakdown</span>
             </div>
-            <div className="p-4 bg-[#09090a] border border-white/5 rounded-xl">
+            <div className={`p-4 border rounded-xl ${t.stepBg}`}>
               {stepsList}
             </div>
           </div>
@@ -1108,61 +1124,57 @@ export function BinaryTools({ activeToolId }: BinaryToolsProps) {
       </div>
 
       {/* Interactive Global Base Conversion Playground (Extremely cool for techies and students!) */}
-      <div id="base-converter-playground" className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-4">
+      <div id="base-converter-playground" className={`p-6 border rounded-2xl shadow-xl space-y-4 ${t.panelBg}`}>
         <div>
-          <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+          <h3 className={`text-sm font-semibold tracking-tight flex items-center gap-2 select-none ${t.heading}`}>
             <Icons.Sliders className="w-4 h-4 text-emerald-400" />
             Live Base Converter Playground
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">Type any value in any of the fields below; all corresponding radices adjust automatically in real-time!</p>
+          <p className={`text-xs mt-0.5 ${t.textFaint}`}>Type any value in any of the fields below; all corresponding radices adjust automatically in real-time!</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-          {/* Decimal */}
           <div className="space-y-1.5">
-            <label className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Decimal (Base-10)</label>
+            <label className={`text-[9px] font-mono font-bold uppercase tracking-widest block ${t.label}`}>Decimal (Base-10)</label>
             <input
               type="text"
               value={playDec}
               onChange={(e) => handlePlaygroundChange('dec', e.target.value)}
               placeholder="e.g. 255"
-              className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-emerald-500/40"
+              className={`w-full p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:border-emerald-500/40 ${t.inputBg}`}
             />
           </div>
 
-          {/* Binary */}
           <div className="space-y-1.5">
-            <label className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Binary (Base-2)</label>
+            <label className={`text-[9px] font-mono font-bold uppercase tracking-widest block ${t.label}`}>Binary (Base-2)</label>
             <input
               type="text"
               value={playBin}
               onChange={(e) => handlePlaygroundChange('bin', e.target.value)}
               placeholder="e.g. 11111111"
-              className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-emerald-500/40"
+              className={`w-full p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:border-emerald-500/40 ${t.inputBg}`}
             />
           </div>
 
-          {/* Octal */}
           <div className="space-y-1.5">
-            <label className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Octal (Base-8)</label>
+            <label className={`text-[9px] font-mono font-bold uppercase tracking-widest block ${t.label}`}>Octal (Base-8)</label>
             <input
               type="text"
               value={playOct}
               onChange={(e) => handlePlaygroundChange('oct', e.target.value)}
               placeholder="e.g. 377"
-              className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-emerald-500/40"
+              className={`w-full p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:border-emerald-500/40 ${t.inputBg}`}
             />
           </div>
 
-          {/* Hexadecimal */}
           <div className="space-y-1.5">
-            <label className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Hexadecimal (Base-16)</label>
+            <label className={`text-[9px] font-mono font-bold uppercase tracking-widest block ${t.label}`}>Hexadecimal (Base-16)</label>
             <input
               type="text"
               value={playHex}
               onChange={(e) => handlePlaygroundChange('hex', e.target.value)}
               placeholder="e.g. FF"
-              className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-emerald-500/40"
+              className={`w-full p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:border-emerald-500/40 ${t.inputBg}`}
             />
           </div>
         </div>

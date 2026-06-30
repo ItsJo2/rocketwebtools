@@ -3,9 +3,10 @@ import { Sliders, Palette, Activity, Check, Copy, AlertCircle, RefreshCw, Eye, D
 
 interface DesignSuiteToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
-export function DesignSuiteTools({ activeToolId }: DesignSuiteToolsProps) {
+export function DesignSuiteTools({ activeToolId, isDark }: DesignSuiteToolsProps) {
   const [copiedStatus, setCopiedStatus] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -15,16 +16,16 @@ export function DesignSuiteTools({ activeToolId }: DesignSuiteToolsProps) {
   };
 
   if (activeToolId === 'css-gradient') {
-    return <CssGradient onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <CssGradient isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'color-palette') {
-    return <ColorPalette onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <ColorPalette isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'svg-optimizer') {
-    return <SvgOptimizer onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <SvgOptimizer isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'svg-path-editor') {
-    return <SvgPathEditor onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <SvgPathEditor isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
 
   return null;
@@ -33,7 +34,24 @@ export function DesignSuiteTools({ activeToolId }: DesignSuiteToolsProps) {
 // ==========================================
 // 1. CSS GRADIENT GENERATOR
 // ==========================================
-function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function CssGradient({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [gradientType, setGradientType] = useState<'linear' | 'radial'>('linear');
   const [angle, setAngle] = useState(135);
   const [stops, setStops] = useState<{ id: number; color: string; position: number; opacity: number }[]>([
@@ -53,7 +71,6 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
   };
 
   const getGradientCode = () => {
-    // Sort stops sequentially
     const sorted = [...stops].sort((a, b) => a.position - b.position);
     const stopsStr = sorted.map(st => `${hexToRgba(st.color, st.opacity)} ${st.position}%`).join(', ');
 
@@ -70,7 +87,6 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 
   const handleAddStop = () => {
     const nextId = Math.max(...stops.map(s => s.id)) + 1;
-    // Add inside midsection
     setStops(prev => [
       ...prev,
       { id: nextId, color: '#6366f1', position: 75, opacity: 100 }
@@ -79,7 +95,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
   };
 
   const handleRemoveStop = (id: number) => {
-    if (stops.length <= 2) return; // limit minimum
+    if (stops.length <= 2) return;
     setStops(prev => prev.filter(s => s.id !== id));
     if (activeStopId === id) {
       setActiveStopId(stops[0].id);
@@ -88,14 +104,18 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 
   const activeStop = stops.find(s => s.id === activeStopId) || stops[0];
 
+  const badgeClass = isDark
+    ? 'bg-violet-500/10 text-violet-400 border-violet-500/20'
+    : 'bg-purple-50 text-purple-600 border-purple-200';
+
   return (
     <div className="space-y-6" id="css-gradient-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20 rounded">UI</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UI</span>
           Aesthetic CSS Gradient Generator
         </h2>
-        <p className="text-sm text-gray-400">Design multi-stop color compositions, customize angles, opacity ranges, and copy ready production-safe cross-browser CSS.</p>
+        <p className={`text-sm ${t.textMuted}`}>Design multi-stop color compositions, customize angles, opacity ranges, and copy ready production-safe cross-browser CSS.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -105,13 +125,13 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
             className="w-full h-60 rounded-2xl border border-white/10 shadow-inner flex items-end p-5 transition-all duration-300"
             style={{ backgroundImage: getGradientCode().replace('background: ', '').replace(';', '') }}
           >
-            <div className="bg-black/40 backdrop-blur-md border border-white/5 p-3 rounded-lg text-xxs font-mono text-gray-300 select-all">
+            <div className={`bg-black/40 backdrop-blur-md border border-white/5 p-3 rounded-lg text-xxs font-mono select-all ${isDark ? "text-gray-300" : "text-gray-700"}`}>
               {getGradientCode()}
             </div>
           </div>
 
-          <div className="p-4 border border-white/15 bg-white/2 rounded-xl flex items-center justify-between">
-            <span className="text-xs font-mono text-gray-400">OUTPUT CODEBLOCK CSS:</span>
+          <div className={`p-4 border ${t.border} ${t.controlBg} rounded-xl flex items-center justify-between`}>
+            <span className={`text-xs font-mono ${t.textMuted}`}>OUTPUT CODEBLOCK CSS:</span>
             <button
               onClick={() => onCopy(getGradientCode(), 'grad-css')}
               className="p-1.5 px-4 bg-violet-600 hover:bg-violet-700 hover:text-white transition-all text-xs text-white rounded-lg cursor-pointer flex items-center gap-1 font-semibold"
@@ -123,22 +143,22 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
         </div>
 
         {/* Editing Controllers */}
-        <div className="bg-[#141414] border border-white/5 p-5 rounded-xl space-y-5">
+        <div className={`${t.panelBg} p-5 rounded-xl space-y-5`}>
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="text-xs font-mono text-gray-400 mb-1 block">GRADIENT FORM:</label>
+              <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>GRADIENT FORM:</label>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setGradientType('linear')}
-                  className={`flex-1 p-2 text-xs font-mono rounded-lg border cursor-pointer transition-colors ${gradientType === 'linear' ? 'bg-violet-600 border-violet-500 text-white font-bold' : 'border-white/10 text-gray-400 bg-white/2 hover:bg-white/5'}`}
+                  className={`flex-1 p-2 text-xs font-mono rounded-lg border cursor-pointer transition-colors ${gradientType === 'linear' ? 'bg-violet-600 border-violet-500 text-white font-bold' : `${t.border} ${t.textMuted} ${t.controlBg} hover:bg-white/5`}`}
                 >
                   Linear
                 </button>
                 <button
                   type="button"
                   onClick={() => setGradientType('radial')}
-                  className={`flex-1 p-2 text-xs font-mono rounded-lg border cursor-pointer transition-colors ${gradientType === 'radial' ? 'bg-violet-600 border-violet-500 text-white font-bold' : 'border-white/10 text-gray-400 bg-white/2 hover:bg-white/5'}`}
+                  className={`flex-1 p-2 text-xs font-mono rounded-lg border cursor-pointer transition-colors ${gradientType === 'radial' ? 'bg-violet-600 border-violet-500 text-white font-bold' : `${t.border} ${t.textMuted} ${t.controlBg} hover:bg-white/5`}`}
                 >
                   Radial
                 </button>
@@ -147,12 +167,12 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 
             {gradientType === 'linear' && (
               <div className="w-28">
-                <label className="text-xs font-mono text-gray-400 mb-1 block">ANGLE (°):</label>
+                <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>ANGLE (°):</label>
                 <input
                   type="number"
                   min="0"
                   max="360"
-                  className="w-full p-2 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white text-center focus:ring-1 focus:ring-violet-500"
+                  className={`w-full p-2 ${t.inputBg} rounded-lg text-xs font-mono text-center focus:ring-1 focus:ring-violet-500`}
                   value={angle}
                   onChange={(e) => setAngle(Math.min(360, Math.max(0, parseInt(e.target.value, 10) || 0)))}
                 />
@@ -162,8 +182,8 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 
           {/* Color stops navigation timeline */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-gray-400">COLOR STOPS TIMELINE:</span>
+            <div className={`flex items-center justify-between text-xs font-mono ${t.textMuted}`}>
+              <span>COLOR STOPS TIMELINE:</span>
               <button
                 onClick={handleAddStop}
                 className="text-violet-400 hover:text-violet-300 font-bold hover:underline cursor-pointer text-xxs"
@@ -179,7 +199,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
                   type="button"
                   key={st.id}
                   onClick={() => setActiveStopId(st.id)}
-                  className={`flex items-center gap-1.5 p-1.5 px-3 rounded-lg text-xxs font-mono border cursor-pointer transition-all ${activeStopId === st.id ? 'border-violet-500 bg-violet-600/10 text-white font-bold' : 'border-white/10 text-gray-400 bg-white/2 hover:bg-white/5'}`}
+                  className={`flex items-center gap-1.5 p-1.5 px-3 rounded-lg text-xxs font-mono border cursor-pointer transition-all ${activeStopId === st.id ? 'border-violet-500 bg-violet-600/10 text-white font-bold' : `${t.border} ${t.textMuted} ${t.controlBg} hover:bg-white/5`}`}
                 >
                   <span className="w-3.5 h-3.5 rounded border border-white/20" style={{ backgroundColor: st.color }} />
                   <span>{st.position}%</span>
@@ -189,9 +209,9 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
           </div>
 
           {/* Selected stop specific options */}
-          <div className="border border-white/5 bg-[#1a1a1a]/40 p-4 rounded-xl space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b border-white/5">
-              <span className="text-xxs font-mono text-gray-400">EDIT SELECTED STOP:</span>
+          <div className={`${t.controlBg} p-4 rounded-xl space-y-4`}>
+            <div className={`flex justify-between items-center pb-2 border-b ${t.border}`}>
+              <span className={`text-xxs font-mono ${t.textFaint}`}>EDIT SELECTED STOP:</span>
               {stops.length > 2 && (
                 <button
                   onClick={() => handleRemoveStop(activeStop.id)}
@@ -204,7 +224,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-mono text-gray-400 mb-1 block">HEX VALUE:</label>
+                <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>HEX VALUE:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -215,7 +235,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
                   <input
                     type="text"
                     maxLength={7}
-                    className="flex-1 p-2 py-1.5 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-violet-500 uppercase"
+                    className={`flex-1 p-2 py-1.5 ${t.inputBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-violet-500 uppercase`}
                     value={activeStop.color}
                     onChange={(e) => handleUpdateStopValue(activeStop.id, 'color', e.target.value)}
                   />
@@ -223,7 +243,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
               </div>
 
               <div>
-                <label className="text-xs font-mono text-gray-400 mb-1 block">POSITION ON TIMELINE ({activeStop.position}%):</label>
+                <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>POSITION ON TIMELINE ({activeStop.position}%):</label>
                 <input
                   type="range"
                   min="0"
@@ -236,7 +256,7 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
             </div>
 
             <div>
-              <label className="text-xs font-mono text-gray-400 mb-1 block">OPACITY VALUE ({activeStop.opacity}%):</label>
+              <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>OPACITY VALUE ({activeStop.opacity}%):</label>
               <input
                 type="range"
                 min="0"
@@ -256,12 +276,28 @@ function CssGradient({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 // ==========================================
 // 2. COLOR PALETTE CREATOR
 // ==========================================
-function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function ColorPalette({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [baseColor, setBaseColor] = useState('#2563eb');
   const [harmonyType, setHarmonyType] = useState<'complementary' | 'analogous' | 'triadic' | 'monochromatic'>('analogous');
   const [palette, setPalette] = useState<string[]>([]);
 
-  // Simple browser-side Hex/Hsl conversions to achieve balance color rules
   const hexToHsl = (hex: string) => {
     let r = parseInt(hex.substring(1, 3), 16) / 255;
     let g = parseInt(hex.substring(3, 5), 16) / 255;
@@ -369,29 +405,33 @@ function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
     setBaseColor(color);
   };
 
+  const badgeClass = isDark
+    ? 'bg-violet-500/10 text-violet-400 border-violet-500/20'
+    : 'bg-purple-50 text-purple-600 border-purple-200';
+
   return (
     <div className="space-y-6" id="color-palette-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/52">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${t.border}`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20 rounded">DESIGN</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>DESIGN</span>
             Cohesive Color Palette Generator
           </h2>
-          <p className="text-sm text-gray-400">Compile beautifully paired color schemes depending on classic geometric color wheels. Click on any hex to copy instantly.</p>
+          <p className={`text-sm ${t.textMuted}`}>Compile beautifully paired color schemes depending on classic geometric color wheels. Click on any hex to copy instantly.</p>
         </div>
         <button
           onClick={handleRandomizeColor}
-          className="p-1.5 px-4 rounded border border-white/10 text-xs font-mono flex items-center gap-1.5 hover:bg-white/5 text-gray-350 cursor-pointer self-start"
+          className={`p-1.5 px-4 rounded border ${t.border} text-xs font-mono flex items-center gap-1.5 hover:bg-white/5 ${t.textMuted} cursor-pointer self-start ${t.copyBtn}`}
         >
           <RefreshCw className="w-3.5 h-3.5" />
           RANDOMIZE COLOR
         </button>
       </div>
 
-      <div className="bg-[#141414] border border-white/5 p-5 rounded-2xl flex flex-col md:flex-row items-center gap-6 justify-between select-none">
+      <div className={`${t.panelBg} p-5 rounded-2xl flex flex-col md:flex-row items-center gap-6 justify-between select-none`}>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div>
-            <span className="text-xs font-mono text-gray-400 block mb-1">BASE COLOR INDEX:</span>
+            <span className={`text-xs font-mono ${t.textMuted} block mb-1`}>BASE COLOR INDEX:</span>
             <div className="flex items-center gap-2">
               <input
                 type="color"
@@ -402,7 +442,7 @@ function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
               <input
                 type="text"
                 maxLength={7}
-                className="w-28 p-2 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-violet-500 uppercase font-black"
+                className={`w-28 p-2 ${t.inputBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-violet-500 uppercase font-black`}
                 value={baseColor}
                 onChange={(e) => setBaseColor(e.target.value)}
               />
@@ -411,14 +451,14 @@ function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
         </div>
 
         <div className="w-full md:w-96">
-          <span className="text-xs font-mono text-gray-400 block mb-1">GEOMETRIC ACCENT RULES:</span>
+          <span className={`text-xs font-mono ${t.textMuted} block mb-1`}>GEOMETRIC ACCENT RULES:</span>
           <div className="grid grid-cols-2 gap-2 text-xs font-mono">
             {['analogous', 'complementary', 'triadic', 'monochromatic'].map(rule => (
               <button
                 type="button"
                 key={rule}
                 onClick={() => setHarmonyType(rule as any)}
-                className={`p-2 rounded-lg border text-left cursor-pointer capitalize ${harmonyType === rule ? 'border-violet-500 bg-violet-600/10 text-white font-bold' : 'border-white/5 text-gray-400 bg-white/2 hover:bg-white/5'}`}
+                className={`p-2 rounded-lg border text-left cursor-pointer capitalize ${harmonyType === rule ? 'border-violet-500 bg-violet-600/10 text-white font-bold' : `${t.border} ${t.textMuted} ${t.controlBg} hover:bg-white/5`}`}
               >
                 {rule}
               </button>
@@ -432,15 +472,15 @@ function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
           <button
             key={`palette-${color}-${idx}`}
             onClick={() => onCopy(color, `pal-${idx}`)}
-            className="group flex flex-col rounded-2xl border border-white/10 overflow-hidden bg-[#161616] hover:border-white/20 transition-all text-left shadow-lg cursor-pointer"
+            className={`group flex flex-col rounded-2xl border ${t.border} overflow-hidden ${t.controlBg} hover:border-white/20 transition-all text-left shadow-lg cursor-pointer`}
           >
             <div className="w-full h-28" style={{ backgroundColor: color }} />
-            <div className="p-3 font-mono flex items-center justify-between w-full h-11 bg-[#121212]">
-              <span className="text-xxs font-black text-gray-300 uppercase">{color}</span>
+            <div className={`p-3 font-mono flex items-center justify-between w-full h-11 ${t.controlBg}`}>
+              <span className={`text-xxs font-black ${t.textFaint} uppercase`}>{color}</span>
               {copiedStatus === `pal-${idx}` ? (
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
               ) : (
-                <Copy className="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-colors" />
+                <Copy className={`w-3.5 h-3.5 ${t.textFaint} group-hover:${t.heading} transition-colors`} />
               )}
             </div>
           </button>
@@ -453,7 +493,24 @@ function ColorPalette({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
 // ==========================================
 // 3. SVG OPTIMIZER & MINIFIER
 // ==========================================
-function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function SvgOptimizer({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [rawSvg, setRawSvg] = useState(`<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n\t viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">\n<!-- Generator: Adobe Illustrator 24.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) -->\n<style type="text/css">\n\t.st0{fill:#6366F1;}\n</style>\n<g>\n\t<circle class="st0" cx="50" cy="50" r="40"/>\n</g>\n</svg>`);
   const [minifiedSvg, setMinifiedSvg] = useState('');
   const [origSize, setOrigSize] = useState(0);
@@ -463,10 +520,7 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
   const handleOptimize = () => {
     let svg = rawSvg.trim();
 
-    // 1. Remove comments
     svg = svg.replace(/<!--[\s\S]*?-->/g, '');
-
-    // 2. Remove xml namespaces/namespaces metadata
     svg = svg.replace(/xmlns:xlink="[^"]*"/g, '');
     svg = svg.replace(/x="[^"]*"/g, '');
     svg = svg.replace(/y="[^"]*"/g, '');
@@ -475,12 +529,9 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
     svg = svg.replace(/id="[^"]*"/g, '');
     svg = svg.replace(/version="[^"]*"/g, '');
 
-    // 3. Strip extra spaces and tabs
     svg = svg.replace(/\n/g, ' ');
     svg = svg.replace(/\t/g, ' ');
     svg = svg.replace(/\s+/g, ' ');
-
-    // 4. Remove spacing around brackets/tag boundaries
     svg = svg.replace(/>\s+</g, '><');
     svg = svg.replace(/\s*=\s*/g, '=');
 
@@ -502,23 +553,27 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
     handleOptimize();
   }, [rawSvg]);
 
+  const badgeClass = isDark
+    ? 'bg-violet-500/10 text-violet-400 border-violet-500/20'
+    : 'bg-purple-50 text-purple-600 border-purple-200';
+
   return (
     <div className="space-y-6" id="svg-optimizer-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20 rounded">SVG</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>SVG</span>
           SVG Layout Optimizer & Minifier
         </h2>
-        <p className="text-sm text-gray-400">Strip useless generator identifiers, Adobe markup headers, local namespaces, and reduce vector file payloads for instant loading.</p>
+        <p className={`text-sm ${t.textMuted}`}>Strip useless generator identifiers, Adobe markup headers, local namespaces, and reduce vector file payloads for instant loading.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Side Inputs */}
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-mono text-gray-400 mb-1.5 block">RAW SVG GRAPHIC ELEMENT MARKUP:</label>
+            <label className={`text-xs font-mono ${t.textMuted} mb-1.5 block`}>RAW SVG GRAPHIC ELEMENT MARKUP:</label>
             <textarea
-              className="w-full h-64 p-3 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-violet-500 leading-normal"
+              className={`w-full h-64 p-3 ${t.textareaBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-violet-500 leading-normal`}
               placeholder="Paste raw vector XML element here (<svg>... </svg>)"
               value={rawSvg}
               onChange={(e) => setRawSvg(e.target.value)}
@@ -526,12 +581,12 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
           </div>
 
           <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="p-3 rounded-lg border border-white/5 bg-white/2">
-              <span className="text-xxs font-mono text-gray-500 block">Original Size</span>
-              <span className="text-sm font-mono font-bold text-white">{origSize} bytes</span>
+            <div className={`p-3 rounded-lg border ${t.border} ${t.controlBg}`}>
+              <span className={`text-xxs font-mono ${t.textFaint} block`}>Original Size</span>
+              <span className={`text-sm font-mono font-bold ${t.heading}`}>{origSize} bytes</span>
             </div>
-            <div className="p-3 rounded-lg border border-white/5 bg-white/2">
-              <span className="text-xxs font-mono text-gray-500 block">Optimized Size</span>
+            <div className={`p-3 rounded-lg border ${t.border} ${t.controlBg}`}>
+              <span className={`text-xxs font-mono ${t.textFaint} block`}>Optimized Size</span>
               <span className="text-sm font-mono font-bold text-violet-400">{minSize} bytes</span>
             </div>
             <div className="p-3 rounded-lg border border-emerald-950 bg-emerald-950/20">
@@ -544,11 +599,11 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
         {/* Right Side Visual and copy block */}
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-mono text-gray-400">VECTOR VISUAL PREVIEW:</span>
+            <span className={`text-xs font-mono ${t.textMuted}`}>VECTOR VISUAL PREVIEW:</span>
             {minifiedSvg && (
               <button
                 onClick={() => onCopy(minifiedSvg, 'opt-svg')}
-                className="text-xs inline-flex items-center gap-1 hover:text-violet-400 text-gray-400 cursor-pointer"
+                className={`text-xs inline-flex items-center gap-1 hover:text-violet-400 ${t.textMuted} cursor-pointer`}
               >
                 {copiedStatus === 'opt-svg' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedStatus === 'opt-svg' ? 'Copied Clean SVG Markup' : 'Copy Optimized SVG'}
@@ -557,14 +612,14 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
           </div>
 
           {/* Render the sanitized vector markup */}
-          <div className="h-64 rounded-xl border border-white/10 bg-[#161616] flex items-center justify-center p-6 relative overflow-hidden">
+          <div className={`h-64 rounded-xl border ${t.border} ${t.controlBg} flex items-center justify-center p-6 relative overflow-hidden`}>
             {minifiedSvg ? (
               <div 
                 className="w-full h-full max-w-[160px] max-h-[160px]"
                 dangerouslySetInnerHTML={{ __html: minifiedSvg }} 
               />
             ) : (
-              <span className="text-xs text-gray-500">Vector layout preview is empty.</span>
+              <span className={`text-xs ${t.textFaint}`}>Vector layout preview is empty.</span>
             )}
           </div>
 
@@ -582,12 +637,31 @@ function SvgOptimizer({ onCopy, copiedStatus }: { onCopy: (text: string, id: str
 // SVG PATH COORDINATE VISUALIZER & EDITOR
 // ==========================================
 export function SvgPathEditor({
+  isDark,
   onCopy,
   copiedStatus
 }: {
+  isDark: boolean;
   onCopy: (text: string, id: string) => void;
   copiedStatus: string | null;
 }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [rawPath, setRawPath] = useState('M 10 80 C 40 10, 60 10, 95 80');
   const [selectedNodeId, setSelectedNodeId] = useState<number | null>(1);
   const [hoveredNodeId, setHoveredNodeId] = useState<number | null>(null);
@@ -630,7 +704,6 @@ export function SvgPathEditor({
   // Helper: Compile nodes back to path string
   const getCompiledPath = (currentNodes: PathNode[]) => {
     return currentNodes.map(n => {
-      // Standardize empty spaces between arguments
       return `${n.command} ${n.args.join(' ')}`;
     }).join(' ');
   };
@@ -800,7 +873,6 @@ export function SvgPathEditor({
 
   const selectedSegment = pathSegments.find(s => s.nodeId === selectedNodeId);
 
-  // Helper: Render friendly name for coordinates input arrays
   const getArgLabel = (cmd: string, idx: number): string => {
     const uc = cmd.toUpperCase();
     if (uc === 'M' || uc === 'L') {
@@ -847,15 +919,15 @@ export function SvgPathEditor({
   const selectedNodeObj = nodes.find(n => n.id === selectedNodeId);
 
   return (
-    <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+    <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
       
       {/* Header Block */}
-      <div className="border-b border-white/5 pb-4">
-        <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+      <div className={`border-b ${t.border} pb-4`}>
+        <h2 className={`text-base font-semibold ${t.heading} tracking-tight flex items-center gap-2 font-mono select-none`}>
           <Grid className="w-5 h-5 text-indigo-400" />
           SVG Path Coordinate Visualizer &amp; Editor
         </h2>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className={`text-xs ${t.textMuted} mt-1`}>
           Trace Scalable Vector path curves, display cubic Bezier anchor handles, and edit coordinates directly on a real-time responsive high-contrast grid system.
         </p>
       </div>
@@ -865,10 +937,10 @@ export function SvgPathEditor({
         {/* Interactive Canvas Column */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex flex-wrap justify-between items-center gap-2">
-            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Dynamic Interactive Canvas</span>
+            <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-wider block font-bold`}>Dynamic Interactive Canvas</span>
             
             <div className="flex items-center gap-3">
-              <label className="text-[11px] font-mono text-gray-500 flex items-center gap-1.5">
+              <label className={`text-[11px] font-mono ${t.textFaint} flex items-center gap-1.5`}>
                 Grid: 
                 <input
                   type="range"
@@ -883,7 +955,7 @@ export function SvgPathEditor({
           </div>
 
           {/* SVG Vector Stage */}
-          <div className="relative rounded-2xl border border-white/10 bg-[#07070a] p-4 flex items-center justify-center min-h-[380px] select-none">
+          <div className={`relative rounded-2xl border ${t.border} ${t.controlBg} p-4 flex items-center justify-center min-h-[380px] select-none`}>
             
             {/* Background alignment grid */}
             <svg 
@@ -931,7 +1003,6 @@ export function SvgPathEditor({
                 if (!seg.handles || seg.handles.length === 0) return null;
                 return seg.handles.map((hand: any, hIdx: number) => (
                   <g key={`hand-${i}-${hIdx}`} className="opacity-80">
-                    {/* Draw line to control point */}
                     <line
                       x1={hand.start.x}
                       y1={hand.start.y}
@@ -941,7 +1012,6 @@ export function SvgPathEditor({
                       strokeWidth="1"
                       strokeDasharray="2,2"
                     />
-                    {/* Circle representing control handle itself */}
                     <circle
                       cx={hand.end.x}
                       cy={hand.end.y}
@@ -977,7 +1047,6 @@ export function SvgPathEditor({
                       strokeWidth="1.2"
                       className="transition-all duration-150"
                     />
-                    {/* Mini node index label */}
                     <text
                       x={seg.end.x}
                       y={seg.end.y - (isSelected ? 7 : 5)}
@@ -996,12 +1065,12 @@ export function SvgPathEditor({
 
           {/* Preset Demos Block */}
           <div className="flex flex-wrap items-center gap-2 pt-1 font-mono">
-            <span className="text-[10px] text-gray-500 font-bold">PRESETS:</span>
+            <span className={`text-[10px] ${t.textFaint} font-bold`}>PRESETS:</span>
             {presets.map((p, i) => (
               <button
                 key={i}
                 onClick={() => handleLoadPreset(p.path)}
-                className="p-1 px-2 border border-white/5 bg-white/5 hover:bg-white/10 text-[10px] text-gray-400 hover:text-white rounded transition-all flex items-center gap-1 cursor-pointer"
+                className={`p-1 px-2 border ${t.border} ${t.controlBg} hover:bg-white/10 text-[10px] ${t.textMuted} hover:${t.heading} rounded transition-all flex items-center gap-1 cursor-pointer`}
               >
                 <Sparkles className="w-3 h-3 text-indigo-400" />
                 {p.name}
@@ -1014,8 +1083,8 @@ export function SvgPathEditor({
         <div className="lg:col-span-5 space-y-4">
           
           {/* Node Selector Table View */}
-          <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-3">
-            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Vector Points Matrix</span>
+          <div className={`${t.panelBg} rounded-xl p-4 space-y-3`}>
+            <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-wider block font-bold`}>Vector Points Matrix</span>
 
             <div className="max-h-[160px] overflow-y-auto space-y-1.5 pr-1 font-mono">
               {nodes.map((n) => {
@@ -1030,19 +1099,19 @@ export function SvgPathEditor({
                     className={`p-2 rounded-lg cursor-pointer flex justify-between items-center transition-all border ${
                       isSelected 
                         ? 'bg-indigo-500/10 border-indigo-500/20 text-white' 
-                        : 'bg-[#111114] border-white/5 text-gray-400 hover:text-white'
+                        : `${t.border} ${t.controlBg} ${t.textMuted} hover:${t.heading}`
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="bg-white/5 p-1 px-2 rounded-md font-bold text-[10px] text-indigo-400">
+                      <span className={`bg-white/5 p-1 px-2 rounded-md font-bold text-[10px] text-indigo-400`}>
                         #{n.id}
                       </span>
                       <strong className="text-xs font-semibold">{n.command}</strong>
                     </div>
 
-                    <div className="text-[10px] text-gray-500 flex gap-2">
-                      <span>End X: <strong className="text-gray-300">{endCoords.x.toFixed(0)}</strong></span>
-                      <span>End Y: <strong className="text-gray-300">{endCoords.y.toFixed(0)}</strong></span>
+                    <div className={`text-[10px] ${t.textFaint} flex gap-2`}>
+                      <span>End X: <strong className={t.heading}>{endCoords.x.toFixed(0)}</strong></span>
+                      <span>End Y: <strong className={t.heading}>{endCoords.y.toFixed(0)}</strong></span>
                     </div>
                   </div>
                 );
@@ -1052,22 +1121,22 @@ export function SvgPathEditor({
 
           {/* Interactive Arguments Form Fields */}
           {selectedNodeObj ? (
-            <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-4">
-              <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-widest block font-bold">
+            <div className={`${t.panelBg} rounded-xl p-4 space-y-4`}>
+              <div className={`flex justify-between items-center border-b ${t.border} pb-2`}>
+                <span className={`text-[10px] font-mono text-indigo-400 uppercase tracking-widest block font-bold`}>
                   Editing Point #{selectedNodeId} (Command: {selectedNodeObj.command})
                 </span>
               </div>
 
               {selectedNodeObj.args.length === 0 ? (
-                <p className="text-xs text-gray-500 italic leading-relaxed font-sans">
+                <p className={`text-xs ${t.textFaint} italic leading-relaxed font-sans`}>
                   The closed path instruction (Z) has no mathematical coordinate handles. It connects the current coordinates directly back to the initial segment source.
                 </p>
               ) : (
                 <div className="space-y-3 font-mono">
                   {selectedNodeObj.args.map((arg, idx) => (
                     <div key={idx} className="space-y-1.5">
-                      <div className="flex justify-between text-xxs font-mono text-gray-500 font-bold uppercase">
+                      <div className={`flex justify-between text-xxs font-mono ${t.textFaint} font-bold uppercase`}>
                         <span>{getArgLabel(selectedNodeObj.command, idx)}</span>
                         <span>Value: {arg}</span>
                       </div>
@@ -1075,13 +1144,13 @@ export function SvgPathEditor({
                       <div className="flex gap-2 items-center">
                         <button
                           onClick={() => handleUpdateNodeArg(selectedNodeObj.id, idx, arg - 5)}
-                          className="p-1 px-2.5 bg-white/5 border border-white/10 rounded font-bold text-xs hover:bg-white/10 text-white transition-colors"
+                          className={`p-1 px-2.5 ${t.copyBtn} rounded font-bold text-xs hover:bg-white/10 transition-colors`}
                         >
                           -5
                         </button>
                         <button
                           onClick={() => handleUpdateNodeArg(selectedNodeObj.id, idx, arg - 1)}
-                          className="p-1 px-2 bg-white/5 border border-white/10 rounded font-bold text-xs hover:bg-white/10 text-white transition-colors"
+                          className={`p-1 px-2 ${t.copyBtn} rounded font-bold text-xs hover:bg-white/10 transition-colors`}
                         >
                           -1
                         </button>
@@ -1091,18 +1160,18 @@ export function SvgPathEditor({
                           value={arg}
                           step="0.5"
                           onChange={(e) => handleUpdateNodeArg(selectedNodeObj.id, idx, parseFloat(e.target.value) || 0)}
-                          className="w-full p-1 bg-[#121214] border border-white/5 rounded text-xs text-white font-mono text-center focus:outline-none focus:border-indigo-500/40"
+                          className={`w-full p-1 ${t.inputBg} rounded text-xs font-mono text-center focus:outline-none focus:border-indigo-500/40`}
                         />
 
                         <button
                           onClick={() => handleUpdateNodeArg(selectedNodeObj.id, idx, arg + 1)}
-                          className="p-1 px-2 bg-white/5 border border-white/10 rounded font-bold text-xs hover:bg-white/10 text-white transition-colors"
+                          className={`p-1 px-2 ${t.copyBtn} rounded font-bold text-xs hover:bg-white/10 transition-colors`}
                         >
                           +1
                         </button>
                         <button
                           onClick={() => handleUpdateNodeArg(selectedNodeObj.id, idx, arg + 5)}
-                          className="p-1 px-2.5 bg-white/5 border border-white/10 rounded font-bold text-xs hover:bg-white/10 text-white transition-colors"
+                          className={`p-1 px-2.5 ${t.copyBtn} rounded font-bold text-xs hover:bg-white/10 transition-colors`}
                         >
                           +5
                         </button>
@@ -1113,17 +1182,17 @@ export function SvgPathEditor({
               )}
             </div>
           ) : (
-            <div className="bg-[#09090c] p-4 rounded-xl border border-white/5 text-center text-xs text-gray-500">
+            <div className={`${t.panelBg} p-4 rounded-xl border ${t.border} text-center text-xs ${t.textFaint}`}>
               Select one point on the path graph to edit.
             </div>
           )}
 
           {/* Main raw coordinate output */}
-          <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-3">
-            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Generated Path string (d)</span>
+          <div className={`${t.panelBg} rounded-xl p-4 space-y-3`}>
+            <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-wider block font-bold`}>Generated Path string (d)</span>
             
             <div className="space-y-3">
-              <div className="p-3 bg-[#111114] border border-white/5 rounded-lg select-all break-all font-mono text-xs text-indigo-400 font-semibold leading-relaxed">
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg select-all break-all font-mono text-xs text-indigo-400 font-semibold leading-relaxed`}>
                 {rawPath}
               </div>
 

@@ -10,7 +10,6 @@ import { QrCodeHelperTools } from './components/QrCodeHelperTools';
 import { UrlMarketingTools } from './components/UrlMarketingTools';
 import { TextTools } from './components/TextTools';
 import { NetworkTools } from './components/NetworkTools';
-import { AiTools } from './components/AiTools';
 import { UtilityTools } from './components/UtilityTools';
 import { ImageTools } from './components/ImageTools';
 import { CalculatorTools } from './components/CalculatorTools';
@@ -27,9 +26,9 @@ import { ColorTools } from './components/ColorTools';
 import { DeveloperSuiteTools } from './components/DeveloperSuiteTools';
 import { DesignSuiteTools } from './components/DesignSuiteTools';
 import { SeoSpatialTools } from './components/SeoSpatialTools';
-import { AiSmartSuiteTools } from './components/AiSmartSuiteTools';
 import { TopAdBanner, BottomAdBanner, SidebarAdSkyscraper } from './components/Advertisements';
 import { Tool } from './types';
+import { CookieBanner } from './components/CookieBanner';
 
 const ALL_TOOLS: Tool[] = [
   // Website Management Tools
@@ -69,11 +68,6 @@ const ALL_TOOLS: Tool[] = [
   { id: 'base64', name: 'Base64 Encoder / Decoder', description: 'Encode clean text to Base64 representation or decode back safely.', iconName: 'Cpu', category: 'development' },
   { id: 'html-url', name: 'URL & HTML Entity Helper', description: 'Escape HTML characters and encode percent strings for safe URI routing.', iconName: 'Code2', category: 'development' },
   { id: 'hash-gen', name: 'Cryptographic Hash Generator', description: 'Calculate secure browser-side SHA-1, SHA-256 and SHA-512 checksums.', iconName: 'Lock', category: 'development' },
-  
-  // AI
-  { id: 'ai-rephrase', name: 'AI Voice Style & Translator', description: 'Rewrite paragraphs, transform tone or translate languages instantly with Gemini.', iconName: 'Sparkles', category: 'ai' },
-  { id: 'ai-regex', name: 'AI Regex Architect', description: 'Construct complex regular expression patterns from instructions, or explain characters.', iconName: 'Wand2', category: 'ai' },
-  { id: 'ai-code', name: 'AI Code Annotator', description: 'Inject detailed docstrings, inline code comments and type declarations automatically.', iconName: 'FileCode', category: 'ai' },
 
   // Image Tools (New Separated Category)
   { id: 'image-enlarger', name: 'Image Enlarger & Upscaler', description: 'Enlarge and upscale images client-side using responsive canvas interpolation (Bicubic/Bilinear) or pixel enlargement.', iconName: 'Maximize', category: 'image' },
@@ -232,12 +226,7 @@ const ALL_TOOLS: Tool[] = [
   // SEO & Web Management Utilities
   { id: 'social-meta-preview', name: 'Social & Meta Tags Generator', description: 'Generate standard SEO meta tags and visually preview social platform listings for Google search, Facebook, LinkedIn, and X.', iconName: 'Eye', category: 'web-mgmt' },
   { id: 'redirect-header-inspect', name: 'Redirect & Security Header Inspector', description: 'Trace request routes server-side, map out redirectional paths, SSL parameters, and inspect key security headers.', iconName: 'Network', category: 'web-mgmt' },
-  { id: 'dns-mx-txt', name: 'DNS MX & TXT Lookup', description: 'Directly extract custom domain verification strings, SPF policy entries, mail configuration files, and MX endpoints.', iconName: 'Globe', category: 'web-mgmt' },
-
-  // Advanced AI-Powered Assistant Tools
-  { id: 'ai-social-caption', name: 'AI Social Media Caption Writer', description: 'Co-create platform-optimized captions, scroll-stopping hooks, and trending hashtags for Instagram, LinkedIn, or Threads via Gemini.', iconName: 'Sparkles', category: 'ai' },
-  { id: 'ai-email-drafter', name: 'AI Email Drafter', description: 'Translate bulleted project drafts and quick descriptions into professional correspondence with target style/tone controls.', iconName: 'FileText', category: 'ai' },
-  { id: 'ai-code-translator', name: 'AI Code Translator', description: 'Translate code fragments beautifully and accurately between languages like Python, JavaScript, and TypeScript using Gemini.', iconName: 'Languages', category: 'ai' }
+  { id: 'dns-mx-txt', name: 'DNS MX & TXT Lookup', description: 'Directly extract custom domain verification strings, SPF policy entries, mail configuration files, and MX endpoints.', iconName: 'Globe', category: 'web-mgmt' }
 ];
 
 const CATEGORIES = [
@@ -245,7 +234,6 @@ const CATEGORIES = [
   { id: 'web-mgmt', name: 'Website Management', color: 'bg-cyan-950/20 border border-cyan-500/20 text-cyan-400 font-mono' },
   { id: 'development', name: 'Dev Tools', color: 'bg-blue-950/25 border border-blue-500/20 text-blue-400 font-mono' },
   { id: 'binary', name: 'Binary Converter Tools', color: 'bg-teal-950/25 border border-teal-500/20 text-teal-400 font-mono' },
-  { id: 'ai', name: 'AI Smart Assistants', color: 'bg-purple-950/20 border border-purple-500/20 text-purple-400' },
   { id: 'image', name: 'Image Tools', color: 'bg-rose-950/20 border border-rose-500/20 text-rose-400' },
   { id: 'text', name: 'Text Analytics', color: 'bg-fuchsia-950/20 border border-fuchsia-500/20 text-fuchsia-400' },
   { id: 'network', name: 'Network Utilities', color: 'bg-emerald-950/20 border border-emerald-500/20 text-emerald-400' },
@@ -367,29 +355,6 @@ const CATEGORY_COLOR_MAP: Record<string, {
     checkText: 'text-teal-400',
     pulseBg: 'bg-teal-550',
     gradient: 'from-teal-500 via-emerald-400 to-cyan-500'
-  },
-  'ai': {
-    colorName: 'purple',
-    bg: 'bg-purple-600',
-    hoverBg: 'hover:bg-purple-700',
-    shadowColor: 'shadow-purple-505/10',
-    textAccent: 'text-purple-500',
-    textAccentHover: 'hover:text-purple-550',
-    badgeBg: 'bg-purple-500/10',
-    badgeText: 'text-purple-400',
-    badgeBorder: 'border-purple-500/15',
-    focusRing: 'focus:border-purple-500 focus:ring-purple-505/50',
-    activeBtn: 'bg-purple-600 text-white border-purple-500',
-    cardHoverBorder: 'hover:border-purple-500/30',
-    cardHoverShadow: 'hover:shadow-purple-500/[0.02]',
-    iconBg: 'bg-purple-500/5',
-    iconText: 'text-purple-400 group-hover:text-purple-305',
-    iconHoverBg: 'group-hover:bg-purple-500/10',
-    titleTextHover: 'group-hover:text-purple-400',
-    sparkleText: 'text-purple-400',
-    checkText: 'text-purple-400',
-    pulseBg: 'bg-purple-550',
-    gradient: 'from-purple-500 via-fuchsia-400 to-pink-500'
   },
   'image': {
     colorName: 'rose',
@@ -645,24 +610,6 @@ const TOOL_DETAILS_MAP: Record<string, {
     features: ['Campaign metadata tags setup help', 'Automated quick-tag suggestion buttons', 'Copy complete compiled URL instantly'],
     safeStatus: 'Local Browser',
     inputType: 'Destination URL and parameters'
-  },
-  'ai-rephrase': {
-    tagline: 'Transform semantic tone, vocabulary, style & format with smart rewriter.',
-    features: ['Powered by Google Gemini model', 'Configurable Professional / Casual modes', 'Zero Prompt configuration needed'],
-    safeStatus: 'Secure API',
-    inputType: 'Paragraphs / Text Files'
-  },
-  'ai-regex': {
-    tagline: 'Semantic regex expression builder with explanation insights.',
-    features: ['Instant pattern explanations', 'Human translation matching rules', 'Prebuilt quick-pattern snippets'],
-    safeStatus: 'Secure API',
-    inputType: 'Goal description / Pattern'
-  },
-  'ai-code': {
-    tagline: 'Auto-annotate, document and insert comments to modern codebase block.',
-    features: ['Detailed inline code summaries', 'JsDoc standard block generator', 'Identifies optimal type guarantees'],
-    safeStatus: 'Secure API',
-    inputType: 'TypeScript / Javascript'
   },
   'case-converter': {
     tagline: 'Instant capitalization converter of standard strings.',
@@ -1218,6 +1165,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTool, activeLegalView]);
 
+  useEffect(() => {
+    const handlePrivacyNav = () => {
+      selectLegalView('privacy');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('navigate-to-privacy', handlePrivacyNav);
+    return () => window.removeEventListener('navigate-to-privacy', handlePrivacyNav);
+  }, []);
+
   const selectTool = (tool: Tool | null) => {
     setActiveTool(tool);
     setToolNotFound(false);
@@ -1326,50 +1282,161 @@ export default function App() {
     
     if (activeTool) {
       const descriptions: Record<string, string> = {
-        'json-formatter': 'Format, validate and beautify JSON instantly in your browser. Free online JSON formatter with syntax highlighting and error detection.',
-        'base64': 'Encode or decode Base64 strings instantly online. Free browser-based Base64 encoder and decoder — no data leaves your device.',
-        'hash-gen': 'Generate SHA-1, SHA-256 and SHA-512 cryptographic hashes instantly in your browser. Free secure client-side hash generator.',
-        'html-encode': 'Convert special characters to safe HTML entities instantly. Free online HTML encoder — runs entirely in your browser.',
-        'html-decode': 'Convert HTML entities back to readable characters instantly. Free online HTML decoder — 100% client-side.',
-        'url-encode': 'Encode URLs with percent-encoding instantly. Free online URL encoder — RFC-3986 compliant, runs in your browser.',
-        'url-decode': 'Decode percent-encoded URLs back to readable text instantly. Free online URL decoder — no data sent to servers.',
-        'qr-generator': 'Generate custom QR codes for free — choose colors, size, and error correction. No watermarks, instant download, works offline.',
-        'qr-decoder': 'Decode and read QR codes from images instantly in your browser. Free QR code reader — no upload to servers.',
-        'image-converter': 'Convert images between PNG, JPEG, WebP, BMP and GIF formats for free. Works entirely in your browser — no upload needed.',
-        'image-cropper': 'Crop images to custom dimensions or aspect ratios for free. Precision browser-based image cropper — no data uploaded.',
-        'image-resizer': 'Resize images to any dimension for free. Smart aspect-ratio locking, instant preview — runs entirely in your browser.',
-        'jpg-to-png': 'Convert JPG images to PNG format for free online. Instant browser-based conversion — no file upload to servers.',
-        'png-to-jpg': 'Convert PNG images to JPG format for free online. Adjustable quality, instant download — 100% client-side.',
-        'webp-to-jpg': 'Convert WebP images to JPG format for free online. Instant browser-based conversion — no server upload.',
-        'png-to-webp': 'Convert PNG images to WebP format for free. Better compression, same quality — runs entirely in your browser.',
-        'pass-gen': 'Generate strong, secure random passwords for free. Cryptographic browser-based password generator — passwords never leave your device.',
-        'password-entropy': 'Calculate password strength and entropy in bits. Estimate brute-force cracking times across CPU and GPU hardware.',
-        'stripe-calc': 'Calculate exact Stripe payment fees and required invoice amounts. Free Stripe fee calculator — instant results in your browser.',
-        'paypal-calc': 'Calculate exact PayPal transaction fees and net payouts. Free PayPal fee calculator — instant, no signup required.',
-        'loan-calc': 'Calculate loan payments, interest, and full amortization schedules for free. Detailed monthly breakdown — runs in your browser.',
-        'age-calc': 'Calculate your exact age in years, months, days, hours and seconds. Free age calculator with zodiac sign and milestones.',
-        'percentage-calc': 'Calculate percentages, percentage change, and ratios instantly. Free multi-mode percentage calculator.',
-        'word-counter': 'Count words, characters, sentences and reading time instantly. Free online word counter and text analyzer.',
-        'case-converter': 'Convert text between uppercase, lowercase, title case, camelCase and snake_case instantly. Free online case converter.',
-        'markdown-preview': 'Preview and edit Markdown in real time. Free online Markdown viewer with live HTML rendering.',
-        'lorem-ipsum': 'Generate Lorem Ipsum placeholder text instantly. Choose paragraphs, sentences or words — free online generator.',
-        'uuid-gen': 'Generate UUID v1 and v4 identifiers instantly in your browser. Free bulk UUID generator — no server required.',
-        'jwt-debugger': 'Decode and inspect JWT tokens client-side. Free JWT debugger — view header, payload and signature details.',
-        'regex-tester': 'Build and test regular expressions with real-time match highlighting. Free online RegEx tester.',
-        'json-diff': 'Compare two JSON objects side by side with colorized differences. Free JSON diff checker — runs in your browser.',
-        'dns-lookup': 'Look up DNS records (A, AAAA, MX, NS, TXT) for any domain. Free online DNS lookup tool.',
-        'my-ip': 'Find your public IP address and browser headers instantly. Free IP checker — no signup required.',
-        'ip-lookup': 'Look up geographic and ISP information for any IP address. Free IP geolocation lookup tool.',
-        'color-converter': 'Convert colors between HEX, RGB, HSL and CMYK instantly. Free online color converter with contrast checker.',
-        'css-gradient': 'Design CSS gradients visually and copy the code instantly. Free online CSS gradient generator.',
-        'color-palette': 'Generate complementary, triadic and analogous color palettes. Free online color palette creator.',
-        'ai-rephrase': 'Rephrase, rewrite and translate text instantly with AI. Powered by Google Gemini — free online AI text rewriter.',
-        'ai-regex': 'Generate and explain regular expressions using AI. Free AI-powered RegEx builder — powered by Gemini.',
-        'ai-code': 'Add comments, docstrings and type annotations to your code automatically. Free AI code annotator powered by Gemini.',
-        'currency-conv': 'Convert currencies with live exchange rates. Free online currency converter.',
-        'length-conv': 'Convert length and distance units — metric, imperial and more. Free online length converter.',
-        'temp-conv': 'Convert temperatures between Celsius, Fahrenheit, Kelvin and Rankine. Free online temperature converter.',
-        'weight-conv': 'Convert weight and mass units — grams, pounds, kilograms and more. Free online weight converter.',
+        // JSON Tools
+        'json-formatter': 'Free online JSON formatter and validator. Paste your JSON and instantly format, beautify, or minify it in your browser — no upload needed.',
+        'json-viewer': 'Visualize JSON as an interactive tree. Collapse, expand, and search nodes instantly in your browser.',
+        'json-validator': 'Validate JSON syntax and catch errors instantly. Highlights the exact line of any problem.',
+        'json-editor': 'Edit and modify JSON structures directly in your browser with live validation.',
+        'json-minifier': 'Minify JSON by removing whitespace to reduce file size instantly in your browser.',
+        'json-diff': 'Compare two JSON objects side by side and highlight every difference instantly.',
+        'json-to-xml': 'Convert JSON to XML format instantly in your browser. No signup or upload required.',
+        'xml-to-json': 'Convert XML to clean JSON format instantly. Runs entirely in your browser.',
+        'json-to-csv': 'Convert JSON arrays to CSV format for Excel or Google Sheets instantly.',
+        'csv-to-json': 'Convert CSV files to JSON format instantly in your browser.',
+        'json-to-tsv': 'Convert JSON to TSV (tab-separated) format instantly in your browser.',
+        'tsv-to-json': 'Convert TSV files to JSON format instantly in your browser.',
+        'json-to-text': 'Extract plain text values from JSON structures instantly.',
+  
+        // Developer Tools
+        'base64': 'Encode or decode Base64 strings instantly in your browser. Your data never leaves your device.',
+        'html-encode': 'Convert special characters to HTML entities instantly. Safe for embedding in web pages.',
+        'html-decode': 'Convert HTML entities back to readable characters instantly in your browser.',
+        'url-encode': 'Encode URLs with percent-encoding instantly. RFC-3986 compliant, runs in your browser.',
+        'url-decode': 'Decode percent-encoded URLs back to readable text instantly in your browser.',
+        'hash-gen': 'Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.',
+        'jwt-debugger': 'Decode and inspect JWT tokens client-side. View header, payload, and signature instantly.',
+        'regex-tester': 'Test and debug regular expressions with real-time match highlighting.',
+        'cron-generator': 'Build and validate cron expressions visually with a plain-English explanation.',
+        'js-beautifier': 'Beautify and format JavaScript code instantly in your browser.',
+        'js-minifier': 'Minify JavaScript to reduce file size and improve page load speed.',
+        'js-obfuscator': 'Obfuscate JavaScript source code to protect it from reverse engineering.',
+        'js-deobfuscator': 'Deobfuscate and clean up obfuscated JavaScript code instantly.',
+        'html-beautifier': 'Format and indent HTML code for better readability instantly.',
+        'html-minifier': 'Strip whitespace from HTML to reduce file size and improve load time.',
+        'css-beautifier': 'Format and beautify CSS code with proper indentation instantly.',
+        'css-minifier': 'Minify CSS to reduce file size and speed up your website.',
+  
+        // Binary Tools
+        'binary-to-text': 'Convert binary code to readable text instantly in your browser.',
+        'text-to-binary': 'Convert any text to binary code instantly. Shows step-by-step breakdown.',
+        'binary-to-decimal': 'Convert binary numbers to decimal instantly with a conversion breakdown.',
+        'decimal-to-binary': 'Convert decimal numbers to binary instantly in your browser.',
+        'binary-to-hex': 'Convert binary to hexadecimal instantly in your browser.',
+        'hex-to-binary': 'Convert hexadecimal to binary instantly in your browser.',
+        'binary-to-octal': 'Convert binary to octal format instantly in your browser.',
+        'octal-to-binary': 'Convert octal to binary format instantly in your browser.',
+        'hex-to-decimal': 'Convert hexadecimal to decimal numbers instantly in your browser.',
+        'decimal-to-hex': 'Convert decimal numbers to hexadecimal instantly in your browser.',
+        'octal-to-decimal': 'Convert octal to decimal numbers instantly in your browser.',
+        'decimal-to-octal': 'Convert decimal to octal numbers instantly in your browser.',
+        'hex-to-octal': 'Convert hexadecimal to octal format instantly in your browser.',
+        'octal-to-hex': 'Convert octal to hexadecimal format instantly in your browser.',
+  
+        // Image Tools
+        'image-converter': 'Convert images between PNG, JPEG, WebP, and other formats free. No upload to servers.',
+        'image-cropper': 'Crop images to any size or aspect ratio free. Works entirely in your browser.',
+        'image-resizer': 'Resize images to exact dimensions free. Keeps aspect ratio automatically.',
+        'image-enlarger': 'Enlarge and upscale images using browser-based interpolation. Free and private.',
+        'jpg-to-png': 'Convert JPG images to PNG format free. Instant download, no server upload.',
+        'png-to-jpg': 'Convert PNG images to JPG format free. Adjust quality and download instantly.',
+        'png-to-webp': 'Convert PNG to WebP for better compression and web performance. Free.',
+        'webp-to-jpg': 'Convert WebP images to JPG format free. Instant in-browser conversion.',
+        'webp-to-png': 'Convert WebP images to PNG format free. No upload to servers.',
+        'jpg-to-webp': 'Convert JPG images to WebP for smaller file sizes. Free and instant.',
+        'image-to-base64': 'Convert images to Base64 data URIs for embedding in HTML or CSS. Free.',
+        'base64-to-image': 'Convert Base64 strings back to downloadable image files instantly.',
+        'image-compressor': 'Compress images to reduce file size without visible quality loss. Free.',
+        'gif-to-png': 'Convert GIF images to PNG format free in your browser.',
+        'bmp-to-png': 'Convert BMP images to PNG format free in your browser.',
+        'svg-to-png': 'Convert SVG vector files to PNG raster images free. Choose your output size.',
+  
+        // Text Tools
+        'word-counter': 'Count words, characters, sentences, and reading time instantly.',
+        'case-converter': 'Convert text between uppercase, lowercase, title case, camelCase, and more.',
+        'markdown-preview': 'Preview Markdown as rendered HTML in real time. Great for README files.',
+        'lorem-ipsum': 'Generate Lorem Ipsum placeholder text by paragraph, sentence, or word count.',
+        'text-diff': 'Compare two blocks of text and highlight every difference line by line.',
+        'text-reverser': 'Reverse any string of text or reverse word order instantly.',
+        'duplicate-remover': 'Remove duplicate lines from any list instantly in your browser.',
+        'text-sorter': 'Sort lines of text alphabetically, numerically, or in reverse order.',
+        'whitespace-remover': 'Strip extra whitespace, tabs, and blank lines from text instantly.',
+        'slug-generator': 'Convert any text to a clean URL-friendly slug instantly.',
+        'string-utilities': 'Count, trim, reverse, and transform strings with multiple utilities in one place.',
+  
+        // Network Tools
+        'my-ip': 'Find your public IP address and browser request headers instantly.',
+        'ip-lookup': 'Look up geographic location and ISP info for any IP address.',
+        'dns-lookup': 'Query DNS records (A, AAAA, MX, TXT, NS, CNAME) for any domain.',
+        'what-is-my-ip': 'See your public IP address and detailed browser information instantly.',
+  
+        // Calculator Tools
+        'loan-calc': 'Calculate monthly loan payments, total interest, and full amortization schedule.',
+        'age-calc': 'Calculate your exact age in years, months, days, hours, and seconds.',
+        'percentage-calc': 'Calculate percentages, percentage change, and reverse percentages instantly.',
+        'stripe-calc': 'Calculate exact Stripe fees and the invoice amount needed to receive a target sum.',
+        'paypal-calc': 'Calculate exact PayPal fees and net payout for any transaction amount.',
+        'sales-tax-calc': 'Calculate sales tax, GST, or VAT for any price and tax rate.',
+        'discount-calc': 'Calculate discounted prices, savings amounts, and original prices from any discount.',
+        'gst-calc': 'Calculate GST amounts, pre-tax prices, and total prices instantly.',
+        'margin-calc': 'Calculate profit margin, markup percentage, and gross profit for any sale.',
+        'average-calc': 'Calculate mean, median, mode, and standard deviation for any set of numbers.',
+        'days-calc': 'Calculate the number of days between any two dates, including business days.',
+        'hours-calc': 'Calculate total hours and minutes between two times.',
+        'tdee-calc': 'Calculate your Total Daily Energy Expenditure and BMR based on activity level.',
+        'calorie-calc': 'Calculate daily calorie needs using the Mifflin-St Jeor and Harris-Benedict formulas.',
+  
+        // General Utilities
+        'pass-gen': 'Generate strong random passwords. Cryptographically secure, never sent to servers.',
+        'password-entropy': 'Calculate password strength in bits and estimate brute-force cracking time.',
+        'qr-generator': 'Generate custom QR codes free. Choose colors, size, and error correction.',
+        'qr-decoder': 'Decode QR codes from images instantly in your browser. No upload to servers.',
+        'uuid-gen': 'Generate UUID v1 and v4 identifiers in bulk instantly in your browser.',
+        'utm-builder': 'Build UTM tracking URLs for Google Analytics campaigns in seconds.',
+        'url-parser': 'Parse any URL into its components — protocol, host, path, and query params.',
+        'facebook-id': 'Find the numeric ID for any Facebook profile, page, or group URL.',
+  
+        // SEO & Web Tools
+        'social-meta-preview': 'Preview how your page looks when shared on Twitter, Facebook, and LinkedIn.',
+        'redirect-header-inspect': 'Inspect HTTP redirect chains and response headers for any URL.',
+        'dns-mx-txt': 'Look up MX, TXT, and SPF records for email configuration and verification.',
+        'canonical-url-stripper': 'Strip UTM parameters and tracking tags from URLs to get the clean version.',
+        'youtube-thumbnail': 'Download YouTube video thumbnails in HD, SD, and all available sizes free.',
+  
+        // Design Tools
+        'css-gradient': 'Design CSS gradients visually and copy the ready-to-use code instantly.',
+        'color-palette': 'Generate complementary, triadic, and analogous color palettes from any color.',
+        'svg-optimizer': 'Optimize and minify SVG files to reduce size without losing quality.',
+        'svg-path-editor': 'Visualize and edit SVG path coordinates interactively in your browser.',
+        'color-converter': 'Convert colors between HEX, RGB, HSL, and CMYK formats instantly.',
+        'hex-to-rgb': 'Convert HEX color codes to RGB values instantly in your browser.',
+        'rgb-to-hex': 'Convert RGB color values to HEX color codes instantly in your browser.',
+  
+        // Converters
+        'length-conv': 'Convert length and distance between metric, imperial, and maritime units.',
+        'area-conv': 'Convert area between square meters, acres, hectares, and more.',
+        'weight-conv': 'Convert weight and mass between grams, pounds, kilograms, and more.',
+        'volume-conv': 'Convert volume between liters, gallons, cups, and more.',
+        'temp-conv': 'Convert temperatures between Celsius, Fahrenheit, Kelvin, and Rankine.',
+        'time-conv': 'Convert time between seconds, minutes, hours, days, weeks, and years.',
+        'digital-conv': 'Convert digital storage between bytes, kilobytes, megabytes, and gigabytes.',
+        'speed-conv': 'Convert speed between km/h, mph, knots, and meters per second.',
+        'currency-conv': 'Convert currencies with live exchange rates from 150+ countries.',
+        'num-to-word-conv': 'Convert numbers to written English words. Great for checks and documents.',
+        'word-to-num-conv': 'Convert written English number words back to digits instantly.',
+        'num-to-roman-conv': 'Convert numbers to Roman numerals instantly. Supports 1 to 3999.',
+        'roman-to-num-conv': 'Convert Roman numerals back to standard numbers instantly.',
+        'pressure-conv': 'Convert pressure between pascals, bars, PSI, and atmospheres.',
+        'energy-conv': 'Convert energy between joules, kilowatt-hours, calories, and BTU.',
+        'power-conv': 'Convert power between watts, kilowatts, horsepower, and BTU/hour.',
+        'frequency-conv': 'Convert frequency between hertz, kilohertz, megahertz, and gigahertz.',
+        'angle-conv': 'Convert angles between degrees, radians, gradians, and turns.',
+        'pace-conv': 'Convert running pace between min/km, min/mile, and seconds.',
+        'current-conv': 'Convert electric current between amperes, milliamperes, and more.',
+        'voltage-conv': 'Convert voltage between volts, millivolts, kilovolts, and megavolts.',
+  
+        // AV & Subtitle Tools
+        'vtt-to-srt': 'Convert VTT subtitle files to SRT format instantly in your browser.',
+        'srt-to-vtt': 'Convert SRT subtitle files to VTT format instantly in your browser.',
       };
 
       const toolDescription = descriptions[activeTool.id] || 
@@ -1428,6 +1495,15 @@ export default function App() {
     }
     setStarred(updated);
     localStorage.setItem('omnitool_starred', JSON.stringify(updated));
+  };
+
+  // Helper to get related tools from the same category
+  const getRelatedTools = (tool: Tool): Tool[] => {
+    const sameCategory = ALL_TOOLS.filter(
+      (t) => t.category === tool.category && t.id !== tool.id
+    );
+    const shuffled = [...sameCategory].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 4);
   };
 
   // Filter tools based on query and selected category tab
@@ -1622,10 +1698,10 @@ export default function App() {
             </div>
 
             {/* Renderer Router */}
-            <div className={`rounded-2xl p-6 sm:p-8 shadow-xl border ${t.bg} ${t.border}`}>
+            <div className={`border rounded-2xl p-6 sm:p-8 shadow-xl ${isDark ? 'bg-[#0f0f0f] border-white/5' : 'bg-white border-gray-200'}`}>
               {activeTool.category === 'web-mgmt' && (
                 ['qr-generator', 'qr-decoder'].includes(activeTool.id) ? (
-                  <QrCodeHelperTools activeToolId={activeTool.id} />
+                  <QrCodeHelperTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['facebook-id', 'uuid-gen', 'url-parser', 'utm-builder', 'query-param-stripper'].includes(activeTool.id) ? (
                   <UrlMarketingTools activeToolId={activeTool.id} />
                 ) : ['social-meta-preview', 'redirect-header-inspect', 'dns-mx-txt'].includes(activeTool.id) ? (
@@ -1636,27 +1712,20 @@ export default function App() {
               )}
               {activeTool.category === 'development' && (
                 ['json-viewer', 'json-validator', 'json-editor', 'json-minify', 'xml-to-json', 'json-to-xml', 'csv-to-json', 'tsv-to-json', 'json-to-csv', 'json-to-tsv', 'json-to-text'].includes(activeTool.id) ? (
-                  <JsonSuiteTools activeToolId={activeTool.id} />
+                  <JsonSuiteTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['json-diff', 'jwt-debugger', 'regex-tester', 'cron-generator'].includes(activeTool.id) ? (
                   <DeveloperSuiteTools activeToolId={activeTool.id} />
                 ) : ['js-beautifier', 'js-minifier', 'js-obfuscator', 'js-deobfuscator'].includes(activeTool.id) ? (
-                  <JsDeveloperTools activeToolId={activeTool.id} />
+                  <JsDeveloperTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['html-beautifier', 'html-minifier', 'css-beautifier', 'css-minifier'].includes(activeTool.id) ? (
                   <WebMgmtTools activeToolId={activeTool.id} />
                 ) : (
-                  <CodeTools activeToolId={activeTool.id} />
+                  <CodeTools activeToolId={activeTool.id} isDark={isDark} />
                 )
               )}
               {activeTool.category === 'text' && <TextTools activeToolId={activeTool.id} />}
               {activeTool.category === 'network' && <NetworkTools activeToolId={activeTool.id} />}
-              {activeTool.category === 'ai' && (
-                ['ai-social-caption', 'ai-email-drafter', 'ai-code-translator'].includes(activeTool.id) ? (
-                  <AiSmartSuiteTools activeToolId={activeTool.id} />
-                ) : (
-                  <AiTools activeToolId={activeTool.id} />
-                )
-              )}
-              {activeTool.category === 'binary' && <BinaryTools activeToolId={activeTool.id} />}
+              {activeTool.category === 'binary' && <BinaryTools activeToolId={activeTool.id} isDark={isDark} />}
               {['css-gradient', 'color-palette', 'svg-optimizer', 'svg-path-editor'].includes(activeTool.id) ? (
                 <DesignSuiteTools activeToolId={activeTool.id} />
               ) : ['length-conv', 'area-conv', 'weight-conv', 'volume-conv', 'temp-conv', 'each-conv', 'time-conv', 'digital-conv', 'parts-per-conv', 'speed-conv', 'pace-conv', 'pressure-conv', 'current-conv', 'voltage-conv', 'power-conv', 'reactive-power-conv', 'apparent-power-conv', 'energy-conv', 'reactive-energy-conv', 'vol-flow-conv', 'illuminance-conv', 'frequency-conv', 'angle-conv', 'currency-conv', 'num-to-word-conv', 'word-to-num-conv', 'torque-conv', 'charge-conv', 'num-to-roman-conv', 'roman-to-num-conv'].includes(activeTool.id) ? (
@@ -1669,7 +1738,7 @@ export default function App() {
                 activeTool.category === 'utility' && <UtilityTools activeToolId={activeTool.id} />
               )}
               {activeTool.category === 'image' && <ImageTools activeToolId={activeTool.id} />}
-              {activeTool.category === 'calculator' && <CalculatorTools activeToolId={activeTool.id} />}
+              {activeTool.category === 'calculator' && <CalculatorTools activeToolId={activeTool.id} isDark={isDark} />}
             </div>
 
             {/* Dynamic Rich SEO Explanation Article */}
@@ -1680,10 +1749,107 @@ export default function App() {
               description={activeTool.description} 
               isDark={isDark}
             />
+
+            {/* Related Tools */}
+            {activeTool && (() => {
+              const related = getRelatedTools(activeTool);
+              if (related.length === 0) return null;
+              const categoryColor = CATEGORY_COLOR_MAP[activeTool.category] || CATEGORY_COLOR_MAP['all'];
+              return (
+                <div className={`mt-8 pt-6 border-t ${isDark ? 'border-white/5' : 'border-gray-200'}`}>
+                  <p className={`text-xs font-bold font-mono uppercase tracking-widest mb-4 ${
+                    isDark ? 'text-gray-500' : 'text-gray-400'
+                  }`}>
+                    More {activeTool.category.replace(/-/g, ' ')} tools
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {related.map((relTool) => (
+                      <button
+                        key={relTool.id}
+                        type="button"
+                        onClick={() => {
+                          selectTool(relTool);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`text-left p-3 rounded-xl border transition-all group ${
+                          isDark
+                            ? 'bg-[#0f0f0f] border-white/5 hover:border-orange-500/25 hover:bg-white/2'
+                            : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50/30'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${categoryColor.iconBg} ${categoryColor.iconText}`}>
+                          {getToolIcon(relTool.iconName)}
+                        </div>
+                        <p className={`text-xs font-bold leading-snug line-clamp-2 transition-colors ${
+                          isDark
+                            ? 'text-gray-300 group-hover:text-white'
+                            : 'text-gray-700 group-hover:text-gray-900'
+                        }`}>
+                          {relTool.name}
+                        </p>
+                        <p className={`text-[10px] mt-1 line-clamp-1 ${
+                          isDark ? 'text-gray-600' : 'text-gray-400'
+                        }`}>
+                          {relTool.description}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         ) : (
           /* SEARCHABLE GRID DASHBOARD SCREEN */
           <div className="space-y-8 animate-fade-in">
+            {/* Hero Section — only on homepage */}
+            <div className={`text-center space-y-4 pt-4 pb-8 border-b ${isDark ? 'border-white/5' : 'border-gray-200'}`}>
+              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono font-bold border ${
+                isDark
+                  ? 'bg-orange-500/8 border-orange-500/15 text-orange-400'
+                  : 'bg-orange-50 border-orange-200 text-orange-600'
+              }`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                {ALL_TOOLS.length} free tools — no account needed
+              </div>
+
+              <h1 className={`text-3xl sm:text-4xl font-black tracking-tight leading-tight ${
+                isDark ? 'text-white' : 'text-gray-900'
+              }`}>
+                The toolbox for people<br className="hidden sm:block" /> who build things online.
+              </h1>
+
+              <p className={`text-sm sm:text-base max-w-xl mx-auto leading-relaxed ${
+                isDark ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Format JSON, convert files, generate passwords, calculate fees, and {ALL_TOOLS.length}+ more utilities — all free, all private, all running directly in your browser.
+              </p>
+
+              <div className={`flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-mono ${
+                isDark ? 'text-gray-500' : 'text-gray-400'
+              }`}>
+                <span className="flex items-center gap-1.5">
+                  <Icons.Shield className="w-3.5 h-3.5 text-emerald-500" />
+                  No data uploaded
+                </span>
+                <span className={isDark ? 'text-white/10' : 'text-gray-200'}>•</span>
+                <span className="flex items-center gap-1.5">
+                  <Icons.Zap className="w-3.5 h-3.5 text-orange-500" />
+                  Works offline
+                </span>
+                <span className={isDark ? 'text-white/10' : 'text-gray-200'}>•</span>
+                <span className="flex items-center gap-1.5">
+                  <Icons.Lock className="w-3.5 h-3.5 text-indigo-400" />
+                  No signup required
+                </span>
+                <span className={isDark ? 'text-white/10' : 'text-gray-200'}>•</span>
+                <span className="flex items-center gap-1.5">
+                  <Icons.Globe className="w-3.5 h-3.5 text-sky-400" />
+                  100% free forever
+                </span>
+              </div>
+            </div>
+
             <div className="text-center max-w-2xl mx-auto space-y-4">
               <div className={`inline-flex items-center gap-1.5 p-1 px-3.5 ${theme.badgeBg} border ${theme.badgeBorder} rounded-full ${theme.badgeText} text-xs font-mono font-bold mx-auto mb-1 animate-pulse`}>
                 <Icons.Rocket className="w-3.5 h-3.5" />
@@ -1987,6 +2153,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <CookieBanner isDark={isDark} />
     </div>
   );
 }

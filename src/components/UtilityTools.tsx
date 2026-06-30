@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Shield, Key, RefreshCw, Calendar, Sparkles, Scale, Info, Check, Copy, Image as ImageIcon, UploadCloud, Trash2, ArrowRight, Download, CheckCircle, HelpCircle, FileImage, FileText, Code, RotateCw } from 'lucide-react';
 
-export function UtilityTools({ activeToolId }: { activeToolId: string }) {
+interface UtilityToolsProps {
+  activeToolId: string;
+  isDark: boolean;
+}
+
+export function UtilityTools({ activeToolId, isDark }: UtilityToolsProps) {
   const [copiedStatus, setCopiedStatus] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -11,41 +16,58 @@ export function UtilityTools({ activeToolId }: { activeToolId: string }) {
   };
 
   if (activeToolId === 'pass-gen') {
-    return <PasswordGenerator onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <PasswordGenerator isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'password-entropy') {
-    return <PasswordEntropyCalculator onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <PasswordEntropyCalculator isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'unit-conv') {
-    return <UnitConverter />;
+    return <UnitConverter isDark={isDark} />;
   }
   if (activeToolId === 'age-calc') {
-    return <AgeCalculator />;
+    return <AgeCalculator isDark={isDark} />;
   }
   if (activeToolId === 'png-to-jpg') {
-    return <PngToJpgConverter />;
+    return <PngToJpgConverter isDark={isDark} />;
   }
   if (activeToolId === 'ico-to-png') {
-    return <IcoToPngConverter />;
+    return <IcoToPngConverter isDark={isDark} />;
   }
   if (activeToolId === 'ico-converter') {
-    return <IcoConverter />;
+    return <IcoConverter isDark={isDark} />;
   }
   if (activeToolId === 'image-to-base64') {
-    return <ImageToBase64 onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <ImageToBase64 isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'base64-to-image') {
-    return <Base64ToImage />;
+    return <Base64ToImage isDark={isDark} />;
   }
   if (activeToolId === 'flip-image') {
-    return <FlipImage />;
+    return <FlipImage isDark={isDark} />;
   }
 
   return null;
 }
 
 // 1. HIGH SECURITY PASSWORD GENERATOR
-function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function PasswordGenerator({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [length, setLength] = useState(16);
   const [includeUpper, setIncludeUpper] = useState(true);
   const [includeLower, setIncludeLower] = useState(true);
@@ -80,7 +102,6 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
     setPassword(generated);
   };
 
-  // Crude estimation of password strength
   const getStrengthRating = () => {
     if (!password) return { text: 'Empty', color: 'bg-gray-200 text-gray-500', width: 'w-0' };
     let score = 0;
@@ -99,21 +120,24 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
 
   const strength = getStrengthRating();
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="password-generator-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">UTILITY</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UTILITY</span>
           Flexible Password Generator
         </h2>
-        <p className="text-sm text-gray-400">Generate randomized, high entropy password sequences directly in browser context.</p>
+        <p className={`text-sm ${t.textMuted}`}>Generate randomized, high entropy password sequences directly in browser context.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sliders & toggles */}
-        <div className="lg:col-span-1 space-y-4 font-sans text-sm text-gray-300 bg-[#141414] border border-white/5 p-5 rounded-xl">
+        <div className={`lg:col-span-1 space-y-4 font-sans text-sm ${t.textMuted} ${t.panelBg} p-5 rounded-xl`}>
           <div>
-            <div className="flex justify-between items-center mb-1 font-semibold text-white">
+            <div className={`flex justify-between items-center mb-1 font-semibold ${t.heading}`}>
               <span>Length:</span>
               <span className="font-mono text-indigo-400">{length} characters</span>
             </div>
@@ -128,30 +152,29 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
           </div>
 
           <div className="space-y-2.5 pt-2">
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-200 hover:text-white">
+            <label className={`flex items-center gap-2 cursor-pointer font-medium ${t.textMuted} hover:${t.heading}`}>
               <input type="checkbox" checked={includeUpper} onChange={(e) => setIncludeUpper(e.target.checked)} className="rounded border-white/10 text-indigo-650 accent-indigo-650 w-4 h-4 cursor-pointer" />
               <span>Uppercase (A-Z)</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-200 hover:text-white">
+            <label className={`flex items-center gap-2 cursor-pointer font-medium ${t.textMuted} hover:${t.heading}`}>
               <input type="checkbox" checked={includeLower} onChange={(e) => setIncludeLower(e.target.checked)} className="rounded border-white/10 text-indigo-650 accent-indigo-650 w-4 h-4 cursor-pointer" />
               <span>Lowercase (a-z)</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-200 hover:text-white">
+            <label className={`flex items-center gap-2 cursor-pointer font-medium ${t.textMuted} hover:${t.heading}`}>
               <input type="checkbox" checked={includeNumbers} onChange={(e) => setIncludeNumbers(e.target.checked)} className="rounded border-white/10 text-indigo-650 accent-indigo-650 w-4 h-4 cursor-pointer" />
               <span>Numbers (0-9)</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-200 hover:text-white">
+            <label className={`flex items-center gap-2 cursor-pointer font-medium ${t.textMuted} hover:${t.heading}`}>
               <input type="checkbox" checked={includeSymbols} onChange={(e) => setIncludeSymbols(e.target.checked)} className="rounded border-white/10 text-indigo-650 accent-indigo-650 w-4 h-4 cursor-pointer" />
               <span>Symbols (!@#$%)</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-amber-400 hover:text-amber-300 pt-2 border-t border-white/5">
+            <label className={`flex items-center gap-2 cursor-pointer font-medium text-amber-400 hover:text-amber-300 pt-2 border-t ${t.border}`}>
               <input type="checkbox" checked={excludeDuplicates} onChange={(e) => setExcludeDuplicates(e.target.checked)} className="rounded border-white/10 text-indigo-650 accent-indigo-655 w-4 h-4 cursor-pointer" />
               <span>Unique keys only</span>
             </label>
           </div>
         </div>
 
-        {/* Output Panel */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -159,7 +182,7 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
               <input
                 type="text"
                 readOnly
-                className="w-full p-3 pl-11 pr-12 border border-white/10 rounded-xl text-lg font-mono focus:outline-none bg-[#161616] text-white font-semibold tracking-wide select-all placeholder-gray-600"
+                className={`w-full p-3 pl-11 pr-12 ${t.inputBg} rounded-xl text-lg font-mono font-semibold tracking-wide select-all placeholder-gray-600`}
                 placeholder="Click the purple button to trigger..."
                 value={password}
               />
@@ -167,7 +190,7 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
                 <button
                   type="button"
                   onClick={() => onCopy(password, 'pwd')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-400 cursor-pointer"
+                  className={`absolute right-3.5 top-1/2 -translate-y-1/2 ${t.textFaint} hover:text-indigo-400 cursor-pointer`}
                   title="Copy password"
                 >
                   {copiedStatus === 'pwd' ? <Check className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
@@ -185,17 +208,17 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
           </div>
 
           {password && (
-            <div className="p-4 border border-white/10 rounded-xl space-y-3 bg-[#161616]">
+            <div className={`p-4 border ${t.border} rounded-xl space-y-3 ${t.controlBg}`}>
               <div className="flex justify-between items-center text-xs">
-                <span className="font-mono text-gray-400">ENTROPY STRENGTH LEVEL:</span>
+                <span className={`font-mono ${t.textMuted}`}>ENTROPY STRENGTH LEVEL:</span>
                 <span className={`p-1 px-3.5 text-xs font-black rounded-full ${strength.color}`}>
                   {strength.text}
                 </span>
               </div>
-              <div className="w-full bg-[#252525] h-2 rounded-full overflow-hidden">
+              <div className={`w-full h-2 rounded-full overflow-hidden ${isDark ? "bg-[#252525]" : "bg-gray-200"}`}>
                 <div className={`h-full transition-all duration-300 ${strength.color} ${strength.width}`} />
               </div>
-              <div className="flex items-start gap-1.5 text-xxs text-gray-400 pt-1">
+              <div className={`flex items-start gap-1.5 text-xxs ${t.textFaint} pt-1`}>
                 <Shield className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                 <span>Computed browser-side inside standard local Math.random cycles. Completely client private.</span>
               </div>
@@ -208,7 +231,24 @@ function PasswordGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id
 }
 
 // 2. UNIT CONVERTER
-function UnitConverter() {
+function UnitConverter({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [category, setCategory] = useState<'length' | 'temp' | 'data'>('length');
   const [val, setVal] = useState<number>(1);
   const [fromUnit, setFromUnit] = useState('m');
@@ -234,7 +274,6 @@ function UnitConverter() {
 
   const handleConvert = () => {
     if (category === 'temp') {
-      // Custom temp logic
       let celsius = val;
       if (fromUnit === 'f') celsius = (val - 32) * (5/9);
       if (fromUnit === 'k') celsius = val - 273.15;
@@ -250,7 +289,6 @@ function UnitConverter() {
       const toObj = unitsList.find(u => u.code === toUnit);
 
       if (fromObj && toObj) {
-        // Convert to base standard, then to final factor
         const baseVal = val / fromObj.factor;
         const converted = baseVal * toObj.factor;
         setResult(parseFloat(converted.toFixed(6)));
@@ -273,30 +311,34 @@ function UnitConverter() {
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="unit-converter-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${t.border}`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">UTILITY</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UTILITY</span>
             Multi-Unit Converter
           </h2>
-          <p className="text-sm text-gray-400">Convert quantities cleanly between computer sizes, physical lengths, or temperatures.</p>
+          <p className={`text-sm ${t.textMuted}`}>Convert quantities cleanly between computer sizes, physical lengths, or temperatures.</p>
         </div>
-        <div className="bg-[#161616] p-1 rounded-lg flex inline-flex text-xs font-semibold border border-white/10">
-          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'length' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'}`} onClick={() => handleSetCategory('length')}>Length</button>
-          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'temp' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'}`} onClick={() => handleSetCategory('temp')}>Temp</button>
-          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'data' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'}`} onClick={() => handleSetCategory('data')}>Data Size</button>
+        <div className={`${t.controlBg} p-1 rounded-lg flex inline-flex text-xs font-semibold border ${t.border}`}>
+          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'length' ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading}`}`} onClick={() => handleSetCategory('length')}>Length</button>
+          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'temp' ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading}`}`} onClick={() => handleSetCategory('temp')}>Temp</button>
+          <button type="button" className={`p-1.5 px-3 rounded cursor-pointer transition-all ${category === 'data' ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading}`}`} onClick={() => handleSetCategory('data')}>Data Size</button>
         </div>
       </div>
 
-      <div className="p-5 border border-white/10 rounded-xl bg-[#161616] space-y-4">
+      <div className={`p-5 border ${t.border} rounded-xl ${t.controlBg} space-y-4`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           <div>
-            <label className="text-xs font-semibold text-gray-400 block mb-1">Quantity/Value:</label>
+            <label className={`text-xs font-semibold ${t.textMuted} block mb-1`}>Quantity/Value:</label>
             <input 
               type="number" 
-              className="w-full p-2.5 border border-white/10 rounded-lg text-sm bg-[#141414] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+              className={`w-full p-2.5 ${t.inputBg} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500`}
               value={val}
               onChange={(e) => {
                 setVal(parseFloat(e.target.value) || 0);
@@ -305,11 +347,11 @@ function UnitConverter() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-400 block mb-1">From Unit:</label>
+            <label className={`text-xs font-semibold ${t.textMuted} block mb-1`}>From Unit:</label>
             <select
               value={fromUnit}
               onChange={(e) => setFromUnit(e.target.value)}
-              className="w-full p-2.5 border border-white/10 rounded-lg text-sm bg-[#141414] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              className={`w-full p-2.5 ${t.selectBg} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500`}
             >
               {category === 'length' && units.length.map(u => <option key={u.code} value={u.code}>{u.name}</option>)}
               {category === 'data' && units.data.map(u => <option key={u.code} value={u.code}>{u.name}</option>)}
@@ -324,11 +366,11 @@ function UnitConverter() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-400 block mb-1">To Unit:</label>
+            <label className={`text-xs font-semibold ${t.textMuted} block mb-1`}>To Unit:</label>
             <select
               value={toUnit}
               onChange={(e) => setToUnit(e.target.value)}
-              className="w-full p-2.5 border border-white/10 rounded-lg text-sm bg-[#141414] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              className={`w-full p-2.5 ${t.selectBg} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500`}
             >
               {category === 'length' && units.length.map(u => <option key={u.code} value={u.code}>{u.name}</option>)}
               {category === 'data' && units.data.map(u => <option key={u.code} value={u.code}>{u.name}</option>)}
@@ -365,7 +407,24 @@ function UnitConverter() {
 }
 
 // 3. AGE & LEAP YEAR COUNTDOWN
-function AgeCalculator() {
+function AgeCalculator({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [birthdate, setBirthdate] = useState('');
   const [stats, setStats] = useState<{
     years: number;
@@ -392,7 +451,6 @@ function AgeCalculator() {
       { name: "Scorpio (Scorpion)", start: "10-23", end: "11-21" },
       { name: "Sagittarius (Archer)", start: "11-22", end: "12-21" }
     ];
-    // Check match
     const dateFormatted = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const matched = zodiacs.find(z => {
       if (z.start <= z.end) {
@@ -431,7 +489,6 @@ function AgeCalculator() {
     const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const hours = Math.floor(diffTime / (1000 * 60 * 60));
 
-    // Next birthday countdown
     const nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
     if (nextBday < today) {
       nextBday.setFullYear(today.getFullYear() + 1);
@@ -449,22 +506,26 @@ function AgeCalculator() {
     });
   };
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="age-calculator-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">UTILITY</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UTILITY</span>
           Personal Birthdate & Zodiac Compiler
         </h2>
-        <p className="text-sm text-gray-400">Examine details of your life metrics, total hours lived, leap dates, and Zodiac charts.</p>
+        <p className={`text-sm ${t.textMuted}`}>Examine details of your life metrics, total hours lived, leap dates, and Zodiac charts.</p>
       </div>
 
-      <div className="p-5 border border-white/10 rounded-xl bg-[#161616] max-w-xl mx-auto space-y-4">
+      <div className={`p-5 border ${t.border} rounded-xl ${t.controlBg} max-w-xl mx-auto space-y-4`}>
         <div>
-          <label className="text-xs font-semibold text-gray-400 block mb-1.5">Pick Birthdate:</label>
+          <label className={`text-xs font-semibold ${t.textMuted} block mb-1.5`}>Pick Birthdate:</label>
           <input
             type="date"
-            className="w-full p-3 border border-white/10 rounded-lg text-sm font-semibold text-white bg-[#141414] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+            className={`w-full p-3 ${t.inputBg} rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500`}
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
           />
@@ -480,25 +541,25 @@ function AgeCalculator() {
         </button>
 
         {stats && (
-          <div className="pt-4 border-t border-white/5 space-y-4">
+          <div className="pt-4 border-t ${t.border} space-y-4">
             <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-3 bg-[#141414] border border-white/5 rounded-lg">
-                <span className="text-xs font-bold text-gray-400 font-mono">EXACT AGE:</span>
-                <p className="text-sm font-bold text-white mt-1">{stats.years} Yrs, {stats.months} Mhs, {stats.days} Days</p>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                <span className={`text-xs font-bold ${t.textFaint} font-mono`}>EXACT AGE:</span>
+                <p className={`text-sm font-bold ${t.heading} mt-1`}>{stats.years} Yrs, {stats.months} Mhs, {stats.days} Days</p>
               </div>
 
-              <div className="p-3 bg-[#141414] border border-white/5 rounded-lg">
-                <span className="text-xs font-bold text-gray-400 font-mono">ZODIAC SYMBOL:</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                <span className={`text-xs font-bold ${t.textFaint} font-mono`}>ZODIAC SYMBOL:</span>
                 <p className="text-sm font-bold text-indigo-300 mt-1">{stats.zodiac}</p>
               </div>
 
-              <div className="p-3 bg-[#141414] border border-white/5 rounded-lg">
-                <span className="text-xs font-bold text-gray-400 font-mono">TOTAL DAYS LIVED:</span>
-                <p className="text-base font-extrabold text-gray-200 mt-1 font-mono">{stats.totalDays.toLocaleString()}</p>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                <span className={`text-xs font-bold ${t.textFaint} font-mono`}>TOTAL DAYS LIVED:</span>
+                <p className={`text-base font-extrabold ${t.heading} mt-1 font-mono`}>{stats.totalDays.toLocaleString()}</p>
               </div>
 
-              <div className="p-3 bg-[#141414] border border-white/5 rounded-lg">
-                <span className="text-xs font-bold text-gray-400 font-mono">COUNTDOWN TO BDAY:</span>
+              <div className={`p-3 ${t.controlBg} border ${t.border} rounded-lg`}>
+                <span className={`text-xs font-bold ${t.textFaint} font-mono`}>COUNTDOWN TO BDAY:</span>
                 <p className="text-base font-extrabold text-rose-455 mt-1 font-mono text-rose-400">
                   {stats.nextBirthday === 0 ? "Today! 🎂" : `${stats.nextBirthday} Days`}
                 </p>
@@ -512,7 +573,24 @@ function AgeCalculator() {
 }
 
 // 4. PNG TO JPG IMAGE CONVERTER
-function PngToJpgConverter() {
+function PngToJpgConverter({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
@@ -622,22 +700,22 @@ function PngToJpgConverter() {
     ? Math.round(((selectedFile.size - convertedSize) / selectedFile.size) * 100)
     : 0;
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="png-to-jpg-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">UTILITY</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UTILITY</span>
           PNG to JPG Image Converter
         </h2>
-        <p className="text-sm text-gray-400">Convert client-side high resolution PNG images to compact JPEGs offline with transparency color fillings.</p>
+        <p className={`text-sm ${t.textMuted}`}>Convert client-side high resolution PNG images to compact JPEGs offline with transparency color fillings.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Selection/Config panel */}
         <div className="lg:col-span-1 space-y-4">
-          
-          {/* File Picker / Drag and Drop area */}
           {!selectedFile ? (
             <div 
               onDragEnter={handleDrag}
@@ -645,12 +723,12 @@ function PngToJpgConverter() {
               onDragLeave={handleDrag}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-xl p-8 text-center flex flex-col items-center justify-center min-h-[220px] transition-all relative ${
-                dragActive ? 'border-indigo-500 bg-[#132230]/40 text-indigo-200' : 'border-white/10 bg-[#141414] hover:border-indigo-550/50'
+                dragActive ? 'border-indigo-500 bg-[#132230]/40 text-indigo-200' : `${t.border} ${t.controlBg} hover:border-indigo-550/50`
               }`}
             >
-              <UploadCloud className="w-10 h-10 text-gray-500 mb-2" />
-              <p className="text-sm font-semibold text-gray-300">Drag & drop your PNG image here</p>
-              <p className="text-xs text-gray-500 mt-1 mb-4">Or click to select from your device</p>
+              <UploadCloud className={`w-10 h-10 ${t.textFaint} mb-2`} />
+              <p className={`text-sm font-semibold ${t.textMuted}`}>Drag & drop your PNG image here</p>
+              <p className={`text-xs ${t.textFaint} mt-1 mb-4`}>Or click to select from your device</p>
               <label className="p-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-xs cursor-pointer transition-all shadow-sm">
                 Browse Files
                 <input 
@@ -662,7 +740,7 @@ function PngToJpgConverter() {
               </label>
             </div>
           ) : (
-            <div className="bg-[#161616] border border-white/10 rounded-xl p-4 space-y-3 relative overflow-hidden">
+            <div className={`${t.controlBg} border ${t.border} rounded-xl p-4 space-y-3 relative overflow-hidden`}>
               <button 
                 onClick={clearFile}
                 className="absolute top-3 right-3 text-gray-400 hover:text-rose-455 p-1 rounded-full hover:bg-rose-500/10 cursor-pointer transition-all"
@@ -673,27 +751,25 @@ function PngToJpgConverter() {
               
               <div className="flex items-center gap-3">
                 {originalImageUrl && (
-                  <img src={originalImageUrl} alt="source thumbnail" className="w-16 h-16 rounded object-cover border border-white/10 bg-[#141414]" />
+                  <img src={originalImageUrl} alt="source thumbnail" className={`w-16 h-16 rounded object-cover border border-white/10 ${isDark ? "bg-[#141414]" : "bg-gray-100"}`} />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-white truncate">{selectedFile.name}</p>
-                  <p className="text-[11px] text-gray-400 font-mono mt-0.5">Size: {formatSize(selectedFile.size)}</p>
+                  <p className={`text-xs font-bold ${t.heading} truncate`}>{selectedFile.name}</p>
+                  <p className={`text-[11px] ${t.textFaint} font-mono mt-0.5`}>Size: {formatSize(selectedFile.size)}</p>
                   {dimensions && (
-                    <p className="text-[11px] text-gray-400 font-mono">Dimensions: {dimensions.width} x {dimensions.height} px</p>
+                    <p className={`text-[11px] ${t.textFaint} font-mono`}>Dimensions: {dimensions.width} x {dimensions.height} px</p>
                   )}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Settings block */}
           {selectedFile && (
-            <div className="bg-[#141414] border border-white/5 rounded-xl p-4 space-y-4 text-sm text-gray-300">
-              <h3 className="font-bold text-white border-b border-white/5 pb-2">Conversion Settings</h3>
+            <div className={`${t.panelBg} rounded-xl p-4 space-y-4 text-sm ${t.textMuted}`}>
+              <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>Conversion Settings</h3>
               
-              {/* Quality Selector */}
               <div className="space-y-1.5">
-                <div className="flex justify-between font-medium text-gray-300">
+                <div className={`flex justify-between font-medium ${t.textMuted}`}>
                   <span>Compression Quality:</span>
                   <span className="font-mono text-indigo-400 text-xs font-bold">{Math.round(quality * 100)}%</span>
                 </div>
@@ -705,21 +781,20 @@ function PngToJpgConverter() {
                   value={quality} 
                   onChange={(e) => {
                     setQuality(parseFloat(e.target.value));
-                    setConvertedUrl(null); // Reset outputs so they can convert again
+                    setConvertedUrl(null);
                   }}
                   className="w-full accent-indigo-650 h-1.5 bg-[#252525] border border-white/5 rounded-lg appearance-none cursor-pointer"
                 />
-                <span className="text-[10px] text-gray-500 block">Lower quality produces smaller file sizes, higher quality preserves details.</span>
+                <span className={`text-[10px] ${t.textFaint} block`}>Lower quality produces smaller file sizes, higher quality preserves details.</span>
               </div>
 
-              {/* Transparent background color picker (since JPG does not support alpha channel) */}
               <div className="space-y-1.5">
-                <span className="font-medium text-gray-300 block">Transparency Fill Color:</span>
+                <span className={`font-medium ${t.textMuted} block`}>Transparency Fill Color:</span>
                 <div className="grid grid-cols-4 gap-2">
                   <button 
                     type="button" 
                     onClick={() => { setBgColor('#ffffff'); setConvertedUrl(null); }} 
-                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#ffffff' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : 'border-white/10 bg-[#161616] text-gray-400'}`}
+                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#ffffff' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}
                   >
                     <span className="w-4 h-4 bg-white border border-white/10 rounded-full mb-1"></span>
                     <span>White</span>
@@ -727,7 +802,7 @@ function PngToJpgConverter() {
                   <button 
                     type="button" 
                     onClick={() => { setBgColor('#000000'); setConvertedUrl(null); }} 
-                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#000000' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : 'border-white/10 bg-[#161616] text-gray-400'}`}
+                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#000000' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}
                   >
                     <span className="w-4 h-4 bg-black rounded-full mb-1 border border-black/50"></span>
                     <span>Black</span>
@@ -735,22 +810,22 @@ function PngToJpgConverter() {
                   <button 
                     type="button" 
                     onClick={() => { setBgColor('#f3f4f6'); setConvertedUrl(null); }} 
-                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#f3f4f6' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : 'border-white/10 bg-[#161616] text-gray-400'}`}
+                    className={`p-1.5 flex flex-col items-center justify-center border rounded-lg text-[10px] font-bold ${bgColor === '#f3f4f6' ? 'border-indigo-500 bg-[#161616] ring-2 ring-indigo-500/20' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}
                   >
                     <span className="w-4 h-4 bg-gray-100 rounded-full mb-1 border border-white/10"></span>
                     <span>Gray</span>
                   </button>
-                  <div className="relative p-1 border border-white/10 rounded-lg bg-[#161616] flex flex-col items-center justify-center">
+                  <div className={`relative p-1 border ${t.border} rounded-lg ${t.controlBg} flex flex-col items-center justify-center`}>
                     <input 
                       type="color" 
                       value={bgColor} 
                       onChange={(e) => { setBgColor(e.target.value); setConvertedUrl(null); }} 
                       className="w-5 h-5 cursor-pointer rounded border border-white/10 outline-none p-0 bg-transparent" 
                     />
-                    <span className="text-[10px] font-mono mt-1 text-gray-300 select-all">{bgColor.toUpperCase()}</span>
+                    <span className={`text-[10px] font-mono mt-1 ${t.textMuted} select-all`}>{bgColor.toUpperCase()}</span>
                   </div>
                 </div>
-                <span className="text-[10px] text-gray-500 block">PNG transparency will be filled with this solid color.</span>
+                <span className={`text-[10px] ${t.textFaint} block`}>PNG transparency will be filled with this solid color.</span>
               </div>
 
               <button
@@ -773,81 +848,71 @@ function PngToJpgConverter() {
               </button>
             </div>
           )}
-
         </div>
 
-        {/* Live Output comparison panels */}
         <div className="lg:col-span-2">
           {!selectedFile ? (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[350px]">
-              <ImageIcon className="w-12 h-12 mb-2 text-gray-600" />
-              <p className="text-sm">Select or drop a PNG image to trigger conversions.</p>
-              <p className="text-xs text-gray-500 max-w-xs mt-1">Files are entirely handled locally on your browser. Absolutely zero image data gets transferred to any host or server.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[350px]`}>
+              <ImageIcon className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+              <p className={`text-sm ${t.textMuted}`}>Select or drop a PNG image to trigger conversions.</p>
+              <p className={`text-xs ${t.textFaint} max-w-xs mt-1`}>Files are entirely handled locally on your browser. Absolutely zero image data gets transferred to any host or server.</p>
             </div>
           ) : (
-            <div className="border border-white/10 rounded-xl p-5 bg-[#161616] h-full space-y-6">
-              
-              {/* Comparison headers */}
-              <div className="grid grid-cols-2 gap-4 border-b border-white/5 pb-4">
+            <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} h-full space-y-6`}>
+              <div className="grid grid-cols-2 gap-4 border-b ${t.border} pb-4">
                 <div>
-                  <span className="text-xs font-bold text-gray-500 font-mono block">SOURCE PNG:</span>
-                  <p className="text-sm font-bold text-white mt-1">PNG Image Format</p>
-                  <p className="text-xs font-mono text-gray-400 mt-0.5">{formatSize(selectedFile.size)}</p>
+                  <span className={`text-xs font-bold ${t.textFaint} font-mono block`}>SOURCE PNG:</span>
+                  <p className={`text-sm font-bold ${t.heading} mt-1`}>PNG Image Format</p>
+                  <p className={`text-xs font-mono ${t.textFaint} mt-0.5`}>{formatSize(selectedFile.size)}</p>
                 </div>
 
-                <div className="border-l border-white/5 pl-4">
-                  <span className="text-xs font-bold text-indigo-400 font-mono block">RESULTING JPG:</span>
-                  <p className="text-sm font-bold text-indigo-200 mt-1">
+                <div className={`border-l pl-4 ${isDark ? "border-white/5" : "border-gray-200"}`}>
+                  <span className={`text-xs font-bold text-indigo-400 font-mono block`}>RESULTING JPG:</span>
+                  <p className={`text-sm font-bold text-indigo-200 mt-1`}>
                     {convertedUrl ? 'Convert Success!' : 'Ready to Convert'}
                   </p>
                   {convertedSize ? (
-                    <p className="text-xs font-mono text-indigo-400 mt-0.5">
+                    <p className={`text-xs font-mono text-indigo-400 mt-0.5`}>
                       {formatSize(convertedSize)} &nbsp;
                       {savedPercent > 0 ? (
                         <span className="text-emerald-450 font-bold text-emerald-400">({savedPercent}% saved size)</span>
                       ) : (
-                        <span className="text-gray-500 font-bold">(increased size)</span>
+                        <span className={`${t.textFaint} font-bold`}>(increased size)</span>
                       )}
                     </p>
                   ) : (
-                    <p className="text-xs font-mono text-gray-500 mt-0.5">Pending conversion click...</p>
+                    <p className={`text-xs font-mono ${t.textFaint} mt-0.5`}>Pending conversion click...</p>
                   )}
                 </div>
               </div>
 
-              {/* Side-by-side or large previews */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Source viewport */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-gray-500 block uppercase">Original PNG Visual:</span>
-                  <div className="aspect-video bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-2 relative group checkerboard-grid">
+                  <span className={`text-[10px] font-mono font-bold ${t.textFaint} block uppercase`}>Original PNG Visual:</span>
+                  <div className={`aspect-video rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-2 relative checkerboard-grid ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {originalImageUrl && (
                       <img src={originalImageUrl} alt="Original input visual" className="max-w-full max-h-full object-contain" />
                     )}
                   </div>
                 </div>
 
-                {/* Dest viewport */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-indigo-400 block uppercase">Resulting JPG Visual:</span>
-                  <div className="aspect-video bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-2 relative">
+                  <span className={`text-[10px] font-mono font-bold text-indigo-400 block uppercase`}>Resulting JPG Visual:</span>
+                  <div className={`aspect-video rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-2 relative ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {convertedUrl ? (
                       <img src={convertedUrl} alt="Converted JPG visual" className="max-w-full max-h-full object-contain" />
                     ) : (
-                      <div className="text-center text-xs text-gray-500 bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4">
-                        <RefreshCw className="w-6 h-6 mb-1 text-gray-600" />
+                      <div className={`text-center text-xs ${t.textFaint} bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4`}>
+                        <RefreshCw className={`w-6 h-6 mb-1 ${t.textFaint}`} />
                         <span>Click "Convert to JPG" on the left dashboard to render the output file.</span>
                       </div>
                     )}
                   </div>
                 </div>
-
               </div>
 
-              {/* Downloader toolbar */}
               {convertedUrl && (
-                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
+                <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
                   <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span>Your conversion is completed! Size was optimized by {savedPercent}%.</span>
@@ -863,18 +928,33 @@ function PngToJpgConverter() {
                   </a>
                 </div>
               )}
-
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
 }
 
 // 5. ICO TO PNG CONVERTER
-function IcoToPngConverter() {
+function IcoToPngConverter({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
   const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
@@ -947,47 +1027,51 @@ function IcoToPngConverter() {
     img.src = originalUrl;
   };
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="ico-to-png-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">IMAGE</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>IMAGE</span>
           ICO to PNG Converter
         </h2>
-        <p className="text-sm text-gray-400">Extract high-resolution, transparent PNG images from Windows `.ico` icons entirely within your browser.</p>
+        <p className={`text-sm ${t.textMuted}`}>Extract high-resolution, transparent PNG images from Windows `.ico` icons entirely within your browser.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-4">
-          <div className="border border-dashed border-white/10 rounded-xl p-5 text-center bg-[#141414] hover:border-indigo-500/30 transition-all relative">
+          <div className={`border border-dashed ${t.border} rounded-xl p-5 text-center ${t.controlBg} hover:border-indigo-500/30 transition-all relative`}>
             <input 
               type="file" 
               accept=".ico" 
               onChange={handleFileChange} 
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
             />
-            <UploadCloud className="w-10 h-10 mx-auto text-gray-500 mb-2 pointer-events-none" />
-            <p className="text-xs font-bold text-gray-300">Choose or drop an ICO file</p>
-            <p className="text-[10px] text-gray-500 mt-1 font-mono">Accepts .ico files</p>
+            <UploadCloud className={`w-10 h-10 mx-auto ${t.textFaint} mb-2 pointer-events-none`} />
+            <p className={`text-xs font-bold ${t.textMuted}`}>Choose or drop an ICO file</p>
+            <p className={`text-[10px] ${t.textFaint} mt-1 font-mono`}>Accepts .ico files</p>
           </div>
 
           {selectedFile && (
-            <div className="bg-[#141414] border border-white/5 rounded-xl p-4 text-sm space-y-4 text-gray-300">
-              <h3 className="font-bold text-white border-b border-white/5 pb-2">ICO Specifications</h3>
+            <div className={`${t.panelBg} rounded-xl p-4 text-sm space-y-4 ${t.textMuted}`}>
+              <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>ICO Specifications</h3>
               <div className="space-y-1.5 font-sans">
-                <p className="text-xs truncate"><span className="text-gray-500">Filename:</span> {selectedFile.name}</p>
-                <p className="text-xs"><span className="text-gray-505 font-sans">File Size:</span> {formatSize(selectedFile.size)}</p>
+                <p className={`text-xs truncate`}><span className={t.textFaint}>Filename:</span> {selectedFile.name}</p>
+                <p className={`text-xs`}><span className={t.textFaint}>File Size:</span> {formatSize(selectedFile.size)}</p>
                 {dimensions && (
-                  <p className="text-xs"><span className="text-gray-550 font-sans">Detected dimensions:</span> {dimensions.width} x {dimensions.height} px</p>
+                  <p className={`text-xs`}><span className={t.textFaint}>Detected dimensions:</span> {dimensions.width} x {dimensions.height} px</p>
                 )}
               </div>
 
               <div className="space-y-1.5 font-sans">
-                <label className="text-xs font-semibold text-gray-400 block">Output Resize Option:</label>
+                <label className={`text-xs font-semibold ${t.textMuted} block`}>Output Resize Option:</label>
                 <select
                   value={selectedSize}
                   onChange={(e) => setSelectedSize(e.target.value)}
-                  className="w-full p-2 border border-white/10 rounded-lg text-xs bg-[#161616] text-white focus:outline-none"
+                  className={`w-full p-2 ${t.selectBg} rounded-lg text-xs focus:outline-none`}
                 >
                   <option value="original">Original Size (Embedded Resolution)</option>
                   <option value="256">256 x 256 px (HQ Icon)</option>
@@ -1023,16 +1107,16 @@ function IcoToPngConverter() {
 
         <div className="lg:col-span-2">
           {!selectedFile ? (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[300px]">
-              <FileImage className="w-12 h-12 mb-2 text-gray-600" />
-              <p className="text-sm">Select an `.ico` image file to extract transparent PNG visual frames.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[300px]`}>
+              <FileImage className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+              <p className={`text-sm ${t.textMuted}`}>Select an `.ico` image file to extract transparent PNG visual frames.</p>
             </div>
           ) : (
-            <div className="border border-white/10 rounded-xl p-5 bg-[#161616] h-full space-y-6">
+            <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} h-full space-y-6`}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <span className="text-xs font-bold text-gray-500 font-mono block uppercase">Source ICO Preview:</span>
-                  <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[280px]">
+                  <span className={`text-xs font-bold ${t.textFaint} font-mono block uppercase`}>Source ICO Preview:</span>
+                  <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[280px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {originalUrl && (
                       <img src={originalUrl} alt="Source ICO visual" className="max-w-full max-h-full object-contain" />
                     )}
@@ -1040,13 +1124,13 @@ function IcoToPngConverter() {
                 </div>
 
                 <div>
-                  <span className="text-xs font-bold text-indigo-400 font-mono block uppercase">Extracted PNG Visual:</span>
-                  <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[280px]">
+                  <span className={`text-xs font-bold text-indigo-400 font-mono block uppercase`}>Extracted PNG Visual:</span>
+                  <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[280px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {convertedUrl ? (
                       <img src={convertedUrl} alt="Extracted PNG visual" className="max-w-full max-h-full object-contain" />
                     ) : (
-                      <div className="text-center text-xs text-gray-500 bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4">
-                        <RefreshCw className="w-6 h-6 mb-1 text-gray-600" />
+                      <div className={`text-center text-xs ${t.textFaint} bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4`}>
+                        <RefreshCw className={`w-6 h-6 mb-1 ${t.textFaint}`} />
                         <span>Click "Extract PNG" to compute output.</span>
                       </div>
                     )}
@@ -1055,7 +1139,7 @@ function IcoToPngConverter() {
               </div>
 
               {convertedUrl && (
-                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
+                <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
                   <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span>PNG format extraction complete! Alpha channels preserved correctly.</span>
@@ -1080,10 +1164,26 @@ function IcoToPngConverter() {
 }
 
 // 6. ICO CONVERTER
-function IcoConverter() {
+function IcoConverter({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [mode, setMode] = useState<'to-ico' | 'to-png'>('to-ico');
 
-  // Multi-size states for PNG to ICO
   const [selectedFileImg, setSelectedFileImg] = useState<File | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [sizes, setSizes] = useState<{ [key: number]: boolean }>({
@@ -1098,7 +1198,6 @@ function IcoConverter() {
   const [icoUrl, setIcoUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // States for ICO to PNG/JPG
   const [selectedFileIco, setSelectedFileIco] = useState<File | null>(null);
   const [icoPreviewUrl, setIcoPreviewUrl] = useState<string | null>(null);
   const [pngExtractedUrl, setPngExtractedUrl] = useState<string | null>(null);
@@ -1219,7 +1318,6 @@ function IcoConverter() {
     img.src = icoPreviewUrl;
   };
 
-  // Binary multi-resolution packer helper
   const generateMultiSizeIco = async (canvasList: HTMLCanvasElement[]): Promise<Blob> => {
     const pngBuffers: ArrayBuffer[] = [];
     const sizesMeta: { w: number; h: number }[] = [];
@@ -1241,9 +1339,9 @@ function IcoConverter() {
     const headerBuffer = new ArrayBuffer(totalHeaderSize);
     const view = new DataView(headerBuffer);
     
-    view.setUint16(0, 0, true); // Reserved
-    view.setUint16(2, 1, true); // Type (1 = ICO)
-    view.setUint16(4, imageCount, true); // Count
+    view.setUint16(0, 0, true);
+    view.setUint16(2, 1, true);
+    view.setUint16(4, imageCount, true);
     
     let currentOffset = totalHeaderSize;
     for (let i = 0; i < imageCount; i++) {
@@ -1254,12 +1352,12 @@ function IcoConverter() {
       
       view.setUint8(dirOffset, w >= 256 ? 0 : w);
       view.setUint8(dirOffset + 1, h >= 256 ? 0 : h);
-      view.setUint8(dirOffset + 2, 0); // Palette
-      view.setUint8(dirOffset + 3, 0); // Reserved
-      view.setUint16(dirOffset + 4, 1, true); // Planes (1)
-      view.setUint16(dirOffset + 6, 32, true); // Bits per pixel (32)
-      view.setUint32(dirOffset + 8, len, true); // Data length
-      view.setUint32(dirOffset + 12, currentOffset, true); // Offset
+      view.setUint8(dirOffset + 2, 0);
+      view.setUint8(dirOffset + 3, 0);
+      view.setUint16(dirOffset + 4, 1, true);
+      view.setUint16(dirOffset + 6, 32, true);
+      view.setUint32(dirOffset + 8, len, true);
+      view.setUint32(dirOffset + 12, currentOffset, true);
       
       currentOffset += len;
     }
@@ -1267,29 +1365,32 @@ function IcoConverter() {
     return new Blob([headerBuffer, ...pngBuffers], { type: 'image/x-icon' });
   };
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="ico-converter-container">
-      <div className="pb-4 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className={`pb-4 border-b ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">IMAGE</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>IMAGE</span>
             Universal ICO Converter
           </h2>
-          <p className="text-sm text-gray-400">Compile smart multi-resolution `.ico` icon packs client-side, or convert `.ico` files back to flat images.</p>
+          <p className={`text-sm ${t.textMuted}`}>Compile smart multi-resolution `.ico` icon packs client-side, or convert `.ico` files back to flat images.</p>
         </div>
         
-        {/* Toggle selectors */}
-        <div className="bg-[#161616] p-1 rounded-lg flex inline-flex text-xs font-bold border border-white/10 self-start">
+        <div className={`${t.controlBg} p-1 rounded-lg flex inline-flex text-xs font-bold border ${t.border} self-start`}>
           <button 
             type="button" 
-            className={`p-1.5 px-3 rounded cursor-pointer transition-all ${mode === 'to-ico' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'}`} 
+            className={`p-1.5 px-3 rounded cursor-pointer transition-all ${mode === 'to-ico' ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading}`}`} 
             onClick={() => setMode('to-ico')}
           >
             Image to ICO Favicon
           </button>
           <button 
             type="button" 
-            className={`p-1.5 px-3 rounded cursor-pointer transition-all ${mode === 'to-png' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'}`} 
+            className={`p-1.5 px-3 rounded cursor-pointer transition-all ${mode === 'to-png' ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading}`}`} 
             onClick={() => setMode('to-png')}
           >
             ICO Unpacker
@@ -1300,27 +1401,27 @@ function IcoConverter() {
       {mode === 'to-ico' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
-            <div className="border border-dashed border-white/10 rounded-xl p-5 text-center bg-[#141414] hover:border-indigo-500/30 transition-all relative">
+            <div className={`border border-dashed ${t.border} rounded-xl p-5 text-center ${t.controlBg} hover:border-indigo-500/30 transition-all relative`}>
               <input 
                 type="file" 
                 accept="image/png, image/jpeg, image/webp" 
                 onChange={handleImgChange} 
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full cursor-pointer" 
               />
-              <UploadCloud className="w-10 h-10 mx-auto text-gray-500 mb-2 pointer-events-none" />
-              <p className="text-xs font-bold text-gray-300">Choose PNG/JPG/WebP input</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">Will be packed into ICO bundle</p>
+              <UploadCloud className={`w-10 h-10 mx-auto ${t.textFaint} mb-2 pointer-events-none`} />
+              <p className={`text-xs font-bold ${t.textMuted}`}>Choose PNG/JPG/WebP input</p>
+              <p className={`text-[10px] ${t.textFaint} mt-0.5`}>Will be packed into ICO bundle</p>
             </div>
 
             {selectedFileImg && (
-              <div className="bg-[#141414] border border-white/5 rounded-xl p-4 text-sm space-y-4 text-gray-300">
-                <h3 className="font-bold text-white border-b border-white/5 pb-2">ICO Compilation Pack</h3>
+              <div className={`${t.panelBg} rounded-xl p-4 text-sm space-y-4 ${t.textMuted}`}>
+                <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>ICO Compilation Pack</h3>
                 
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-gray-400 block mb-1 font-sans">Select dimensions to embed:</span>
+                  <span className={`text-xs font-semibold ${t.textMuted} block mb-1 font-sans`}>Select dimensions to embed:</span>
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                     {[16, 32, 48, 64, 128, 256].map((sz) => (
-                      <label key={sz} className="flex items-center gap-2 bg-[#161616] p-2 rounded border border-white/5 cursor-pointer hover:border-white/10 select-none">
+                      <label key={sz} className={`flex items-center gap-2 ${t.controlBg} p-2 rounded border ${t.border} cursor-pointer hover:border-white/10 select-none`}>
                         <input 
                           type="checkbox" 
                           checked={sizes[sz] || false} 
@@ -1331,7 +1432,7 @@ function IcoConverter() {
                       </label>
                     ))}
                   </div>
-                  <span className="text-[10px] text-gray-500 block font-sans">Typical standard browser favicons call for a composite of 16x16, 32x32, and 48x48. Check them.</span>
+                  <span className={`text-[10px] ${t.textFaint} block font-sans`}>Typical standard browser favicons call for a composite of 16x16, 32x32, and 48x48. Check them.</span>
                 </div>
 
                 <button
@@ -1358,15 +1459,15 @@ function IcoConverter() {
 
           <div className="lg:col-span-2">
             {!selectedFileImg ? (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[300px]">
-                <ImageIcon className="w-12 h-12 mb-2 text-gray-600" />
-                <p className="text-sm">Provide a transparent PNG or high quality picture to compile custom favicons.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[300px]`}>
+                <ImageIcon className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+                <p className={`text-sm ${t.textMuted}`}>Provide a transparent PNG or high quality picture to compile custom favicons.</p>
               </div>
             ) : (
-              <div className="border border-white/10 rounded-xl p-5 bg-[#161616] h-full space-y-6">
+              <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} h-full space-y-6`}>
                 <div>
-                  <span className="text-xs font-bold text-gray-500 font-mono block uppercase">Source Image Target:</span>
-                  <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px]">
+                  <span className={`text-xs font-bold ${t.textFaint} font-mono block uppercase`}>Source Image Target:</span>
+                  <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {imageSrc && (
                       <img src={imageSrc} alt="Source upload preview" className="max-w-full max-h-full object-contain" />
                     )}
@@ -1374,7 +1475,7 @@ function IcoConverter() {
                 </div>
 
                 {icoUrl && (
-                  <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans">
+                  <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans">
                     <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                       <CheckCircle className="w-4 h-4 text-emerald-400" />
                       <span>ICO compilation is ready! Encompasses {Object.keys(sizes).filter(k=>sizes[Number(k)]).length} resolution formats. Size: {icoBlob ? formatSize(icoBlob.size) : 'Calculated'}</span>
@@ -1397,24 +1498,24 @@ function IcoConverter() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
-            <div className="border border-dashed border-white/10 rounded-xl p-5 text-center bg-[#141414] hover:border-indigo-500/30 transition-all relative">
+            <div className={`border border-dashed ${t.border} rounded-xl p-5 text-center ${t.controlBg} hover:border-indigo-500/30 transition-all relative`}>
               <input 
                 type="file" 
                 accept=".ico" 
                 onChange={handleIcoChange} 
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full cursor-pointer" 
               />
-              <UploadCloud className="w-10 h-10 mx-auto text-gray-500 mb-2 pointer-events-none" />
-              <p className="text-xs font-bold text-gray-300">Choose ICO to unpack</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">Upload .ico image</p>
+              <UploadCloud className={`w-10 h-10 mx-auto ${t.textFaint} mb-2 pointer-events-none`} />
+              <p className={`text-xs font-bold ${t.textMuted}`}>Choose ICO to unpack</p>
+              <p className={`text-[10px] ${t.textFaint} mt-0.5`}>Upload .ico image</p>
             </div>
 
             {selectedFileIco && (
-              <div className="bg-[#141414] border border-white/5 rounded-xl p-4 text-sm space-y-4 text-gray-300 font-sans">
-                <h3 className="font-bold text-white border-b border-white/5 pb-2">ICO Unpacker options</h3>
+              <div className={`${t.panelBg} rounded-xl p-4 text-sm space-y-4 ${t.textMuted} font-sans`}>
+                <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>ICO Unpacker options</h3>
                 <div className="font-mono text-xs space-y-1">
-                  <p className="truncate"><span className="text-gray-505 font-sans">Filename:</span> {selectedFileIco.name}</p>
-                  <p><span className="text-gray-505 font-sans">Weight:</span> {formatSize(selectedFileIco.size)}</p>
+                  <p className="truncate"><span className={t.textFaint}>Filename:</span> {selectedFileIco.name}</p>
+                  <p><span className={t.textFaint}>Weight:</span> {formatSize(selectedFileIco.size)}</p>
                 </div>
 
                 <button
@@ -1441,16 +1542,16 @@ function IcoConverter() {
 
           <div className="lg:col-span-2 col-span-1">
             {!selectedFileIco ? (
-              <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[300px]">
-                <FileImage className="w-12 h-12 mb-2 text-gray-600" />
-                <p className="text-sm">Provide `.ico` resource to unpack into raw PNG frame elements.</p>
+              <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[300px]`}>
+                <FileImage className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+                <p className={`text-sm ${t.textMuted}`}>Provide `.ico` resource to unpack into raw PNG frame elements.</p>
               </div>
             ) : (
-              <div className="border border-white/10 rounded-xl p-5 bg-[#161616] h-full space-y-6">
+              <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} h-full space-y-6`}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <span className="text-xs font-bold text-gray-500 font-mono block uppercase">Source ICO Layout:</span>
-                    <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[220px]">
+                    <span className={`text-xs font-bold ${t.textFaint} font-mono block uppercase`}>Source ICO Layout:</span>
+                    <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[220px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                       {icoPreviewUrl && (
                         <img src={icoPreviewUrl} alt="ICO Source layout" className="max-w-full max-h-full object-contain" />
                       )}
@@ -1458,13 +1559,13 @@ function IcoConverter() {
                   </div>
 
                   <div>
-                    <span className="text-xs font-bold text-indigo-400 font-mono block uppercase">Extracted Output View:</span>
-                    <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[220px]">
+                    <span className={`text-xs font-bold text-indigo-400 font-mono block uppercase`}>Extracted Output View:</span>
+                    <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[220px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                       {pngExtractedUrl ? (
                         <img src={pngExtractedUrl} alt="Extracted clean PNG" className="max-w-full max-h-full object-contain" />
                       ) : (
-                        <div className="text-center text-xs text-gray-500 bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4">
-                          <RefreshCw className="w-6 h-6 mb-1 text-gray-600" />
+                        <div className={`text-center text-xs ${t.textFaint} bg-[#141414] w-full h-full flex flex-col items-center justify-center px-4`}>
+                          <RefreshCw className={`w-6 h-6 mb-1 ${t.textFaint}`} />
                           <span>Awaiting frame extraction...</span>
                         </div>
                       )}
@@ -1473,7 +1574,7 @@ function IcoConverter() {
                 </div>
 
                 {pngExtractedUrl && (
-                  <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans">
+                  <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans">
                     <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                       <CheckCircle className="w-4 h-4 text-emerald-400" />
                       <span>Extracted PNG frame with transparency has been finalized client-side.</span>
@@ -1499,7 +1600,24 @@ function IcoConverter() {
 }
 
 // 7. IMAGE TO BASE64 CONVERTER
-function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function ImageToBase64({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [base64String, setBase64String] = useState<string>('');
   const [fileType, setFileType] = useState<string>('');
@@ -1548,38 +1666,42 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
   const outputString = getOutputText();
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="image-to-base64-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">CONVERTER</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CONVERTER</span>
           Image to Base64 Code
         </h2>
-        <p className="text-sm text-gray-400">Convert your image assets into secure, layout-safe Base64 String or CSS data-uri schemas offline in-browser.</p>
+        <p className={`text-sm ${t.textMuted}`}>Convert your image assets into secure, layout-safe Base64 String or CSS data-uri schemas offline in-browser.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-4 font-sans">
-          <div className="border border-dashed border-white/10 rounded-xl p-5 text-center bg-[#141414] hover:border-indigo-500/30 transition-all relative">
+          <div className={`border border-dashed ${t.border} rounded-xl p-5 text-center ${t.controlBg} hover:border-indigo-500/30 transition-all relative`}>
             <input 
               type="file" 
               accept="image/*" 
               onChange={handleFileChange} 
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full cursor-pointer" 
             />
-            <UploadCloud className="w-10 h-10 mx-auto text-gray-500 mb-2 pointer-events-none" />
-            <p className="text-xs font-bold text-gray-300">Select any image file</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">Supports JPG, PNG, SVG, GIF, WebP</p>
+            <UploadCloud className={`w-10 h-10 mx-auto ${t.textFaint} mb-2 pointer-events-none`} />
+            <p className={`text-xs font-bold ${t.textMuted}`}>Select any image file</p>
+            <p className={`text-[10px] ${t.textFaint} mt-0.5`}>Supports JPG, PNG, SVG, GIF, WebP</p>
           </div>
 
           {selectedFile && (
-            <div className="bg-[#141414] border border-white/5 rounded-xl p-4 text-sm space-y-3.5 text-gray-300">
-              <h3 className="font-bold text-white border-b border-white/5 pb-2">Image Statistics</h3>
+            <div className={`${t.panelBg} rounded-xl p-4 text-sm space-y-3.5 ${t.textMuted}`}>
+              <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>Image Statistics</h3>
               <div className="space-y-2 text-xs font-mono">
-                <p className="truncate"><span className="text-gray-400 font-sans">Filename:</span> {selectedFile.name}</p>
-                <p><span className="text-gray-400 font-sans">Mimetype:</span> {fileType}</p>
-                <p><span className="text-gray-400 font-sans">Original weight:</span> {formatSize(selectedFile.size)}</p>
-                <p><span className="text-gray-400 font-sans">Unicode length:</span> {base64String.length.toLocaleString()} chars</p>
+                <p className="truncate"><span className={`${t.textFaint} font-sans`}>Filename:</span> {selectedFile.name}</p>
+                <p><span className={`${t.textFaint} font-sans`}>Mimetype:</span> {fileType}</p>
+                <p><span className={`${t.textFaint} font-sans`}>Original weight:</span> {formatSize(selectedFile.size)}</p>
+                <p><span className={`${t.textFaint} font-sans`}>Unicode length:</span> {base64String.length.toLocaleString()} chars</p>
               </div>
               
               <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 text-amber-305 text-[11px] rounded-lg font-sans">
@@ -1591,13 +1713,13 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
         <div className="lg:col-span-2">
           {!selectedFile ? (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[300px]">
-              <Code className="w-12 h-12 mb-2 text-gray-600" />
-              <p className="text-sm">Supply any image asset to translate into text URI representations.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[300px]`}>
+              <Code className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+              <p className={`text-sm ${t.textMuted}`}>Supply any image asset to translate into text URI representations.</p>
             </div>
           ) : (
-            <div className="border border-white/10 rounded-xl p-4 bg-[#161616] h-full space-y-4">
-              <div className="flex flex-wrap gap-1.5 border-b border-white/5 pb-2">
+            <div className={`border ${t.border} rounded-xl p-4 ${t.controlBg} h-full space-y-4`}>
+              <div className="flex flex-wrap gap-1.5 border-b ${t.border} pb-2">
                 {[
                   { id: 'datauri', label: 'Data URI Schema' },
                   { id: 'raw', label: 'Raw Base64 Code' },
@@ -1609,7 +1731,7 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
                     key={tb.id}
                     title="Switch formats"
                     onClick={() => setActiveTab(tb.id as any)}
-                    className={`p-1.5 px-3.5 rounded text-xs font-bold cursor-pointer transition-all ${activeTab === tb.id ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                    className={`p-1.5 px-3.5 rounded text-xs font-bold cursor-pointer transition-all ${activeTab === tb.id ? 'bg-indigo-600 text-white shadow' : `${t.textMuted} hover:${t.heading} hover:bg-white/5`}`}
                   >
                     {tb.label}
                   </button>
@@ -1617,13 +1739,13 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs font-mono text-gray-400">
+                <div className={`flex justify-between items-center text-xs font-mono ${t.textMuted}`}>
                   <span>OUTFLOW STRUCTURAL TEXT:</span>
                   {outputString && (
                     <button
                       type="button"
                       onClick={() => onCopy(outputString, 'b64')}
-                      className="text-xs hover:text-indigo-400 inline-flex items-center gap-1 text-gray-400 cursor-pointer"
+                      className={`text-xs hover:text-indigo-400 inline-flex items-center gap-1 ${t.textMuted} cursor-pointer`}
                     >
                       {copiedStatus === 'b64' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       {copiedStatus === 'b64' ? 'Copied code!' : 'Copy format code'}
@@ -1633,7 +1755,7 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
                 <textarea
                   readOnly
-                  className="w-full h-64 p-3.5 border border-white/10 rounded-lg text-[11px] font-mono bg-[#141414] text-purple-300 focus:outline-none focus:border-white/10 resize-none break-all select-all opacity-95"
+                  className={`w-full h-64 p-3.5 ${t.outputBg} rounded-lg text-[11px] font-mono focus:outline-none focus:border-white/10 resize-none break-all select-all opacity-95`}
                   value={outputString}
                   placeholder="Base64 sequences will compose here..."
                 />
@@ -1641,10 +1763,10 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
               {base64String && (
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-gray-500 font-bold uppercase">Dynamic image preview from data-uri:</span>
-                  <div className="h-16 flex items-center gap-2 p-2 bg-[#141414] rounded-lg border border-white/5 w-fit">
-                    <img src={base64String} alt="Decoded asset inline preview" className="h-full rounded object-contain max-w-[120px] bg-[#1a1a1a] border border-white/10" referrerPolicy="no-referrer" />
-                    <span className="text-xxs text-gray-550 font-mono italic">Compiled visual confirmation</span>
+                  <span className={`text-[10px] font-mono ${t.textFaint} font-bold uppercase`}>Dynamic image preview from data-uri:</span>
+                  <div className={`h-16 flex items-center gap-2 p-2 ${t.controlBg} rounded-lg border ${t.border} w-fit`}>
+                    <img src={base64String} alt="Decoded asset inline preview" className={`h-full rounded object-contain max-w-[120px] border border-white/10 ${isDark ? "bg-[#1a1a1a]" : "bg-gray-100"}`} referrerPolicy="no-referrer" />
+                    <span className={`text-xxs ${t.textFaint} font-mono italic`}>Compiled visual confirmation</span>
                   </div>
                 </div>
               )}
@@ -1657,7 +1779,24 @@ function ImageToBase64({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 }
 
 // 8. BASE64 TO IMAGE CONVERTER
-function Base64ToImage() {
+function Base64ToImage({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [inputText, setInputText] = useState('');
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [mimeType, setMimeType] = useState<string>('image/png');
@@ -1674,7 +1813,6 @@ function Base64ToImage() {
 
     let cleaned = inputText.trim();
     
-    // Check if it's already a Data URI
     if (cleaned.startsWith('data:image/')) {
       const match = cleaned.match(/^data:(image\/[^;]+);base64,/);
       if (match) {
@@ -1690,14 +1828,11 @@ function Base64ToImage() {
       }
     }
 
-    // Otherwise, strip whitespaces and check if it's alphanumeric base64
     cleaned = cleaned.replace(/\s/g, '');
     
     try {
-      // Basic verification
       window.atob(cleaned);
       
-      // Sniff MIME type
       let guessedMime = 'image/png';
       if (cleaned.startsWith('iVBORw0KGgo')) guessedMime = 'image/png';
       else if (cleaned.startsWith('/9j/')) guessedMime = 'image/jpeg';
@@ -1729,32 +1864,36 @@ function Base64ToImage() {
     return 'png';
   };
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="base64-to-image-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">DECODER</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>DECODER</span>
           Base64 to Image Decoder
         </h2>
-        <p className="text-sm text-gray-400">Decode Base64 Data URI strings or raw binary character streams back into high-fidelity downloadable graphics.</p>
+        <p className={`text-sm ${t.textMuted}`}>Decode Base64 Data URI strings or raw binary character streams back into high-fidelity downloadable graphics.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-[#141414] border border-white/5 rounded-xl p-5 text-sm space-y-4 text-gray-300 font-sans">
-            <h3 className="font-bold text-white border-b border-white/5 pb-2">Decoder parameters</h3>
+          <div className={`${t.panelBg} rounded-xl p-5 text-sm space-y-4 ${t.textMuted} font-sans`}>
+            <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>Decoder parameters</h3>
             
             <div className="space-y-1">
-              <span className="text-xs font-semibold text-gray-400 block">Identified Mimetype:</span>
-              <div className="p-2.5 bg-[#161616] border border-white/5 rounded-lg text-xs font-mono font-bold text-indigo-400">
+              <span className={`text-xs font-semibold ${t.textMuted} block`}>Identified Mimetype:</span>
+              <div className={`p-2.5 ${t.controlBg} border ${t.border} rounded-lg text-xs font-mono font-bold text-indigo-400`}>
                 {mimeType}
               </div>
             </div>
 
             {dimensions && (
               <div className="space-y-1 font-sans">
-                <span className="text-xs font-semibold text-gray-400 block">Resolution dimensions:</span>
-                <div className="p-2.5 bg-[#161616] border border-white/5 rounded-lg text-xs font-mono font-bold text-white">
+                <span className={`text-xs font-semibold ${t.textMuted} block`}>Resolution dimensions:</span>
+                <div className={`p-2.5 ${t.controlBg} border ${t.border} rounded-lg text-xs font-mono font-bold ${t.heading}`}>
                   {dimensions.w} x {dimensions.h} pixels
                 </div>
               </div>
@@ -1773,9 +1912,9 @@ function Base64ToImage() {
 
         <div className="lg:col-span-2 space-y-4">
           <div className="space-y-1.5 font-sans">
-            <span className="text-xs font-mono text-gray-400 block font-bold">PASTE STRING HERE (Supports raw strings or complete Data URIs):</span>
+            <span className={`text-xs font-mono ${t.textMuted} block font-bold`}>PASTE STRING HERE (Supports raw strings or complete Data URIs):</span>
             <textarea
-              className="w-full h-44 p-3 border border-white/10 rounded-lg text-[11px] font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-indigo-505 placeholder-gray-650"
+              className={`w-full h-44 p-3 ${t.textareaBg} rounded-lg text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-505`}
               placeholder="e.g. data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -1789,13 +1928,13 @@ function Base64ToImage() {
           )}
 
           {imageSrc && (
-            <div className="border border-white/10 rounded-xl p-5 bg-[#161616] space-y-4">
-              <span className="text-xs font-bold text-indigo-400 font-mono block uppercase">Rendered graphic canvas:</span>
-              <div className="aspect-video bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-3 relative checkerboard-grid max-h-[300px]">
+            <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} space-y-4`}>
+              <span className={`text-xs font-bold text-indigo-400 font-mono block uppercase`}>Rendered graphic canvas:</span>
+              <div className={`aspect-video rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-3 relative checkerboard-grid max-h-[300px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                 <img src={imageSrc} alt="Decoded visualization" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
               </div>
 
-              <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans animate-fade">
+              <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20 font-sans animate-fade">
                 <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                   <CheckCircle className="w-4 h-4 text-emerald-400" />
                   <span>Success! Painted Base64 code array cleanly to graphic viewport.</span>
@@ -1819,7 +1958,24 @@ function Base64ToImage() {
 }
 
 // 9. IMAGE FLIP & ROTATION TOOL
-function FlipImage() {
+function FlipImage({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
   const [transformedUrl, setTransformedUrl] = useState<string | null>(null);
@@ -1881,18 +2037,11 @@ function FlipImage() {
       canvas.width = targetWidth;
       canvas.height = targetHeight;
 
-      // Translate coordinates to centers
       ctx.translate(canvas.width / 2, canvas.height / 2);
-
-      // Apply rotation degrees
       ctx.rotate((rotation * Math.PI) / 180);
-
-      // Apply side scaling flips
       const scaleX = flipH ? -1 : 1;
       const scaleY = flipV ? -1 : 1;
       ctx.scale(scaleX, scaleY);
-
-      // Print at negative half offsets
       ctx.drawImage(img, -width / 2, -height / 2, width, height);
 
       canvas.toBlob((blob) => {
@@ -1906,55 +2055,58 @@ function FlipImage() {
     img.src = originalUrl;
   };
 
-  // Run automatically when orientation inputs change
   React.useEffect(() => {
     if (originalUrl) {
       applyTransformations();
     }
   }, [flipH, flipV, rotation, originalUrl]);
 
+  const badgeClass = isDark
+    ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="flip-image-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded">IMAGE</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>IMAGE</span>
           Flip & Rotate Image
         </h2>
-        <p className="text-sm text-gray-400">Instantly mirror, pivot, spin, or completely rotate image assets in real-time right inside your browser client.</p>
+        <p className={`text-sm ${t.textMuted}`}>Instantly mirror, pivot, spin, or completely rotate image assets in real-time right inside your browser client.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
         <div className="lg:col-span-1 space-y-4">
-          <div className="border border-dashed border-white/10 rounded-xl p-5 text-center bg-[#141414] hover:border-indigo-500/30 transition-all relative">
+          <div className={`border border-dashed ${t.border} rounded-xl p-5 text-center ${t.controlBg} hover:border-indigo-500/30 transition-all relative`}>
             <input 
               type="file" 
               accept="image/*" 
               onChange={handleFileChange} 
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full cursor-pointer" 
             />
-            <UploadCloud className="w-10 h-10 mx-auto text-gray-500 mb-2 pointer-events-none" />
-            <p className="text-xs font-bold text-gray-300">Upload any image target</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">JPG, PNG, WEBP, etc.</p>
+            <UploadCloud className={`w-10 h-10 mx-auto ${t.textFaint} mb-2 pointer-events-none`} />
+            <p className={`text-xs font-bold ${t.textMuted}`}>Upload any image target</p>
+            <p className={`text-[10px] ${t.textFaint} mt-0.5`}>JPG, PNG, WEBP, etc.</p>
           </div>
 
           {selectedFile && (
-            <div className="bg-[#141414] border border-white/5 rounded-xl p-5 text-sm space-y-4 text-gray-300 font-sans">
-              <h3 className="font-bold text-white border-b border-white/5 pb-2">Transformation Controls</h3>
+            <div className={`${t.panelBg} rounded-xl p-5 text-sm space-y-4 ${t.textMuted} font-sans`}>
+              <h3 className={`font-bold ${t.heading} border-b ${t.border} pb-2`}>Transformation Controls</h3>
               
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-gray-400 block">Mirror Flips:</span>
+                <span className={`text-xs font-semibold ${t.textMuted} block`}>Mirror Flips:</span>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <button
                     type="button"
                     onClick={() => setFlipH(!flipH)}
-                    className={`p-2 rounded-lg font-bold border transition-all cursor-pointer ${flipH ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-[#161616] border-white/10 text-gray-400 hover:text-white'}`}
+                    className={`p-2 rounded-lg font-bold border transition-all cursor-pointer ${flipH ? 'bg-indigo-600 border-indigo-500 text-white' : `${t.border} ${t.controlBg} ${t.textFaint} hover:${t.heading}`}`}
                   >
                     Flip Horizontal ↔️
                   </button>
                   <button
                     type="button"
                     onClick={() => setFlipV(!flipV)}
-                    className={`p-2 rounded-lg font-bold border transition-all cursor-pointer ${flipV ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-[#161616] border-white/10 text-gray-400 hover:text-white'}`}
+                    className={`p-2 rounded-lg font-bold border transition-all cursor-pointer ${flipV ? 'bg-indigo-600 border-indigo-500 text-white' : `${t.border} ${t.controlBg} ${t.textFaint} hover:${t.heading}`}`}
                   >
                     Flip Vertical ↕️
                   </button>
@@ -1962,15 +2114,15 @@ function FlipImage() {
               </div>
 
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-gray-400 block">Preset Rotations:</span>
-                <div className="grid grid-cols-4 gap-1 px-1 p-1 bg-[#161616] border border-white/10 rounded-lg text-[10px] font-semibold text-center">
+                <span className={`text-xs font-semibold ${t.textMuted} block`}>Preset Rotations:</span>
+                <div className={`grid grid-cols-4 gap-1 px-1 p-1 ${t.controlBg} border ${t.border} rounded-lg text-[10px] font-semibold text-center`}>
                   {[0, 90, 180, 270].map((angle) => {
                     return (
                       <button
                         key={angle}
                         type="button"
                         onClick={() => setRotation(angle)}
-                        className={`p-1 pl-1.5 pr-1.5 rounded transition-all cursor-pointer ${rotation === angle ? 'bg-indigo-600 text-white shadow' : 'text-gray-405 hover:text-white'}`}
+                        className={`p-1 pl-1.5 pr-1.5 rounded transition-all cursor-pointer ${rotation === angle ? 'bg-indigo-600 text-white shadow' : `${t.textFaint} hover:${t.heading}`}`}
                       >
                         {angle}°
                       </button>
@@ -1980,7 +2132,7 @@ function FlipImage() {
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-semibold text-gray-400">
+                <div className={`flex justify-between text-xs font-semibold ${t.textMuted}`}>
                   <span>Rotation degree:</span>
                   <span className="font-mono text-indigo-400 font-bold">{rotation}°</span>
                 </div>
@@ -1993,14 +2145,14 @@ function FlipImage() {
                   onChange={(e) => setRotation(parseInt(e.target.value, 10))}
                   className="w-full h-1.5 bg-[#252525] accent-indigo-600 text-indigo-605 border border-white/5 rounded-lg appearance-none cursor-pointer"
                 />
-                <span className="text-[10px] text-gray-500 block">Pivots perfectly around canvas coordinates at 90-degree step layouts.</span>
+                <span className={`text-[10px] ${t.textFaint} block`}>Pivots perfectly around canvas coordinates at 90-degree step layouts.</span>
               </div>
 
-              <div className="flex gap-2 text-xs font-sans pt-2 border-t border-white/5">
+              <div className={`flex gap-2 text-xs font-sans pt-2 border-t ${t.border}`}>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full p-2 bg-[#1c1c1c] text-gray-400 border border-white/10 hover:text-white rounded-lg transition-all font-bold cursor-pointer"
+                  className={`w-full p-2 ${t.controlBg} ${t.textFaint} border ${t.border} hover:${t.heading} rounded-lg transition-all font-bold cursor-pointer`}
                 >
                   Clear Transforms
                 </button>
@@ -2011,16 +2163,16 @@ function FlipImage() {
 
         <div className="lg:col-span-2">
           {!selectedFile ? (
-            <div className="h-full border border-dashed border-white/10 rounded-xl bg-[#141414] flex flex-col items-center justify-center text-center p-8 text-gray-500 min-h-[300px]">
-              <RotateCw className="w-12 h-12 mb-2 text-gray-600" />
-              <p className="text-sm">Supply any picture to mirror reflect or spin its directions.</p>
+            <div className={`h-full border border-dashed ${t.border} rounded-xl ${t.controlBg} flex flex-col items-center justify-center text-center p-8 ${t.textFaint} min-h-[300px]`}>
+              <RotateCw className={`w-12 h-12 mb-2 ${t.textFaint}`} />
+              <p className={`text-sm ${t.textMuted}`}>Supply any picture to mirror reflect or spin its directions.</p>
             </div>
           ) : (
-            <div className="border border-white/10 rounded-xl p-5 bg-[#161616] h-full space-y-6">
+            <div className={`border ${t.border} rounded-xl p-5 ${t.controlBg} h-full space-y-6`}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <span className="text-xs font-bold text-gray-500 font-mono block uppercase font-sans">Original orientation:</span>
-                  <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px]">
+                  <span className={`text-xs font-bold ${t.textFaint} font-mono block uppercase font-sans`}>Original orientation:</span>
+                  <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {originalUrl && (
                       <img src={originalUrl} alt="Source unchanged" className="max-w-full max-h-full object-contain" />
                     )}
@@ -2028,24 +2180,24 @@ function FlipImage() {
                 </div>
 
                 <div>
-                  <span className="text-xs font-bold text-indigo-400 font-mono block uppercase font-sans">Transformed outcome:</span>
-                  <div className="aspect-square bg-[#141414] rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px]">
+                  <span className={`text-xs font-bold text-indigo-400 font-mono block uppercase font-sans`}>Transformed outcome:</span>
+                  <div className={`aspect-square rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-4 relative checkerboard-grid mt-2 max-h-[250px] ${isDark ? "bg-[#141414]" : "bg-gray-100"}`}>
                     {isProcessing ? (
-                      <div className="text-center text-xs text-gray-500">
+                      <div className={`text-center text-xs ${t.textFaint}`}>
                         <RefreshCw className="w-6 h-6 mb-1 text-gray-650 animate-spin mx-auto" />
                         <span>Rendering live transforms...</span>
                       </div>
                     ) : transformedUrl ? (
                       <img src={transformedUrl} alt="Visual transformed outcome" className="max-w-full max-h-full object-contain" />
                     ) : (
-                      <div className="text-center text-xs text-gray-500">Awaiting processing triggers...</div>
+                      <div className={`text-center text-xs ${t.textFaint}`}>Awaiting processing triggers...</div>
                     )}
                   </div>
                 </div>
               </div>
 
               {transformedUrl && (
-                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
+                <div className="pt-4 border-t ${t.border} flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#1a1c2e] p-4 rounded-xl border border-indigo-500/20">
                   <div className="flex items-center gap-2 text-indigo-200 text-xs font-semibold">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span>Real-time canvas-processed changes are baked locally inside target container.</span>
@@ -2073,27 +2225,42 @@ function FlipImage() {
 // PASSWORD ENTROPY & KEYSPACE CALCULATOR COMPONENT
 // =========================================================================
 export function PasswordEntropyCalculator({
+  isDark,
   onCopy,
   copiedStatus
 }: {
+  isDark: boolean;
   onCopy: (text: string, id: string) => void;
   copiedStatus: string | null;
 }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [password, setPassword] = useState('CorrectHorseBatteryStaple');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Analyze character pool subsets
   const len = password.length;
   const hasLower = /[a-z]/.test(password);
   const hasUpper = /[A-Z]/.test(password);
   const hasDigit = /[0-9]/.test(password);
-  // Matches typical special symbols
   const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':",./<>?`~|\\ ]/.test(password);
-  // Matches anything else (Unicode characters, non-standard signs)
   const nonStandardRegex = /[^a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':",./<>?`~|\\ ]/g;
   const hasNonStandard = nonStandardRegex.test(password);
 
-  // Compute Keyspace SIZE (N)
   let poolSize = 0;
   if (hasLower) poolSize += 26;
   if (hasUpper) poolSize += 26;
@@ -2101,10 +2268,8 @@ export function PasswordEntropyCalculator({
   if (hasSymbol) poolSize += 33;
   if (hasNonStandard) poolSize += 15;
 
-  // Bits of Entropy E = log2(N^L) = L * log2(N)
   const entropy = len > 0 && poolSize > 0 ? len * (Math.log(poolSize) / Math.log(2)) : 0;
 
-  // Strength categorizations
   let grade = { label: 'Empty State', color: 'text-gray-500', barBg: 'bg-white/10', percentage: 0 };
   if (entropy > 0) {
     if (entropy < 28) {
@@ -2120,7 +2285,6 @@ export function PasswordEntropyCalculator({
     }
   }
 
-  // Format cracking times nicely
   const formatCrackTime = (seconds: number): string => {
     if (seconds === Infinity || seconds > 1e30) {
       return 'Practically Infinite (Decillions of Years)';
@@ -2150,10 +2314,8 @@ export function PasswordEntropyCalculator({
     return 'Quadrillions of years';
   };
 
-  // Combinations
   const combinationsCount = Math.pow(poolSize, len);
 
-  // Guess speeds (attempts/sec)
   const speccedRigs = [
     { name: 'Standard Multi-Core CPU', rate: 1e8, speedDesc: '100 Million guesses/sec', model: 'Intel i7 Core Desktop', icon: 'Cpu' },
     { name: 'NVIDIA RTX 4095 GPU Array', rate: 5e10, speedDesc: '50 Billion guesses/sec', model: 'Multi-GPU Brute Force Cluster', icon: 'Zap' },
@@ -2162,29 +2324,27 @@ export function PasswordEntropyCalculator({
   ];
 
   return (
-    <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+    <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
       
-      {/* Title block */}
-      <div className="border-b border-white/5 pb-4">
-        <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+      <div className={`border-b ${t.border} pb-4`}>
+        <h2 className={`text-base font-semibold ${t.heading} tracking-tight flex items-center gap-2 font-mono select-none`}>
           <Shield className="w-5 h-5 text-sky-450" />
           Password Keyspace &amp; Entropy Calculator
         </h2>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className={`text-xs ${t.textMuted} mt-1`}>
           Evaluate the mathematical strength of passphrases of any length and view estimates of offline brute-force attack runtimes.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Input & Pool Status Column */}
         <div className="lg:col-span-6 space-y-4">
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <label className="text-xs font-mono font-bold text-gray-400 uppercase block">Evaluate Passphrase</label>
+            <div className={`flex justify-between items-center`}>
+              <label className={`text-xs font-mono font-bold ${t.textMuted} uppercase block`}>Evaluate Passphrase</label>
               <button
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-[10px] text-gray-500 hover:text-gray-300 font-mono"
+                className={`text-[10px] ${t.textFaint} hover:${t.heading} font-mono`}
               >
                 {showPassword ? 'Hide Characters' : 'Reveal Characters'}
               </button>
@@ -2196,13 +2356,13 @@ export function PasswordEntropyCalculator({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Type or paste passphrase here..."
-                className="w-full p-3 pr-10 bg-[#09090b] border border-white/5 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-sky-500/50 transition-colors"
+                className={`w-full p-3 pr-10 ${t.inputBg} rounded-xl text-sm font-mono focus:outline-none focus:border-sky-500/50 transition-colors`}
               />
               <div className="absolute inset-y-0 right-3 flex items-center">
                 <button
                   onClick={() => onCopy(password, 'entropy-copy')}
                   disabled={!password}
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className={`${t.textFaint} hover:${t.heading} transition-colors`}
                   title="Copy password content"
                 >
                   {copiedStatus === 'entropy-copy' ? (
@@ -2214,46 +2374,43 @@ export function PasswordEntropyCalculator({
               </div>
             </div>
 
-            {/* Core Demo Triggers */}
             <div className="flex flex-wrap gap-2 pt-1">
-              <span className="text-[9px] font-mono font-bold text-gray-500 self-center">DEMOS:</span>
+              <span className={`text-[9px] font-mono font-bold ${t.textFaint} self-center`}>DEMOS:</span>
               <button
                 onClick={() => setPassword('password')}
-                className="p-1 px-2 border border-white/5 bg-white/5 hover:bg-white/10 text-[9px] font-mono text-gray-400 hover:text-white rounded transition-all"
+                className={`p-1 px-2 border ${t.border} ${t.controlBg} hover:bg-white/10 text-[9px] font-mono ${t.textFaint} hover:${t.heading} rounded transition-all`}
               >
                 password
               </button>
               <button
                 onClick={() => setPassword('Tr0ub4dor&3')}
-                className="p-1 px-2 border border-white/5 bg-white/5 hover:bg-white/10 text-[9px] font-mono text-gray-400 hover:text-white rounded transition-all"
+                className={`p-1 px-2 border ${t.border} ${t.controlBg} hover:bg-white/10 text-[9px] font-mono ${t.textFaint} hover:${t.heading} rounded transition-all`}
               >
                 Tr0ub4dor&amp;3
               </button>
               <button
                 onClick={() => setPassword('CorrectHorseBatteryStaple')}
-                className="p-1 px-2 border border-white/5 bg-white/5 hover:bg-white/10 text-[9px] font-mono text-gray-400 hover:text-white rounded transition-all"
+                className={`p-1 px-2 border ${t.border} ${t.controlBg} hover:bg-white/10 text-[9px] font-mono ${t.textFaint} hover:${t.heading} rounded transition-all`}
               >
                 CorrectHorseBatteryStaple
               </button>
               <button
                 onClick={() => setPassword('G$9#mP!2zKqW6eR')}
-                className="p-1 px-2 border border-white/5 bg-white/5 hover:bg-white/10 text-[9px] font-mono text-gray-400 hover:text-white rounded transition-all"
+                className={`p-1 px-2 border ${t.border} ${t.controlBg} hover:bg-white/10 text-[9px] font-mono ${t.textFaint} hover:${t.heading} rounded transition-all`}
               >
                 15-char Random
               </button>
             </div>
           </div>
 
-          {/* Entropy Gauge Panel */}
-          <div className="p-4 bg-[#09090c] border border-white/5 rounded-xl space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Mathematical Entropy Gauge</span>
+          <div className={`p-4 ${t.controlBg} rounded-xl space-y-3`}>
+            <div className={`flex justify-between items-center`}>
+              <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-wider block font-bold`}>Mathematical Entropy Gauge</span>
               <span className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded">
                 {entropy.toFixed(1)} Bits
               </span>
             </div>
 
-            {/* Dynamic gauge bar */}
             <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden">
               <div 
                 className={`h-full transition-all duration-500 ${grade.barBg}`}
@@ -2261,68 +2418,65 @@ export function PasswordEntropyCalculator({
               />
             </div>
 
-            <div className="flex justify-between text-[11px] font-mono">
-              <span className="text-gray-500">Security Rating:</span>
+            <div className={`flex justify-between text-[11px] font-mono`}>
+              <span className={t.textFaint}>Security Rating:</span>
               <span className={`${grade.color} font-bold`}>{grade.label}</span>
             </div>
           </div>
 
-          {/* Used Pool Subsets checklists */}
-          <div className="p-4 bg-[#09090c] border border-white/5 rounded-xl space-y-3">
-            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Character Subsets Detected</span>
+          <div className={`p-4 ${t.controlBg} rounded-xl space-y-3`}>
+            <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-wider block font-bold`}>Character Subsets Detected</span>
             
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasLower ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : 'bg-[#121214] border-white/5 text-gray-500'}`}>
+              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasLower ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}>
                 <span>Lowercase [a-z]</span>
                 <span className="font-bold">{hasLower ? '+26' : '0'}</span>
               </div>
-              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasUpper ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : 'bg-[#121214] border-white/5 text-gray-500'}`}>
+              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasUpper ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}>
                 <span>Uppercase [A-Z]</span>
                 <span className="font-bold">{hasUpper ? '+26' : '0'}</span>
               </div>
-              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasDigit ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : 'bg-[#121214] border-white/5 text-gray-500'}`}>
+              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasDigit ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}>
                 <span>Numbers [0-9]</span>
                 <span className="font-bold">{hasDigit ? '+10' : '0'}</span>
               </div>
-              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasSymbol ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : 'bg-[#121214] border-white/5 text-gray-500'}`}>
+              <div className={`p-2 rounded-lg flex items-center justify-between border ${hasSymbol ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400' : `${t.border} ${t.controlBg} ${t.textFaint}`}`}>
                 <span>Symbols (!,@,#,$)</span>
                 <span className="font-bold">{hasSymbol ? '+33' : '0'}</span>
               </div>
             </div>
 
-            <div className="border-t border-white/5 pt-3 grid grid-cols-2 text-[11px] font-mono text-gray-400">
+            <div className={`border-t ${t.border} pt-3 grid grid-cols-2 text-[11px] font-mono ${t.textFaint}`}>
               <div>
                 <span>Passphrase Length: </span>
-                <strong className="text-white font-bold">{len}</strong>
+                <strong className={`${t.heading} font-bold`}>{len}</strong>
               </div>
               <div>
                 <span>Total Pool Size: </span>
-                <strong className="text-white font-bold">{poolSize} Chars</strong>
+                <strong className={`${t.heading} font-bold`}>{poolSize} Chars</strong>
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* Crack Time Estimates Column */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-4">
-            <div className="flex items-center gap-1.5 pb-2 border-b border-white/5">
-              <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest font-bold font-mono">OFFLINE BRUTE FORCE BREAKDOWN</span>
+          <div className={`${t.controlBg} rounded-xl p-4 space-y-4`}>
+            <div className={`flex items-center gap-1.5 pb-2 border-b ${t.border}`}>
+              <span className={`text-[10px] font-mono ${t.textFaint} uppercase tracking-widest font-bold font-mono`}>OFFLINE BRUTE FORCE BREAKDOWN</span>
             </div>
 
             <div className="space-y-3">
               {speccedRigs.map((rig, i) => {
                 const crackTimeSec = combinationsCount / rig.rate;
                 return (
-                  <div key={'rig-' + i} className="p-3 bg-[#111114] border border-white/5 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                  <div key={'rig-' + i} className={`p-3 ${t.controlBg} border ${t.border} rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2`}>
                     <div className="text-left font-sans">
-                      <span className="text-xs font-mono font-bold text-gray-200 block">{rig.name}</span>
-                      <span className="text-[10px] text-gray-400 font-mono block">Specs: {rig.model} ({rig.speedDesc})</span>
+                      <span className={`text-xs font-mono font-bold ${t.heading} block`}>{rig.name}</span>
+                      <span className={`text-[10px] ${t.textFaint} font-mono block`}>Specs: {rig.model} ({rig.speedDesc})</span>
                     </div>
 
                     <div className="text-left sm:text-right font-sans">
-                      <span className="text-[10px] text-gray-500 block uppercase font-mono font-semibold">Cracking ETA:</span>
+                      <span className={`text-[10px] ${t.textFaint} block uppercase font-mono font-semibold`}>Cracking ETA:</span>
                       <span className={`text-xs font-mono font-bold ${crackTimeSec < 3600 * 24 ? 'text-rose-400' : 'text-emerald-400'}`}>
                         {formatCrackTime(crackTimeSec)}
                       </span>
@@ -2333,14 +2487,13 @@ export function PasswordEntropyCalculator({
             </div>
           </div>
 
-          {/* Scientific summary info */}
-          <div className="p-4 bg-white/5 border border-white/5 rounded-xl text-left space-y-2 font-mono text-xs text-gray-455">
-            <div className="flex gap-1 items-center font-sans">
+          <div className={`p-4 ${t.controlBg} border ${t.border} rounded-xl text-left space-y-2 font-mono text-xs ${t.textFaint}`}>
+            <div className={`flex gap-1 items-center font-sans`}>
               <Info className="w-3.5 h-3.5 text-sky-400" />
-              <span className="text-white font-bold">Understanding Math Entropy</span>
+              <span className={`${t.heading} font-bold`}>Understanding Math Entropy</span>
             </div>
-            <p className="leading-relaxed text-[11px] font-sans">
-              Cryptographic entropy is logarithmic. A passphrase with <strong className="text-white">80 bits</strong> of entropy contains <strong className="text-white">1.2 Trillion Trillion</strong> possible combinations. Each single bit added doubles the difficulty of cracking the password, illustrating why passphrase length is substantially more defensive than dynamic symbol replacement.
+            <p className={`leading-relaxed text-[11px] font-sans ${t.textMuted}`}>
+              Cryptographic entropy is logarithmic. A passphrase with <strong className={t.heading}>80 bits</strong> of entropy contains <strong className={t.heading}>1.2 Trillion Trillion</strong> possible combinations. Each single bit added doubles the difficulty of cracking the password, illustrating why passphrase length is substantially more defensive than dynamic symbol replacement.
             </p>
           </div>
         </div>

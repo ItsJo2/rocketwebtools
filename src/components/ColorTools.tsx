@@ -3,6 +3,7 @@ import { Palette, Copy, Check, Sliders, Hash, RotateCw, AlertCircle, RefreshCw }
 
 interface ColorToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
 // Helper: Hex to RGB
@@ -117,7 +118,7 @@ function getContrast(rgb1: { r: number; g: number; b: number }, rgb2: { r: numbe
   return (brightest + 0.05) / (darkest + 0.05);
 }
 
-export function ColorTools({ activeToolId }: ColorToolsProps) {
+export function ColorTools({ activeToolId, isDark }: ColorToolsProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -127,20 +128,37 @@ export function ColorTools({ activeToolId }: ColorToolsProps) {
   };
 
   if (activeToolId === 'color-converter') {
-    return <ColorConverter onCopy={handleCopy} copiedId={copiedId} />;
+    return <ColorConverter isDark={isDark} onCopy={handleCopy} copiedId={copiedId} />;
   }
   if (activeToolId === 'hex-to-rgb') {
-    return <HexToRgbComponent onCopy={handleCopy} copiedId={copiedId} />;
+    return <HexToRgbComponent isDark={isDark} onCopy={handleCopy} copiedId={copiedId} />;
   }
   if (activeToolId === 'rgb-to-hex') {
-    return <RgbToHexComponent onCopy={handleCopy} copiedId={copiedId} />;
+    return <RgbToHexComponent isDark={isDark} onCopy={handleCopy} copiedId={copiedId} />;
   }
 
   return null;
 }
 
 // 1. UNIFIED COLOR CONVERTER
-function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+function ColorConverter({ isDark, onCopy, copiedId }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [colorInput, setColorInput] = useState('#4F46E5');
   const [rgb, setRgb] = useState({ r: 79, g: 70, b: 229 });
   const [error, setError] = useState<string | null>(null);
@@ -179,15 +197,19 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
   const contrastWhite = getContrast(rgb, { r: 255, g: 255, b: 255 });
   const contrastBlack = getContrast(rgb, { r: 9, g: 9, b: 11 });
 
+  const badgeClass = isDark
+    ? 'bg-rose-500/10 text-rose-455 border-rose-500/20'
+    : 'bg-rose-50 text-rose-600 border-rose-200';
+
   return (
     <div className="space-y-6" id="color-converter-container">
-      <div className="pb-4 border-b border-white/5 flex justify-between items-center flex-wrap gap-4">
+      <div className={`pb-4 border-b ${t.border} flex justify-between items-center flex-wrap gap-4`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-rose-500/10 text-rose-455 border border-rose-500/20 rounded">COLOR</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>COLOR</span>
             Advanced Color Converter
           </h2>
-          <p className="text-sm text-gray-400">Convert deep color values between HEX, RGB, HSL, and CMYK schemas.</p>
+          <p className={`text-sm ${t.textMuted}`}>Convert deep color values between HEX, RGB, HSL, and CMYK schemas.</p>
         </div>
         <button
           onClick={generateRandomColor}
@@ -201,9 +223,9 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Color Controller Block */}
-        <div className="lg:col-span-4 space-y-4 bg-[#141414] border border-white/5 p-5 rounded-2xl">
+        <div className={`lg:col-span-4 space-y-4 ${t.panelBg} p-5 rounded-2xl`}>
           <div className="space-y-3">
-            <label className="text-xs font-mono text-gray-400 uppercase tracking-wider block font-bold">Pick Color or Type Hex</label>
+            <label className={`text-xs font-mono ${t.labelFaint} uppercase tracking-wider block font-bold`}>Pick Color or Type Hex</label>
             <div className="flex gap-3">
               <input 
                 type="color" 
@@ -217,7 +239,7 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
                   type="text"
                   value={colorInput}
                   onChange={(e) => updateFromHex(e.target.value)}
-                  className="w-full p-2.5 pl-9 bg-[#1d1d1f] border border-white/10 rounded-lg text-sm text-white font-mono uppercase focus:outline-none focus:border-indigo-500"
+                  className={`w-full p-2.5 pl-9 ${t.inputBg} rounded-lg text-sm font-mono uppercase focus:outline-none focus:border-indigo-500`}
                   placeholder="#4F46E5"
                 />
               </div>
@@ -244,7 +266,7 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
             </span>
             <button
               onClick={() => onCopy(colorInput, 'slab')}
-              className="p-1.5 bg-[#0e0e11]/80 hover:bg-[#0e0e11] border border-white/5 text-gray-300 hover:text-white rounded-lg relative z-10 transition-colors"
+              className={`p-1.5 ${t.copyBtn} rounded-lg relative z-10 transition-colors`}
               title="Copy hex code"
             >
               {copiedId === 'slab' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -252,7 +274,7 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
           </div>
 
           {/* RGB Sliders control block */}
-          <div className="space-y-3 pt-3 border-t border-white/5 font-mono text-xs text-gray-300">
+          <div className={`space-y-3 pt-3 border-t ${t.border} font-mono text-xs ${t.textMuted}`}>
             <div>
               <div className="flex justify-between items-center mb-1">
                 <span className="text-rose-455 font-bold">R (Red):</span>
@@ -296,85 +318,85 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
             
             {/* Hex block code */}
-            <div className="p-4 bg-[#141414] border border-white/5 rounded-2xl space-y-2 flex flex-col justify-between">
+            <div className={`p-4 ${t.panelBg} rounded-2xl space-y-2 flex flex-col justify-between`}>
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-rose-455 font-bold uppercase text-[10px] tracking-widest">Hexadecimal</span>
                   <button 
                     onClick={() => onCopy(colorInput, 'hex-f')} 
-                    className="p-1 px-2 border border-white/5 hover:bg-white/5 rounded text-gray-400 hover:text-white transition-colors"
+                    className={`p-1 px-2 ${t.copyBtn} rounded transition-colors`}
                   >
                     {copiedId === 'hex-f' ? 'Copied' : 'Copy'}
                   </button>
                 </div>
-                <div className="p-2.5 bg-[#0a0a0c] border border-white/5 rounded text-indigo-300 font-semibold select-all">
+                <div className={`p-2.5 ${t.controlBg} rounded text-indigo-300 font-semibold select-all`}>
                   {colorInput.toUpperCase()}
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">Universal web markup CSS color token representation.</p>
+              <p className={`text-[10px] ${t.textFaint} mt-1`}>Universal web markup CSS color token representation.</p>
             </div>
 
             {/* RGB block code */}
-            <div className="p-4 bg-[#141414] border border-white/5 rounded-2xl space-y-2 flex flex-col justify-between">
+            <div className={`p-4 ${t.panelBg} rounded-2xl space-y-2 flex flex-col justify-between`}>
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-emerald-400 font-bold uppercase text-[10px] tracking-widest">RGB & RGBA</span>
                   <button 
                     onClick={() => onCopy(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, 'rgb-f')} 
-                    className="p-1 px-2 border border-white/5 hover:bg-white/5 rounded text-gray-400 hover:text-white transition-colors"
+                    className={`p-1 px-2 ${t.copyBtn} rounded transition-colors`}
                   >
                     {copiedId === 'rgb-f' ? 'Copied' : 'Copy'}
                   </button>
                 </div>
-                <div className="p-2.5 bg-[#0a0a0c] border border-white/5 rounded text-emerald-400 font-semibold select-all">
+                <div className={`p-2.5 ${t.controlBg} rounded text-emerald-400 font-semibold select-all`}>
                   rgb({rgb.r}, {rgb.g}, {rgb.b})
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">Red, Green, and Blue light color integers from 0 to 255.</p>
+              <p className={`text-[10px] ${t.textFaint} mt-1`}>Red, Green, and Blue light color integers from 0 to 255.</p>
             </div>
 
             {/* HSL block code */}
-            <div className="p-4 bg-[#141414] border border-white/5 rounded-2xl space-y-2 flex flex-col justify-between">
+            <div className={`p-4 ${t.panelBg} rounded-2xl space-y-2 flex flex-col justify-between`}>
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-blue-400 font-bold uppercase text-[10px] tracking-widest">HSL Color Space</span>
                   <button 
                     onClick={() => onCopy(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`, 'hsl-f')} 
-                    className="p-1 px-2 border border-white/5 hover:bg-white/5 rounded text-gray-400 hover:text-white transition-colors"
+                    className={`p-1 px-2 ${t.copyBtn} rounded transition-colors`}
                   >
                     {copiedId === 'hsl-f' ? 'Copied' : 'Copy'}
                   </button>
                 </div>
-                <div className="p-2.5 bg-[#0a0a0c] border border-white/5 rounded text-blue-400 font-semibold select-all">
+                <div className={`p-2.5 ${t.controlBg} rounded text-blue-400 font-semibold select-all`}>
                   hsl({hsl.h}, {hsl.s}%, {hsl.l}%)
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">Hue degrees, Saturation %, and Lightness % values.</p>
+              <p className={`text-[10px] ${t.textFaint} mt-1`}>Hue degrees, Saturation %, and Lightness % values.</p>
             </div>
 
             {/* CMYK printing block */}
-            <div className="p-4 bg-[#141414] border border-white/5 rounded-2xl space-y-2 flex flex-col justify-between">
+            <div className={`p-4 ${t.panelBg} rounded-2xl space-y-2 flex flex-col justify-between`}>
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-purple-400 font-bold uppercase text-[10px] tracking-widest">CMYK printing</span>
                   <button 
                     onClick={() => onCopy(`cmyk(${cmyk.c}%, ${cmyk.m}%, ${cmyk.y}%, ${cmyk.k}%)`, 'cmyk-f')} 
-                    className="p-1 px-2 border border-white/5 hover:bg-white/5 rounded text-gray-400 hover:text-white transition-colors"
+                    className={`p-1 px-2 ${t.copyBtn} rounded transition-colors`}
                   >
                     {copiedId === 'cmyk-f' ? 'Copied' : 'Copy'}
                   </button>
                 </div>
-                <div className="p-2.5 bg-[#0a0a0c] border border-white/5 rounded text-purple-400 font-semibold select-all">
+                <div className={`p-2.5 ${t.controlBg} rounded text-purple-400 font-semibold select-all`}>
                   cmyk({cmyk.c}%, {cmyk.m}%, {cmyk.y}%, {cmyk.k}%)
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">Cyan, Magenta, Yellow, and Key Black subtraction plates.</p>
+              <p className={`text-[10px] ${t.textFaint} mt-1`}>Cyan, Magenta, Yellow, and Key Black subtraction plates.</p>
             </div>
           </div>
 
           {/* Accessible contrast analysis report */}
-          <div className="p-5 bg-[#141414] border border-white/5 rounded-2xl space-y-4">
-            <h4 className="text-xs font-bold font-mono text-gray-300 uppercase tracking-wider flex items-center gap-1.5 border-b border-white/5 pb-2.5">
+          <div className={`p-5 ${t.panelBg} rounded-2xl space-y-4`}>
+            <h4 className={`text-xs font-bold font-mono ${t.textMuted} uppercase tracking-wider flex items-center gap-1.5 border-b ${t.border} pb-2.5`}>
               <Sliders className="w-4 h-4 text-rose-500" />
               WCAG Contrast Accessibility Checker
             </h4>
@@ -382,21 +404,21 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               {/* White Contrast Card */}
-              <div className="p-4 bg-[#0a0a0c] border border-white/5 rounded-xl space-y-2">
+              <div className={`p-4 ${t.controlBg} rounded-xl space-y-2`}>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono text-gray-400">Against White background</span>
+                  <span className={`text-xs font-mono ${t.textMuted}`}>Against White background</span>
                   <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded ${contrastWhite >= 4.5 ? 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/20' : 'bg-red-950/20 text-red-400 border border-red-500/20'}`}>
                     {contrastWhite.toFixed(2)} : 1
                   </span>
                 </div>
                 
-                <div className="flex justify-between text-xxs font-mono text-gray-500 pt-1 border-t border-white/5">
+                <div className={`flex justify-between text-xxs font-mono ${t.textFaint} pt-1 border-t ${t.border}`}>
                   <span>Regular Text (4.5:1):</span>
                   <span className={contrastWhite >= 4.5 ? 'text-emerald-400 font-bold' : 'text-red-400'}>
                     {contrastWhite >= 4.5 ? 'PASS (AA)' : 'FAIL'}
                   </span>
                 </div>
-                <div className="flex justify-between text-xxs font-mono text-gray-500">
+                <div className={`flex justify-between text-xxs font-mono ${t.textFaint}`}>
                   <span>Large Text (3.0:1):</span>
                   <span className={contrastWhite >= 3.0 ? 'text-emerald-400 font-bold' : 'text-red-400'}>
                     {contrastWhite >= 3.0 ? 'PASS (AA)' : 'FAIL'}
@@ -405,21 +427,21 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
               </div>
 
               {/* Black Contrast Card */}
-              <div className="p-4 bg-[#0a0a0c] border border-white/5 rounded-xl space-y-2">
+              <div className={`p-4 ${t.controlBg} rounded-xl space-y-2`}>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono text-gray-400">Against Dark slate bg</span>
+                  <span className={`text-xs font-mono ${t.textMuted}`}>Against Dark slate bg</span>
                   <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded ${contrastBlack >= 4.5 ? 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/20' : 'bg-red-950/20 text-red-400 border border-red-500/20'}`}>
                     {contrastBlack.toFixed(2)} : 1
                   </span>
                 </div>
                 
-                <div className="flex justify-between text-xxs font-mono text-gray-500 pt-1 border-t border-white/5">
+                <div className={`flex justify-between text-xxs font-mono ${t.textFaint} pt-1 border-t ${t.border}`}>
                   <span>Regular Text (4.5:1):</span>
                   <span className={contrastBlack >= 4.5 ? 'text-emerald-400 font-bold' : 'text-red-400'}>
                     {contrastBlack >= 4.5 ? 'PASS (AA)' : 'FAIL'}
                   </span>
                 </div>
-                <div className="flex justify-between text-xxs font-mono text-gray-500">
+                <div className={`flex justify-between text-xxs font-mono ${t.textFaint}`}>
                   <span>Large Text (3.0:1):</span>
                   <span className={contrastBlack >= 3.0 ? 'text-emerald-400 font-bold' : 'text-red-400'}>
                     {contrastBlack >= 3.0 ? 'PASS (AA)' : 'FAIL'}
@@ -437,7 +459,24 @@ function ColorConverter({ onCopy, copiedId }: { onCopy: (text: string, id: strin
 }
 
 // 2. SPECIFIC HEX TO RGB
-function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+function HexToRgbComponent({ isDark, onCopy, copiedId }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [input, setInput] = useState('#EF4444');
   const [result, setResult] = useState<string | null>(null);
 
@@ -455,20 +494,24 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
     }
   }, [input]);
 
+  const badgeClass = isDark
+    ? 'bg-rose-500/10 text-rose-455 border-rose-500/20'
+    : 'bg-rose-50 text-rose-600 border-rose-200';
+
   return (
     <div className="space-y-6" id="hex-to-rgb-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-rose-500/10 text-rose-455 border border-rose-500/20 rounded">COLOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>COLOR</span>
           HEX to RGB Converter
         </h2>
-        <p className="text-sm text-gray-400">Convert hex color hashes directly back into light-emitting RGB integer formats.</p>
+        <p className={`text-sm ${t.textMuted}`}>Convert hex color hashes directly back into light-emitting RGB integer formats.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column */}
-        <div className="p-5 bg-[#141414] border border-white/5 rounded-2xl space-y-4">
-          <label className="text-xs font-mono text-gray-455 uppercase tracking-wide block font-bold">Input HEX Code</label>
+        <div className={`p-5 ${t.panelBg} rounded-2xl space-y-4`}>
+          <label className={`text-xs font-mono ${t.textFaint} uppercase tracking-wide block font-bold`}>Input HEX Code</label>
           <div className="relative">
             <Hash className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-500" />
             <input 
@@ -476,7 +519,7 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="e.g. #3b82f6 or 3B82F6"
-              className="w-full p-3 pl-10 bg-[#0a0a0c] border border-white/10 rounded-xl text-sm text-white font-mono uppercase focus:outline-none focus:border-red-500"
+              className={`w-full p-3 pl-10 ${t.inputBg} rounded-xl text-sm font-mono uppercase focus:outline-none focus:border-red-500`}
             />
           </div>
           <div className="flex gap-2">
@@ -493,10 +536,10 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
         </div>
 
         {/* Right Output Column */}
-        <div className="p-5 bg-[#141414] border border-white/5 rounded-2xl flex flex-col justify-between">
+        <div className={`p-5 ${t.panelBg} rounded-2xl flex flex-col justify-between`}>
           <div>
             <div className="flex justify-between items-center mb-3">
-              <span className="text-xs font-mono text-gray-455 font-bold uppercase tracking-widest">CONVERTED RGB VALUE:</span>
+              <span className={`text-xs font-mono ${t.textFaint} font-bold uppercase tracking-widest`}>CONVERTED RGB VALUE:</span>
               {result && (
                 <button 
                   onClick={() => onCopy(result, 'rgb-c')}
@@ -509,7 +552,7 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
             </div>
 
             {result ? (
-              <div className="p-4 bg-[#0a0a0c] border border-white/5 rounded-xl text-center space-y-3">
+              <div className={`p-4 ${t.controlBg} rounded-xl text-center space-y-3`}>
                 <p className="text-2xl font-black font-mono text-emerald-350 tracking-wide select-all">{result}</p>
                 <div 
                   style={{ backgroundColor: result }}
@@ -517,12 +560,12 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
                 />
               </div>
             ) : (
-              <div className="border border-dashed border-white/10 rounded-xl p-8 text-center text-gray-500 font-mono text-xs">
+              <div className={`border border-dashed ${t.border} rounded-xl p-8 text-center ${t.textFaint} font-mono text-xs`}>
                 Supply a fully matching HEX value code correctly trigger conversion.
               </div>
             )}
           </div>
-          <p className="text-[10px] font-mono text-gray-500 mt-3 leading-relaxed">
+          <p className={`text-[10px] font-mono ${t.textFaint} mt-3 leading-relaxed`}>
             Note: This utility supports both 3-digit shorthand (e.g. F00) and standard 6-digit layouts (e.g. FF0000) with or without standard hash tokens.
           </p>
         </div>
@@ -532,28 +575,49 @@ function HexToRgbComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
 }
 
 // 3. SPECIFIC RGB TO HEX
-function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+function RgbToHexComponent({ isDark, onCopy, copiedId }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedId: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [r, setR] = useState<number>(59);
   const [g, setG] = useState<number>(130);
   const [b, setB] = useState<number>(246);
 
   const rgbHex = rgbToHexStr(r, g, b);
 
+  const badgeClass = isDark
+    ? 'bg-rose-500/10 text-rose-455 border-rose-500/20'
+    : 'bg-rose-50 text-rose-600 border-rose-200';
+
   return (
     <div className="space-y-6" id="rgb-to-hex-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-rose-500/10 text-rose-455 border border-rose-500/20 rounded">COLOR</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>COLOR</span>
           RGB to HEX Converter
         </h2>
-        <p className="text-sm text-gray-400">Reconstruct standard hexadecimal hash colors from distinct component light values.</p>
+        <p className={`text-sm ${t.textMuted}`}>Reconstruct standard hexadecimal hash colors from distinct component light values.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left Column Controls */}
-        <div className="p-5 bg-[#141414] border border-white/5 rounded-2xl space-y-4 font-mono text-xs text-gray-300">
-          <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">Configure component values</span>
+        <div className={`p-5 ${t.panelBg} rounded-2xl space-y-4 font-mono text-xs ${t.textMuted}`}>
+          <span className={`text-xs uppercase font-bold ${t.textFaint} tracking-wider`}>Configure component values</span>
           
           <div className="space-y-3 pt-2">
             <div>
@@ -563,7 +627,7 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               </div>
               <input 
                 type="number" min="0" max="255" value={r} onChange={(e) => setR(Math.max(0, Math.min(255, parseInt(e.target.value) || 0)))}
-                className="w-full p-2 bg-[#0a0a0c] border border-white/10 rounded focus:outline-none focus:border-indigo-500 block text-white mb-2"
+                className={`w-full p-2 ${t.inputBg} rounded focus:outline-none focus:border-indigo-500 block mb-2`}
               />
               <input 
                 type="range" min="0" max="255" value={r} onChange={(e) => setR(parseInt(e.target.value))}
@@ -578,7 +642,7 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               </div>
               <input 
                 type="number" min="0" max="255" value={g} onChange={(e) => setG(Math.max(0, Math.min(255, parseInt(e.target.value) || 0)))}
-                className="w-full p-2 bg-[#0a0a0c] border border-white/10 rounded focus:outline-none focus:border-indigo-500 block text-white mb-2"
+                className={`w-full p-2 ${t.inputBg} rounded focus:outline-none focus:border-indigo-500 block mb-2`}
               />
               <input 
                 type="range" min="0" max="255" value={g} onChange={(e) => setG(parseInt(e.target.value))}
@@ -593,7 +657,7 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               </div>
               <input 
                 type="number" min="0" max="255" value={b} onChange={(e) => setB(Math.max(0, Math.min(255, parseInt(e.target.value) || 0)))}
-                className="w-full p-2 bg-[#0a0a0c] border border-white/10 rounded focus:outline-none focus:border-indigo-500 block text-white mb-2"
+                className={`w-full p-2 ${t.inputBg} rounded focus:outline-none focus:border-indigo-500 block mb-2`}
               />
               <input 
                 type="range" min="0" max="255" value={b} onChange={(e) => setB(parseInt(e.target.value))}
@@ -604,10 +668,10 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
         </div>
 
         {/* Right Output Column */}
-        <div className="p-5 bg-[#141414] border border-white/5 rounded-2xl flex flex-col justify-between">
+        <div className={`p-5 ${t.panelBg} rounded-2xl flex flex-col justify-between`}>
           <div>
             <div className="flex justify-between items-center mb-3">
-              <span className="text-xs font-mono text-gray-455 font-bold uppercase tracking-widest">COMPILE RESULT HEX CODE:</span>
+              <span className={`text-xs font-mono ${t.textFaint} font-bold uppercase tracking-widest`}>COMPILE RESULT HEX CODE:</span>
               <button 
                 onClick={() => onCopy(rgbHex, 'hex-c')}
                 className="text-xs text-indigo-400 hover:text-indigo-350 transition-colors inline-flex items-center gap-1 cursor-pointer font-mono"
@@ -617,7 +681,7 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               </button>
             </div>
 
-            <div className="p-4 bg-[#0a0a0c] border border-white/5 rounded-xl text-center space-y-3">
+            <div className={`p-4 ${t.controlBg} rounded-xl text-center space-y-3`}>
               <p className="text-2xl font-black font-mono text-indigo-300 tracking-wider select-all uppercase">{rgbHex}</p>
               <div 
                 style={{ backgroundColor: rgbHex }}
@@ -625,7 +689,7 @@ function RgbToHexComponent({ onCopy, copiedId }: { onCopy: (text: string, id: st
               />
             </div>
           </div>
-          <p className="text-[10px] font-mono text-gray-500 mt-3 leading-relaxed">
+          <p className={`text-[10px] font-mono ${t.textFaint} mt-3 leading-relaxed`}>
             Light values are correctly clamped between standard boundaries (0 and 255) before compilation. Use this standard hexadecimal output directly in CSS files.
           </p>
         </div>

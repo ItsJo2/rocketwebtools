@@ -3,9 +3,10 @@ import { GitCompare, KeyRound, Search, Clock, Check, Copy, AlertCircle, Sparkles
 
 interface DeveloperSuiteToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
-export function DeveloperSuiteTools({ activeToolId }: DeveloperSuiteToolsProps) {
+export function DeveloperSuiteTools({ activeToolId, isDark }: DeveloperSuiteToolsProps) {
   const [copiedStatus, setCopiedStatus] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -15,16 +16,16 @@ export function DeveloperSuiteTools({ activeToolId }: DeveloperSuiteToolsProps) 
   };
 
   if (activeToolId === 'json-diff') {
-    return <JsonDiff onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <JsonDiff isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'jwt-debugger') {
-    return <JwtDebugger onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <JwtDebugger isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
   if (activeToolId === 'regex-tester') {
-    return <RegexTester />;
+    return <RegexTester isDark={isDark} />;
   }
   if (activeToolId === 'cron-generator') {
-    return <CronGenerator onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <CronGenerator isDark={isDark} onCopy={handleCopy} copiedStatus={copiedStatus} />;
   }
 
   return null;
@@ -33,7 +34,24 @@ export function DeveloperSuiteTools({ activeToolId }: DeveloperSuiteToolsProps) 
 // ==========================================
 // 1. JSON DIFF CHECKER
 // ==========================================
-function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function JsonDiff({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [leftJson, setLeftJson] = useState('{\n  "name": "Rocket Tools",\n  "version": "1.0.0",\n  "features": ["conversion", "formatting", "ai"],\n  "active": true,\n  "limit": 500\n}');
   const [rightJson, setRightJson] = useState('{\n  "name": "Rocket Web Tools",\n  "version": "1.1.0",\n  "features": ["conversion", "formatting", "ai", "sitemap"],\n  "active": true,\n  "refreshRate": 1000\n}');
   const [diffResult, setDiffResult] = useState<{ leftLines: any[]; rightLines: any[] } | null>(null);
@@ -44,7 +62,6 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
     setDiffResult(null);
 
     try {
-      // Validate they are proper JSON
       const leftObj = JSON.parse(leftJson);
       const rightObj = JSON.parse(rightJson);
 
@@ -57,7 +74,6 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
       const leftLinesFormatted: any[] = [];
       const rightLinesFormatted: any[] = [];
 
-      // Simple, highly trace-accurate Diff alignment
       const maxLen = Math.max(leftLinesRaw.length, rightLinesRaw.length);
 
       for (let i = 0; i < maxLen; i++) {
@@ -68,7 +84,6 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
           leftLinesFormatted.push({ text: lLine, status: 'equal', num: i + 1 });
           rightLinesFormatted.push({ text: rLine, status: 'equal', num: i + 1 });
         } else if (lLine !== undefined && rLine !== undefined) {
-          // Check if key is the same but value changed
           leftLinesFormatted.push({ text: lLine, status: 'changed', num: i + 1 });
           rightLinesFormatted.push({ text: rLine, status: 'changed', num: i + 1 });
         } else if (lLine !== undefined) {
@@ -86,29 +101,33 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="json-diff-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">DEV</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>DEV</span>
           JSON Side-by-Side Diff Checker
         </h2>
-        <p className="text-sm text-gray-400">Compare two JSON payloads side-by-side. Highlights line level differences, deletions, and additions instantly.</p>
+        <p className={`text-sm ${t.textMuted}`}>Compare two JSON payloads side-by-side. Highlights line level differences, deletions, and additions instantly.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">ORIGINAL JSON (A):</label>
+          <label className={`text-xs font-mono ${t.textMuted} mb-1.5 block`}>ORIGINAL JSON (A):</label>
           <textarea
-            className="w-full h-44 p-3 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={`w-full h-44 p-3 ${t.textareaBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500`}
             value={leftJson}
             onChange={(e) => setLeftJson(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">MODIFIED JSON (B):</label>
+          <label className={`text-xs font-mono ${t.textMuted} mb-1.5 block`}>MODIFIED JSON (B):</label>
           <textarea
-            className="w-full h-44 p-3 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={`w-full h-44 p-3 ${t.textareaBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500`}
             value={rightJson}
             onChange={(e) => setRightJson(e.target.value)}
           />
@@ -133,17 +152,17 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
       )}
 
       {diffResult && (
-        <div className="border border-white/10 rounded-xl overflow-hidden bg-[#121212]">
-          <div className="grid grid-cols-2 bg-white/5 border-b border-white/5 text-xs text-gray-400 font-mono p-2 px-4 font-bold">
+        <div className={`border ${t.border} rounded-xl overflow-hidden ${t.controlBg}`}>
+          <div className={`grid grid-cols-2 ${t.controlBg} border-b ${t.border} text-xs ${t.textFaint} font-mono p-2 px-4 font-bold`}>
             <div>Original Object A</div>
             <div>Modified Object B</div>
           </div>
-          <div className="grid grid-cols-2 divide-x divide-white/5 font-mono text-xs overflow-auto max-h-96">
+          <div className={`grid grid-cols-2 divide-x ${t.border} font-mono text-xs overflow-auto max-h-96 ${t.controlBg}`}>
             {/* Left side */}
-            <div className="p-3 space-y-0.5 bg-[#141414]">
+            <div className={`p-3 space-y-0.5 ${t.controlBg}`}>
               {diffResult.leftLines.map((line, idx) => {
                 let bgStyle = 'hover:bg-white/2';
-                let txtStyle = 'text-gray-300';
+                let txtStyle = t.textMuted;
                 if (line.status === 'deleted') {
                   bgStyle = 'bg-rose-950/30 text-rose-300 hover:bg-rose-950/40';
                 } else if (line.status === 'changed') {
@@ -154,7 +173,7 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
 
                 return (
                   <div key={`left-${idx}`} className={`flex items-start rounded px-2 py-0.5 ${bgStyle}`}>
-                    <span className="w-8 select-none opacity-20 text-[10px] pr-2 text-right">{line.num || ''}</span>
+                    <span className={`w-8 select-none opacity-20 text-[10px] pr-2 text-right ${t.textFaint}`}>{line.num || ''}</span>
                     <span className={`whitespace-pre select-all ${txtStyle}`}>{line.text !== null ? line.text : ' '}</span>
                   </div>
                 );
@@ -162,10 +181,10 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
             </div>
 
             {/* Right side */}
-            <div className="p-3 space-y-0.5 bg-[#141414]">
+            <div className={`p-3 space-y-0.5 ${t.controlBg}`}>
               {diffResult.rightLines.map((line, idx) => {
                 let bgStyle = 'hover:bg-white/2';
-                let txtStyle = 'text-gray-300';
+                let txtStyle = t.textMuted;
                 if (line.status === 'added') {
                   bgStyle = 'bg-emerald-950/30 text-emerald-350 hover:bg-emerald-950/40';
                 } else if (line.status === 'changed') {
@@ -176,14 +195,14 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
 
                 return (
                   <div key={`right-${idx}`} className={`flex items-start rounded px-2 py-0.5 ${bgStyle}`}>
-                    <span className="w-8 select-none opacity-20 text-[10px] pr-2 text-right">{line.num || ''}</span>
+                    <span className={`w-8 select-none opacity-20 text-[10px] pr-2 text-right ${t.textFaint}`}>{line.num || ''}</span>
                     <span className={`whitespace-pre select-all ${txtStyle}`}>{line.text !== null ? line.text : ' '}</span>
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="p-2 border-t border-white/5 bg-[#161616] flex justify-center gap-6 text-[10px] text-gray-500 font-mono">
+          <div className={`p-2 border-t ${t.border} ${t.controlBg} flex justify-center gap-6 text-[10px] ${t.textFaint} font-mono`}>
             <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-500/20 border border-emerald-500/40" /> Added</span>
             <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-rose-500/20 border border-rose-500/40" /> Deleted</span>
             <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-amber-500/20 border border-amber-500/40" /> Modified</span>
@@ -197,7 +216,24 @@ function JsonDiff({ onCopy, copiedStatus }: { onCopy: (text: string, id: string)
 // ==========================================
 // 2. JWT (JSON WEB TOKEN) DEBUGGER
 // ==========================================
-function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function JwtDebugger({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE4MDMyMzkwMjIsImFkbWluIjp0cnVlfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
   const [header, setHeader] = useState<string | null>(null);
   const [payload, setPayload] = useState<string | null>(null);
@@ -219,9 +255,7 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
     }
 
     try {
-      // Decode helper
       const base64Decode = (str: string) => {
-        // Handle URL safe base64
         let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
         while (base64.length % 4) {
           base64 += '=';
@@ -241,7 +275,6 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
       setPayload(JSON.stringify(decodedPayload, null, 2));
       setSignature(steps[2]);
 
-      // Calculate expirations
       if (decodedPayload.exp) {
         const expUnix = decodedPayload.exp * 1000;
         const expDate = new Date(expUnix);
@@ -272,21 +305,25 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="jwt-debugger-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">JWT</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>JWT</span>
           JWT Token Debugger
         </h2>
-        <p className="text-sm text-gray-400">Decode JSON Web Tokens instantly to dissect headers, claims information, signatures, and check token lifespan parameters.</p>
+        <p className={`text-sm ${t.textMuted}`}>Decode JSON Web Tokens instantly to dissect headers, claims information, signatures, and check token lifespan parameters.</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">ENCODED JWT TOKEN string:</label>
+          <label className={`text-xs font-mono ${t.textMuted} mb-1.5 block`}>ENCODED JWT TOKEN string:</label>
           <textarea
-            className="w-full h-24 p-3 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 leading-normal"
+            className={`w-full h-24 p-3 ${t.textareaBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 leading-normal`}
             placeholder="Paste your JSON Web Token (eyJhbGciOi...)"
             value={token}
             onChange={(e) => setToken(e.target.value)}
@@ -315,12 +352,12 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-xs font-mono text-violet-400 font-bold uppercase">HEADER: ALGORITHM & TOKEN TYPE</span>
-                <button onClick={() => onCopy(header || '', 'jwt-h')} className="text-xxs text-gray-500 hover:text-white cursor-pointer inline-flex items-center gap-1">
+                <button onClick={() => onCopy(header || '', 'jwt-h')} className={`text-xxs ${t.textFaint} hover:${t.heading} cursor-pointer inline-flex items-center gap-1`}>
                   {copiedStatus === 'jwt-h' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                   Copy
                 </button>
               </div>
-              <pre className="p-3 border border-violet-900/30 bg-[#161616]/80 text-violet-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-56">
+              <pre className={`p-3 border border-violet-900/30 ${t.controlBg} text-violet-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-56`}>
                 {header}
               </pre>
             </div>
@@ -328,20 +365,20 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-xs font-mono text-sky-400 font-bold uppercase">PAYLOAD: DATA CLAIMS</span>
-                <button onClick={() => onCopy(payload || '', 'jwt-p')} className="text-xxs text-gray-500 hover:text-white cursor-pointer inline-flex items-center gap-1">
+                <button onClick={() => onCopy(payload || '', 'jwt-p')} className={`text-xxs ${t.textFaint} hover:${t.heading} cursor-pointer inline-flex items-center gap-1`}>
                   {copiedStatus === 'jwt-p' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   Copy
                 </button>
               </div>
-              <pre className="p-3 border border-sky-900/30 bg-[#161616]/80 text-sky-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-80">
+              <pre className={`p-3 border border-sky-900/30 ${t.controlBg} text-sky-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-80`}>
                 {payload}
               </pre>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="p-5 border border-white/5 rounded-xl bg-white/2 space-y-4">
-              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">Token Expiration Status</h4>
+            <div className={`p-5 border ${t.border} rounded-xl ${t.controlBg} space-y-4`}>
+              <h4 className={`text-xs font-bold ${t.textFaint} uppercase tracking-widest font-mono`}>Token Expiration Status</h4>
               {expirationReport ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -350,26 +387,26 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
                       {expirationReport.valid ? 'VALID CLAIM SESSION' : 'TOKEN CLAIM EXPIRED'}
                     </span>
                   </div>
-                  <div className="space-y-1 text-xs font-mono text-gray-350">
-                    <p><span className="text-gray-500">Value:</span> {expirationReport.ageText}</p>
-                    <p><span className="text-gray-500">Calendar check:</span> {expirationReport.date}</p>
+                  <div className={`space-y-1 text-xs font-mono ${t.textMuted}`}>
+                    <p><span className={t.textFaint}>Value:</span> {expirationReport.ageText}</p>
+                    <p><span className={t.textFaint}>Calendar check:</span> {expirationReport.date}</p>
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-gray-500">No standard `exp` (Expiration) claim registered inside this token's payload.</p>
+                <p className={`text-xs ${t.textFaint}`}>No standard `exp` (Expiration) claim registered inside this token's payload.</p>
               )}
             </div>
 
             <div>
-              <span className="text-xs font-mono text-emerald-400 font-bold uppercase block mb-1.5">SIGNATURE VERIFICATION SEGMENT</span>
-              <div className="p-4 border border-emerald-950 bg-emerald-950/15 text-emerald-300 font-mono text-xs rounded-lg break-all">
+              <span className={`text-xs font-mono text-emerald-400 font-bold uppercase block mb-1.5`}>SIGNATURE VERIFICATION SEGMENT</span>
+              <div className={`p-4 border border-emerald-950 bg-emerald-950/15 text-emerald-300 font-mono text-xs rounded-lg break-all ${t.controlBg}`}>
                 HMACSHA256(<br />
                 &nbsp;&nbsp;base64UrlEncode(header) + "." +<br />
                 &nbsp;&nbsp;base64UrlEncode(payload),<br />
                 &nbsp;&nbsp;<span className="text-emerald-400 bg-white/5 p-1 rounded font-bold">your-256-bit-secret</span><br />
                 )<br />
-                <span className="text-gray-500">// Result signature chunk:</span><br />
-                <span className="text-gray-400 select-all font-bold">{signature}</span>
+                <span className={t.textFaint}>// Result signature chunk:</span><br />
+                <span className={`select-all font-bold ${t.textMuted}`}>{signature}</span>
               </div>
             </div>
           </div>
@@ -382,7 +419,24 @@ function JwtDebugger({ onCopy, copiedStatus }: { onCopy: (text: string, id: stri
 // ==========================================
 // 3. REGEX TESTER
 // ==========================================
-function RegexTester() {
+function RegexTester({ isDark }: { isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [pattern, setPattern] = useState('[a-zA-Z0-9._%+-]+@&?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}');
   const [flags, setFlags] = useState('g');
   const [testText, setTestText] = useState('Feel free to extract info from hello@rocketwebtools.com or send a notification file to developer-support@test.org easily.');
@@ -407,7 +461,6 @@ function RegexTester() {
             index: match.index,
             groups: match.slice(1)
           });
-          // Safeguard infinite loops for zero-width matches
           if (match[0].length === 0) {
             regex.lastIndex++;
           }
@@ -429,12 +482,10 @@ function RegexTester() {
     }
   };
 
-  // Run automatically on input change
   React.useEffect(() => {
     handleTest();
   }, [pattern, flags, testText]);
 
-  // Color match highlighters for visual interface
   const renderHighlightedText = () => {
     if (errorMsg || !pattern) return <span className="whitespace-pre-wrap">{testText}</span>;
 
@@ -445,7 +496,6 @@ function RegexTester() {
       let match;
       let matchIndex = 0;
 
-      // Handle non-global matches or reset search
       const runRegex = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
 
       while ((match = runRegex.exec(testText)) !== null) {
@@ -482,39 +532,43 @@ function RegexTester() {
     }
   };
 
+  const badgeClass = isDark
+    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="regex-tester-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">REGEX</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>REGEX</span>
           RegEx Patterns Tester & Highlight Engine
         </h2>
-        <p className="text-sm text-gray-400">Assemble regular expressions, toggle modifiers, evaluate them on target paragraphs instantly, and highlight match ranges.</p>
+        <p className={`text-sm ${t.textMuted}`}>Assemble regular expressions, toggle modifiers, evaluate them on target paragraphs instantly, and highlight match ranges.</p>
       </div>
 
-      <div className="bg-[#141414] border border-white/5 rounded-xl p-5 space-y-4">
+      <div className={`${t.panelBg} rounded-xl p-5 space-y-4`}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-3">
-            <label className="text-xs font-mono text-gray-400 mb-1 block">REGULAR EXPRESSION (PATTERN):</label>
+            <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>REGULAR EXPRESSION (PATTERN):</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-mono select-none">/</span>
+              <span className={`absolute left-3 top-1/2 -translate-y-1/2 ${t.textFaint} text-xs font-mono select-none`}>/</span>
               <input
                 type="text"
-                className="w-full p-2 py-2.5 pl-5 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={`w-full p-2 py-2.5 pl-5 ${t.inputBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500`}
                 value={pattern}
                 onChange={(e) => setPattern(e.target.value)}
                 placeholder="[a-z]+"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-mono select-none">/</span>
+              <span className={`absolute right-3 top-1/2 -translate-y-1/2 ${t.textFaint} text-xs font-mono select-none`}>/</span>
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-mono text-gray-400 mb-1 block">MODIFIERS / FLAGS:</label>
+            <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>MODIFIERS / FLAGS:</label>
             <select
               value={flags}
               onChange={(e) => setFlags(e.target.value)}
-              className="w-full p-2 py-2.5 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none cursor-pointer"
+              className={`w-full p-2 py-2.5 ${t.selectBg} rounded-lg text-xs font-mono focus:outline-none cursor-pointer`}
             >
               <option value="g">g (Global Matching)</option>
               <option value="gi">gi (Case Insensitive)</option>
@@ -533,9 +587,9 @@ function RegexTester() {
         )}
 
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1 block">TEST STRING CORPUS:</label>
+          <label className={`text-xs font-mono ${t.textMuted} mb-1 block`}>TEST STRING CORPUS:</label>
           <textarea
-            className="w-full h-24 p-3 border border-white/10 rounded-lg text-xs font-mono bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={`w-full h-24 p-3 ${t.textareaBg} rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500`}
             value={testText}
             onChange={(e) => setTestText(e.target.value)}
           />
@@ -544,38 +598,38 @@ function RegexTester() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
-          <span className="text-xs font-mono text-gray-400 block mb-1.5 uppercase font-bold text-gray-300">LIVE MATCH HIGH-HIGHLIGHTER</span>
-          <div className="p-4 rounded-xl border border-white/10 bg-[#161616] h-48 overflow-auto leading-relaxed text-xs break-words whitespace-pre-wrap select-all font-mono">
+          <span className={`text-xs font-mono ${t.textFaint} block mb-1.5 uppercase font-bold ${t.textMuted}`}>LIVE MATCH HIGH-HIGHLIGHTER</span>
+          <div className={`p-4 rounded-xl border ${t.border} ${t.controlBg} h-48 overflow-auto leading-relaxed text-xs break-words whitespace-pre-wrap select-all font-mono ${t.heading}`}>
             {renderHighlightedText()}
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-mono block uppercase font-bold text-blue-400">Match Indices Matrix ({matches.length} captured)</span>
+            <span className={`text-xs font-mono block uppercase font-bold text-blue-400`}>Match Indices Matrix ({matches.length} captured)</span>
           </div>
-          <div className="rounded-xl border border-white/10 bg-[#161616] h-48 overflow-auto">
+          <div className={`rounded-xl border ${t.border} ${t.controlBg} h-48 overflow-auto`}>
             {matches.length > 0 ? (
-              <table className="w-full text-left border-collapse text-xxs font-mono">
+              <table className={`w-full text-left border-collapse text-xxs font-mono ${t.heading}`}>
                 <thead>
-                  <tr className="bg-white/5 border-b border-white/5 text-gray-400">
+                  <tr className={`${t.controlBg} border-b ${t.border} ${t.textFaint}`}>
                     <th className="p-2 pl-4">Index</th>
                     <th className="p-2">Content</th>
                     <th className="p-2 text-right pr-4">Range Offset</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 text-gray-300">
+                <tbody className={`divide-y ${t.border} ${t.textMuted}`}>
                   {matches.map((m, idx) => (
                     <tr key={`match-tbl-${idx}`} className="hover:bg-white/5">
                       <td className="p-2 pl-4 font-bold text-blue-400">#{idx + 1}</td>
                       <td className="p-2 select-all font-semibold max-w-xs truncate">{m.text}</td>
-                      <td className="p-2 text-right pr-4 text-gray-500">offset {m.index}</td>
+                      <td className="p-2 text-right pr-4 ${t.textFaint}">offset {m.index}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <div className="h-full flex items-center justify-center text-center text-xs text-gray-500">
+              <div className={`h-full flex items-center justify-center text-center text-xs ${t.textFaint}`}>
                 No active captures found matching the current pattern.
               </div>
             )}
@@ -589,7 +643,24 @@ function RegexTester() {
 // ==========================================
 // 4. CRON EXPRESSION GENERATOR
 // ==========================================
-function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function CronGenerator({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [minutes, setMinutes] = useState('*');
   const [hours, setHours] = useState('*');
   const [dayOfMonth, setDayOfMonth] = useState('*');
@@ -620,15 +691,12 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
     }
   };
 
-  // Run translator logic based on standard crontab configurations
   const translateExpression = (m: string, h: string, dom: string, mon: string, dow: string) => {
     const expr = `${m} ${h} ${dom} ${mon} ${dow}`;
     setCronExpression(expr);
 
-    // Human-descriptive translator engine
     let out = 'Runs ';
 
-    // 1. Minute block
     if (m === '*') {
       out += 'every minute';
     } else if (m.startsWith('*/')) {
@@ -638,7 +706,6 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
       out += `at minute ${m}`;
     }
 
-    // 2. Hour block
     if (h === '*') {
       out += ' of every hour';
     } else if (h.startsWith('*/')) {
@@ -648,21 +715,18 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
       out += ` of hour ${h}:00`;
     }
 
-    // 3. Day of month block
     if (dom === '*') {
       out += ', every day';
     } else {
       out += `, on day of month ${dom}`;
     }
 
-    // 4. Month block
     if (mon === '*') {
       out += ', of every month';
     } else {
       out += `, of month ${mon}`;
     }
 
-    // 5. Day of week block
     if (dow === '*') {
       out += ' on all days of the week.';
     } else {
@@ -674,19 +738,16 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
     setReadableDescription(out);
 
-    // Compute mock next 5 upcoming dates easily
     const dates: string[] = [];
     const date = new Date();
-    // Round to next minute
     date.setSeconds(0, 0);
 
     for (let i = 0; i < 5; i++) {
-      // Simulate chronological step depending on values
       let hopMinutes = 1;
       if (m.startsWith('*/')) {
         hopMinutes = parseInt(m.substring(2), 10) || 1;
       } else if (m !== '*') {
-        hopMinutes = 60; // hop hour
+        hopMinutes = 60;
       }
       
       date.setMinutes(date.getMinutes() + (i === 0 ? 0 : hopMinutes));
@@ -699,71 +760,75 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
     translateExpression(minutes, hours, dayOfMonth, month, dayOfWeek);
   }, [minutes, hours, dayOfMonth, month, dayOfWeek]);
 
+  const badgeClass = isDark
+    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    : 'bg-blue-50 text-blue-600 border-blue-200';
+
   return (
     <div className="space-y-6" id="cron-generator-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">CRON</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>CRON</span>
           Cron Schedule Builder & Translator
         </h2>
-        <p className="text-sm text-gray-400">Generate standard 5-part crontab schedule strings from simple inputs, read plain descriptions, and view mock next executions.</p>
+        <p className={`text-sm ${t.textMuted}`}>Generate standard 5-part crontab schedule strings from simple inputs, read plain descriptions, and view mock next executions.</p>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-xxs font-mono">
-        <span className="text-gray-500 self-center">Presets:</span>
+      <div className={`flex flex-wrap gap-2 text-xxs font-mono ${t.textMuted}`}>
+        <span className={`${t.textFaint} self-center`}>Presets:</span>
         {presets.map((p) => (
           <button
             key={p.name}
             onClick={() => handleApplyPreset(p.value)}
-            className="p-1 px-2 border border-white/10 hover:border-blue-500/40 bg-white/2 hover:bg-white/5 rounded cursor-pointer text-gray-350"
+            className={`p-1 px-2 border ${t.border} hover:border-blue-500/40 ${t.controlBg} hover:bg-white/5 rounded cursor-pointer ${t.textMuted}`}
           >
             {p.name}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-[#141414] border border-white/5 p-5 rounded-xl text-xs font-mono">
+      <div className={`grid grid-cols-2 md:grid-cols-5 gap-3 ${t.panelBg} p-5 rounded-xl text-xs font-mono`}>
         <div>
-          <label className="text-gray-450 block mb-1">Minutes (0-59):</label>
+          <label className={`${t.textMuted} block mb-1`}>Minutes (0-59):</label>
           <input
             type="text"
-            className="w-full p-2 border border-white/10 rounded-lg bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold"
+            className={`w-full p-2 ${t.inputBg} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold`}
             value={minutes}
             onChange={(e) => setMinutes(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-gray-455 block mb-1">Hours (0-23):</label>
+          <label className={`${t.textMuted} block mb-1`}>Hours (0-23):</label>
           <input
             type="text"
-            className="w-full p-2 border border-white/10 rounded-lg bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold"
+            className={`w-full p-2 ${t.inputBg} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold`}
             value={hours}
             onChange={(e) => setHours(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-gray-460 block mb-1">Day of Month (1-31):</label>
+          <label className={`${t.textMuted} block mb-1`}>Day of Month (1-31):</label>
           <input
             type="text"
-            className="w-full p-2 border border-white/10 rounded-lg bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold"
+            className={`w-full p-2 ${t.inputBg} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold`}
             value={dayOfMonth}
             onChange={(e) => setDayOfMonth(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-gray-465 block mb-1">Month (1-12):</label>
+          <label className={`${t.textMuted} block mb-1`}>Month (1-12):</label>
           <input
             type="text"
-            className="w-full p-2 border border-white/10 rounded-lg bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold"
+            className={`w-full p-2 ${t.inputBg} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold`}
             value={month}
             onChange={(e) => setMonth(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-gray-470 block mb-1">Day of Week (0-6):</label>
+          <label className={`${t.textMuted} block mb-1`}>Day of Week (0-6):</label>
           <input
             type="text"
-            className="w-full p-2 border border-white/10 rounded-lg bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold"
+            className={`w-full p-2 ${t.inputBg} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-xs font-bold`}
             value={dayOfWeek}
             onChange={(e) => setDayOfWeek(e.target.value)}
           />
@@ -773,12 +838,12 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <span className="text-xs font-mono text-gray-400 block mb-1 uppercase font-bold text-gray-300">GENERATED CRON EXPRESSION</span>
-            <div className="p-4 rounded-xl border border-blue-500/20 bg-[#161616] flex justify-between items-center">
-              <span className="font-mono text-lg text-blue-350 font-bold select-all tracking-widest">{cronExpression}</span>
+            <span className={`text-xs font-mono ${t.textFaint} block mb-1 uppercase font-bold ${t.textMuted}`}>GENERATED CRON EXPRESSION</span>
+            <div className={`p-4 rounded-xl border border-blue-500/20 ${t.controlBg} flex justify-between items-center`}>
+              <span className={`font-mono text-lg text-blue-350 font-bold select-all tracking-widest ${t.heading}`}>{cronExpression}</span>
               <button
                 onClick={() => onCopy(cronExpression, 'cron-e')}
-                className="text-xs text-gray-400 hover:text-blue-400 inline-flex items-center gap-1 cursor-pointer font-mono"
+                className={`text-xs ${t.textFaint} hover:text-blue-400 inline-flex items-center gap-1 cursor-pointer font-mono`}
               >
                 {copiedStatus === 'cron-e' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedStatus === 'cron-e' ? 'Copied' : 'Copy'}
@@ -787,28 +852,28 @@ function CronGenerator({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
           </div>
 
           <div>
-            <span className="text-xs font-mono text-gray-400 block mb-1 uppercase font-bold text-gray-300 font-bold">HUMAN TRANSLATION DESCRIPTION</span>
-            <div className="p-4 rounded-xl border border-white/10 bg-[#161616] text-gray-200 text-xs font-sans leading-relaxed">
+            <span className={`text-xs font-mono ${t.textFaint} block mb-1 uppercase font-bold ${t.textMuted}`}>HUMAN TRANSLATION DESCRIPTION</span>
+            <div className={`p-4 rounded-xl border ${t.border} ${t.controlBg} text-xs font-sans leading-relaxed ${t.heading}`}>
               {readableDescription}
             </div>
           </div>
         </div>
 
         <div>
-          <span className="text-xs font-mono text-blue-405 block mb-1.5 uppercase font-bold text-gray-300 font-bold">PROJECTED NEXT 5 EXECUTION DATES</span>
-          <div className="rounded-xl border border-white/10 bg-[#161616] overflow-hidden">
-            <table className="w-full text-left border-collapse text-xs font-mono">
+          <span className={`text-xs font-mono text-blue-405 block mb-1.5 uppercase font-bold ${t.textMuted}`}>PROJECTED NEXT 5 EXECUTION DATES</span>
+          <div className={`rounded-xl border ${t.border} ${t.controlBg} overflow-hidden`}>
+            <table className={`w-full text-left border-collapse text-xs font-mono ${t.heading}`}>
               <thead>
-                <tr className="bg-white/5 border-b border-white/5 text-gray-400">
+                <tr className={`${t.controlBg} border-b ${t.border} ${t.textFaint}`}>
                   <th className="p-3 pl-4">Execution index</th>
                   <th className="p-3 text-right pr-4">Estimated trigger Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-gray-300">
+              <tbody className={`divide-y ${t.border} ${t.textMuted}`}>
                 {upcomingDates.map((dateStr, idx) => (
                   <tr key={`date-${idx}`} className="hover:bg-white/5">
                     <td className="p-3 pl-4 text-blue-400">Trigger {idx + 1}</td>
-                    <td className="p-3 text-right pr-4 text-gray-450">{dateStr}</td>
+                    <td className="p-3 text-right pr-4 ${t.textFaint}">{dateStr}</td>
                   </tr>
                 ))}
               </tbody>

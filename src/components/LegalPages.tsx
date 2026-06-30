@@ -97,6 +97,9 @@ export function LegalPages({ type, onBack }: LegalPageProps) {
               <li>
                 <strong className={t.textPrimary}>Web Beacons:</strong> Third-party ad networks may employ cookies, JavaScript routines, or web beacons to trace campaign efficiencies directly. We possess no supervisory authority or monitoring capabilities over these external tracking mechanisms.
               </li>
+              <li>
+                <strong className={t.textPrimary}>Cookie Consent & Preferences:</strong> We use essential cookies to remember your preferences (theme, starred tools). We also use Google AdSense advertising cookies to serve ads that keep this service free. You can decline optional cookies using the cookie banner. Essential cookies cannot be disabled as they are required for the site to function correctly.
+              </li>
             </ul>
           </section>
 

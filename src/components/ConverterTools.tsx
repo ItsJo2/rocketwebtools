@@ -407,26 +407,47 @@ const CONVERTER_CONFIG_MAP: Record<string, ConverterConfig> = {
   }
 };
 
-export function ConverterTools({ activeToolId }: { activeToolId: string }) {
+interface ConverterToolsProps {
+  activeToolId: string;
+  isDark: boolean;
+}
+
+export function ConverterTools({ activeToolId, isDark }: ConverterToolsProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   if (activeToolId === 'currency-conv') {
-    return <CurrencyConverter />;
+    return <CurrencyConverter isDark={isDark} />;
   }
   if (activeToolId === 'num-to-word-conv') {
-    return <NumberToWordConverter />;
+    return <NumberToWordConverter isDark={isDark} />;
   }
   if (activeToolId === 'word-to-num-conv') {
-    return <WordToNumberConverter />;
+    return <WordToNumberConverter isDark={isDark} />;
   }
   if (activeToolId === 'num-to-roman-conv') {
-    return <NumberToRomanConverter />;
+    return <NumberToRomanConverter isDark={isDark} />;
   }
   if (activeToolId === 'roman-to-num-conv') {
-    return <RomanToNumberConverter />;
+    return <RomanToNumberConverter isDark={isDark} />;
   }
 
   const config = CONVERTER_CONFIG_MAP[activeToolId];
 
-  // If we can't find a configuration for this specific tool ID, render nothing
   if (!config) {
     return (
       <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm">
@@ -440,50 +461,33 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
   const [toUnit, setToUnit] = useState<string>(config.units[1]?.code || config.units[0].code);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  // Re-synchronize units when the tool shifts
   useEffect(() => {
     setInputVal(config.id === 'temp-conv' ? 25 : 10);
     setFromUnit(config.units[0].code);
     setToUnit(config.units[1]?.code || config.units[0].code);
   }, [activeToolId, config]);
 
-  // Handle unit swap
   const handleSwap = () => {
     const temp = fromUnit;
     setFromUnit(toUnit);
     setToUnit(temp);
   };
 
-  // Convert temperature helper
   const convertTemp = (value: number, from: string, to: string): number => {
-    // Convert to Celsius first
     let celsius = value;
     if (from === 'f') celsius = (value - 32) * (5 / 9);
     else if (from === 'k') celsius = value - 273.15;
     else if (from === 'r') celsius = (value - 491.67) * (5 / 9);
 
-    // Convert Celsius to Target
     let result = celsius;
     if (to === 'f') result = celsius * (9 / 5) + 32;
     else if (to === 'k') result = celsius + 273.15;
     else if (to === 'r') result = (celsius + 273.15) * (9 / 5);
 
-    // Rounded precisely
     return parseFloat(result.toFixed(4));
   };
 
-  // Convert pace helper
   const convertPace = (value: number, from: string, to: string): number => {
-    // Pace behaves differently since smaller value = faster rate, but the scale factors represent conversion factors linearly:
-    // 1 min/km is 1.0, 1 min/mi is 1.609344 min/km.
-    // If you run 5 min/km, to get min/mi:
-    // If from is min/km and to is min/mi: 5 * 1.609344 = 8.046 min/mile.
-    // Wait, let's look at factor values:
-    // min/km (1.0), min/mi (1.609344), sec/km (60.0), sec/mi (96.56064).
-    // To convert 5 min/km to sec/km: 5 * 60 = 300 sec/km.
-    // To convert from A to B: (value / factorA) * factorB!
-    // Example: 300 sec/km to min/km: (300 / 60.0) * 1.0 = 5 min/km.
-    // Perfect! Pacing factors behave linearly under this structure because pace is directly proportional to time!
     const fromObj = config.units.find((u) => u.code === from);
     const toObj = config.units.find((u) => u.code === to);
     if (!fromObj || !toObj) return 0;
@@ -492,7 +496,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
     return parseFloat(result.toFixed(4));
   };
 
-  // Core conversion dispatcher
   const getConversionResult = (): number => {
     if (config.id === 'temp-conv') {
       return convertTemp(inputVal, fromUnit, toUnit);
@@ -506,11 +509,9 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
 
     if (!fromObj || !toObj) return 0;
 
-    // Convert from custom to Standard Base unit (divide by fromObj.factor), then multiply by toObj.factor
     const baseVal = inputVal / fromObj.factor;
     const converted = baseVal * toObj.factor;
 
-    // Retain high precision on tiny numbers, or standard rounding on everyday numbers
     if (converted === 0) return 0;
     if (Math.abs(converted) < 1e-4) {
       return parseFloat(converted.toPrecision(6));
@@ -520,26 +521,21 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
 
   const convertedResult = getConversionResult();
 
-  // Helper to format results in prose
   const getProseText = () => {
     const fromUName = config.units.find((u) => u.code === fromUnit)?.name || fromUnit;
     const toUName = config.units.find((u) => u.code === toUnit)?.name || toUnit;
     return `${inputVal} ${fromUName.split(' ')[0]} is equivalent to ${convertedResult} ${toUName.split(' ')[0]}`;
   };
 
-  // Helper to perform a quick clipboard copy
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCode(id);
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
-  // Custom runner analysis for Athletic Pace tool
   const getPaceSpeedAnalysis = () => {
     if (config.id !== 'pace-conv') return null;
 
-    // Calculate km/h and mph representations of current pace
-    // Pace is in minutes per kilometer.
     let minPerKm = inputVal;
     if (fromUnit === 'min/mi') minPerKm = inputVal / 1.609344;
     else if (fromUnit === 'sec/km') minPerKm = inputVal / 60;
@@ -550,7 +546,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
     const kmh = 60 / minPerKm;
     const mph = kmh * 0.621371;
 
-    // Calculate marathon time and 5k time
     const fiveKSeconds = minPerKm * 5 * 60;
     const tenKSeconds = minPerKm * 10 * 60;
     const halfMarathonSeconds = minPerKm * 21.0975 * 60;
@@ -603,17 +598,13 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
     );
   };
 
-  // Custom digital bits & bytes diagnostics
   const getDigitalAnalysis = () => {
     if (config.id !== 'digital-conv') return null;
 
-    // Convert input value to standard Bytes
     const fromObj = config.units.find((u) => u.code === fromUnit);
     if (!fromObj) return null;
     const bytes = inputVal / fromObj.factor;
 
-    // Compare with transfer speed durations over typical internet connections
-    // 100 Mbps, 500 Mbps, 1 Gbps
     const formatDuration = (secondsVal: number) => {
       if (secondsVal < 0.1) return 'Instant';
       if (secondsVal < 60) return `${secondsVal.toFixed(1)} seconds`;
@@ -622,7 +613,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
       return `${mins}m ${secs}s`;
     };
 
-    // Bytes to bits
     const bits = bytes * 8;
     const sec100Mbps = bits / 100_000_000;
     const sec500Mbps = bits / 500_000_000;
@@ -664,7 +654,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
     );
   };
 
-  // Custom electrical diagnostics and predictions
   const getElectricalAnalysis = () => {
     if (!['current-conv', 'voltage-conv', 'power-conv', 'energy-conv'].includes(config.id)) return null;
 
@@ -675,7 +664,7 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
       if (watts <= 0 || isNaN(watts)) return null;
 
       const kilowatts = watts / 1000;
-      const ratePerHour = 0.16; // Average US residential electric rate
+      const ratePerHour = 0.16;
       const costPerHour = kilowatts * ratePerHour;
       const costPerDay = costPerHour * 24;
       const costPerMonth = costPerDay * 30.44;
@@ -828,19 +817,21 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
   };
 
   const IconComponent = Icons[config.icon] || Icons.Scale;
+  const badgeClass = isDark
+    ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+    : 'bg-orange-50 text-orange-600 border-orange-200';
 
   return (
     <div className="space-y-8 font-sans" id={`unit-converter-view-${config.id}`}>
-      {/* Title block */}
-      <div className="pb-4 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
+      <div className={`pb-4 border-b ${t.border} flex items-center justify-between flex-wrap gap-4`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded">
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>
               CONVERTER
             </span>
             {config.title}
           </h2>
-          <p className="text-sm text-gray-400">{config.description}</p>
+          <p className={`text-sm ${t.textMuted}`}>{config.description}</p>
         </div>
         <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center">
           <IconComponent className="w-5 h-5" />
@@ -848,26 +839,23 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* Input Controls */}
-        <div className="lg:col-span-3 space-y-5 bg-[#141416]/50 border border-white/5 p-6 rounded-2xl relative shadow-md">
+        <div className={`lg:col-span-3 space-y-5 ${t.panelBg} p-6 rounded-2xl relative shadow-md`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Input value */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">VALUE TO CONVERT:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>VALUE TO CONVERT:</label>
               <input
                 type="number"
-                className="w-full p-3 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-mono font-bold text-lg focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none"
+                className={`w-full p-3 ${t.inputBg} rounded-xl font-mono font-bold text-lg focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none`}
                 value={isNaN(inputVal) ? '' : inputVal}
                 onChange={(e) => setInputVal(parseFloat(e.target.value))}
                 placeholder="1.0"
               />
             </div>
 
-            {/* From unit */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">FROM UNIT:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>FROM UNIT:</label>
               <select
-                className="w-full p-3.5 bg-[#0a0a0b] border border-white/10 rounded-xl text-white text-sm focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none"
+                className={`w-full p-3.5 ${t.selectBg} rounded-xl text-sm focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none`}
                 value={fromUnit}
                 onChange={(e) => setFromUnit(e.target.value)}
               >
@@ -880,7 +868,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
             </div>
           </div>
 
-          {/* Action Row - Swap button */}
           <div className="flex justify-center -my-2.5 relative z-10">
             <button
               type="button"
@@ -892,13 +879,11 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
             </button>
           </div>
 
-          {/* Target options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Target Select */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">TO UNIT:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>TO UNIT:</label>
               <select
-                className="w-full p-3.5 bg-[#0a0a0b] border border-white/10 rounded-xl text-white text-sm focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none"
+                className={`w-full p-3.5 ${t.selectBg} rounded-xl text-sm focus:ring-1 focus:ring-orange-500/40 focus:border-orange-500 focus:outline-none`}
                 value={toUnit}
                 onChange={(e) => setToUnit(e.target.value)}
               >
@@ -912,14 +897,13 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
               </select>
             </div>
 
-            {/* Conversion output */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-orange-400 block font-mono">CONVERTED RESULT:</label>
               <div className="relative">
                 <input
                   type="text"
                   readOnly
-                  className="w-full p-3 bg-[#111112] border border-orange-500/10 rounded-xl text-orange-400 font-mono font-black text-lg focus:outline-none select-all"
+                  className={`w-full p-3 ${t.outputBg} border border-orange-500/10 rounded-xl text-orange-400 font-mono font-black text-lg focus:outline-none select-all`}
                   value={isNaN(convertedResult) ? 'Pending val...' : convertedResult}
                 />
                 <button
@@ -938,7 +922,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
             </div>
           </div>
 
-          {/* Inline Prose sentence description */}
           {!isNaN(convertedResult) && (
             <div className="p-3.5 bg-orange-500/5 border border-orange-500/10 rounded-xl text-xs text-orange-300 font-medium flex items-center justify-between gap-4">
               <span>{getProseText()}</span>
@@ -952,26 +935,24 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
             </div>
           )}
 
-          {/* Conditional athletic analysis and digital diagnostic blocks */}
           {getPaceSpeedAnalysis()}
           {getDigitalAnalysis()}
           {getElectricalAnalysis()}
         </div>
 
-        {/* Dynamic Multi-Unit Quick Reference Table (Insanely high Google SEO Value!) */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-[#0f0f10] border border-white/5 p-5 rounded-2xl space-y-3 shadow-md max-h-[440px] overflow-y-auto">
+          <div className={`${t.cardBg} p-5 rounded-2xl space-y-3 shadow-md max-h-[440px] overflow-y-auto`}>
             <div>
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block font-mono">
+              <span className={`text-[10px] font-bold ${t.labelFaint} uppercase tracking-widest block font-mono`}>
                 COMPREHENSIVE TRANSLATIONS
               </span>
-              <h3 className="text-sm font-bold text-white">Value in All Measured Metrics</h3>
-              <p className="text-[11px] text-gray-400 leading-normal">
+              <h3 className={`text-sm font-bold ${t.heading}`}>Value in All Measured Metrics</h3>
+              <p className={`text-[11px] ${t.textMuted} leading-normal`}>
                 Quick reference preview of {inputVal || 1} {config.units.find((u) => u.code === fromUnit)?.name.split(' ')[0]} inside other corresponding standards.
               </p>
             </div>
 
-            <div className="border border-white/5 rounded-xl divide-y divide-white/5 overflow-hidden text-xs bg-[#141416]/40 font-mono">
+            <div className={`border ${t.border} rounded-xl divide-y divide-white/5 overflow-hidden text-xs ${t.controlBg} font-mono`}>
               {config.units.map((unit) => {
                 let displayVal = 0;
                 if (config.id === 'temp-conv') {
@@ -999,12 +980,12 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
                     className={`flex items-center justify-between p-2 px-3 text-[11px] transition-colors ${
                       unit.code === fromUnit
                         ? 'bg-orange-500/5 text-orange-400 font-bold'
-                        : 'hover:bg-white/5 text-gray-300'
+                        : `hover:bg-white/5 ${t.textMuted}`
                     }`}
                   >
-                    <span className="text-gray-400 text-left line-clamp-1">{unit.name}</span>
+                    <span className={`text-left line-clamp-1 ${t.label}`}>{unit.name}</span>
                     <div className="flex items-center gap-1.5 flex-shrink-0 text-right">
-                      <span className={unit.code === fromUnit ? 'text-orange-400 font-extrabold' : 'text-white'}>
+                      <span className={unit.code === fromUnit ? 'text-orange-400 font-extrabold' : t.heading}>
                         {isNaN(roundedVal) ? '0' : roundedVal.toLocaleString(undefined, { maximumFractionDigits: 6 })}
                       </span>
                       <button
@@ -1033,7 +1014,6 @@ export function ConverterTools({ activeToolId }: { activeToolId: string }) {
 
 // ----------------------------------------------------
 // 1. DYNAMIC CURRENCY CONVERTER INTEGRATION
-// Includes Live exchange rate fetching & Fallback support
 // ----------------------------------------------------
 
 const FALLBACK_CURRENCIES: Record<string, { name: string; symbol: string; rate: number }> = {
@@ -1049,7 +1029,28 @@ const FALLBACK_CURRENCIES: Record<string, { name: string; symbol: string; rate: 
   INR: { name: 'Indian Rupee', symbol: '₹', rate: 83.50 }
 };
 
-function CurrencyConverter() {
+interface CurrencyConverterProps {
+  isDark: boolean;
+}
+
+function CurrencyConverter({ isDark }: CurrencyConverterProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [rates, setRates] = useState<Record<string, number>>(() => {
     const initialRates: Record<string, number> = {};
     Object.entries(FALLBACK_CURRENCIES).forEach(([code, data]) => {
@@ -1084,7 +1085,6 @@ function CurrencyConverter() {
           const freshRates: Record<string, number> = data.rates;
           setRates(freshRates);
 
-          // Build dynamic metadata with standard symbols for new currency codes
           const updatedMeta = { ...currencyMetadata };
           Object.keys(freshRates).forEach((code) => {
             if (!updatedMeta[code]) {
@@ -1120,42 +1120,42 @@ function CurrencyConverter() {
     if (isNaN(inputVal)) return 0;
     const rateFrom = rates[fromCurr] || 1.0;
     const rateTo = rates[toCurr] || 1.0;
-    // Base USD amount
     const usdAmount = inputVal / rateFrom;
     return usdAmount * rateTo;
   })();
 
   const fromSymbol = currencyMetadata[fromCurr]?.symbol || fromCurr;
   const toSymbol = currencyMetadata[toCurr]?.symbol || toCurr;
+  const badgeClass = isDark
+    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+    : 'bg-amber-50 text-amber-600 border-amber-200';
 
   return (
     <div className="space-y-6" id="currency-converter-root">
-      <div className="pb-4 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className={`pb-4 border-b ${t.border} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded">UNIT</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UNIT</span>
             Currency Converter
           </h2>
-          <p className="text-sm text-gray-400">Perform standard global currency exchanges with live-fetched bank exchange ratios.</p>
+          <p className={`text-sm ${t.textMuted}`}>Perform standard global currency exchanges with live-fetched bank exchange ratios.</p>
         </div>
-        <div className="text-xs font-mono text-gray-500 bg-[#141416]/90 p-2 border border-white/5 rounded-xl uppercase flex items-center gap-1.5 shrink-0 select-none">
+        <div className={`text-xs font-mono ${t.textFaint} bg-[#141416]/90 p-2 border ${t.border} rounded-xl uppercase flex items-center gap-1.5 shrink-0 select-none`}>
           <span className={`w-2 h-2 rounded-full ${loading ? 'bg-amber-400 animate-pulse' : 'bg-emerald-500'}`} />
           {lastUpdated}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-2 bg-[#141416] border border-white/5 p-6 rounded-2xl space-y-6">
+        <div className={`lg:col-span-2 ${t.panelBg} p-6 rounded-2xl space-y-6`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Input target value */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">EXCHANGE AMOUNT ({fromSymbol}):</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>EXCHANGE AMOUNT ({fromSymbol}):</label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 font-mono font-bold text-base">{fromSymbol}</span>
+                <span className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${t.labelFaint} font-mono font-bold text-base`}>{fromSymbol}</span>
                 <input
                   type="number"
-                  className="w-full p-3.5 pl-11 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-mono font-bold text-lg focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none"
+                  className={`w-full p-3.5 pl-11 ${t.inputBg} rounded-xl font-mono font-bold text-lg focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none`}
                   value={isNaN(inputVal) ? '' : inputVal}
                   onChange={(e) => setInputVal(parseFloat(e.target.value))}
                   placeholder="100"
@@ -1163,11 +1163,10 @@ function CurrencyConverter() {
               </div>
             </div>
 
-            {/* From currency select */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">FROM CURRENCY:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>FROM CURRENCY:</label>
               <select
-                className="w-full p-4 bg-[#0a0a0b] border border-white/10 rounded-xl text-white text-sm focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none font-mono"
+                className={`w-full p-4 ${t.selectBg} rounded-xl text-sm focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none font-mono`}
                 value={fromCurr}
                 onChange={(e) => setFromCurr(e.target.value)}
               >
@@ -1178,10 +1177,8 @@ function CurrencyConverter() {
                 ))}
               </select>
             </div>
-
           </div>
 
-          {/* Action Row - Swap button */}
           <div className="flex justify-center -my-3.5 relative z-10">
             <button
               type="button"
@@ -1198,12 +1195,10 @@ function CurrencyConverter() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Target Select */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">TO TARGET CURRENCY:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>TO TARGET CURRENCY:</label>
               <select
-                className="w-full p-4 bg-[#0a0a0b] border border-white/10 rounded-xl text-white text-sm focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none font-mono"
+                className={`w-full p-4 ${t.selectBg} rounded-xl text-sm focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 focus:outline-none font-mono`}
                 value={toCurr}
                 onChange={(e) => setToCurr(e.target.value)}
               >
@@ -1215,14 +1210,13 @@ function CurrencyConverter() {
               </select>
             </div>
 
-            {/* Conversion output */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-amber-400 block font-mono font-black">CONVERTED VAL ({toSymbol}):</label>
               <div className="relative">
                 <input
                   type="text"
                   readOnly
-                  className="w-full p-3.5 bg-[#111112] border border-amber-500/15 rounded-xl text-amber-400 font-mono font-black text-lg focus:outline-none select-all"
+                  className={`w-full p-3.5 ${t.outputBg} border border-amber-500/15 rounded-xl text-amber-400 font-mono font-black text-lg focus:outline-none select-all`}
                   value={isNaN(exchangeVal) ? 'Loading rates...' : `${toSymbol} ${exchangeVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`}
                 />
                 <button
@@ -1239,35 +1233,33 @@ function CurrencyConverter() {
                 </button>
               </div>
             </div>
-
           </div>
 
-          <p className="text-xs text-gray-500 text-center font-mono select-none">
+          <p className={`text-xs ${t.textFaint} text-center font-mono select-none`}>
             Let 1.00 {fromCurr} = {(rates[toCurr] / (rates[fromCurr] || 1)).toFixed(6)} {toCurr}. 
             Data refreshed live from decentralized er-api nodes.
           </p>
         </div>
 
-        {/* Quick Rate Sheet */}
         <div className="space-y-4">
-          <div className="bg-[#0f0f10] border border-white/5 p-5 rounded-2xl space-y-3.5 shadow-md">
+          <div className={`${t.cardBg} p-5 rounded-2xl space-y-3.5 shadow-md`}>
             <div>
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block font-mono">LIVE MATRIX SHEET</span>
-              <h3 className="text-sm font-bold text-white mt-0.5">Value of ({inputVal || 1.0}) {fromCurr}</h3>
-              <p className="text-[11px] text-gray-400 leading-normal">
+              <span className={`text-[10px] font-bold text-amber-400 uppercase tracking-widest block font-mono`}>LIVE MATRIX SHEET</span>
+              <h3 className={`text-sm font-bold ${t.heading} mt-0.5`}>Value of ({inputVal || 1.0}) {fromCurr}</h3>
+              <p className={`text-[11px] ${t.textMuted} leading-normal`}>
                 Comparison chart for ({inputVal || 1.0}) {fromCurr} conversion into standard robust assets.
               </p>
             </div>
 
-            <div className="border border-white/5 rounded-xl divide-y divide-white/5 overflow-hidden text-xs bg-[#141416]/40 font-mono">
+            <div className={`border ${t.border} rounded-xl divide-y divide-white/5 overflow-hidden text-xs ${t.controlBg} font-mono`}>
               {['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR'].map((code) => {
                 if (code === fromCurr) return null;
                 const converted = (inputVal || 1.0) / (rates[fromCurr] || 1) * (rates[code] || 1);
                 const sym = currencyMetadata[code]?.symbol || code;
                 return (
-                  <div key={code} className="flex items-center justify-between p-2.5 px-3 hover:bg-white/5 text-gray-300">
-                    <span className="text-gray-400 text-left">{code} - {currencyMetadata[code]?.name.split(' ')[0]}</span>
-                    <span className="text-white font-extrabold text-right">
+                  <div key={code} className={`flex items-center justify-between p-2.5 px-3 hover:bg-white/5 ${t.textMuted}`}>
+                    <span className={`text-left ${t.label}`}>{code} - {currencyMetadata[code]?.name.split(' ')[0]}</span>
+                    <span className={`font-extrabold text-right ${t.heading}`}>
                       {sym} {converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
@@ -1336,7 +1328,7 @@ function numberToWords(num: number): string {
   let finalStr = sign + (text.trim() || 'zero');
 
   if (decimalPart > 0) {
-    const decimalString = decimalPart.toFixed(4).replace(/0+$/, ''); // Limit decimal digits
+    const decimalString = decimalPart.toFixed(4).replace(/0+$/, '');
     const digits = decimalString.split('.')[1] || '';
     if (digits) {
       const spelledDigits = digits.split('').map(digit => {
@@ -1350,7 +1342,28 @@ function numberToWords(num: number): string {
   return finalStr.trim();
 }
 
-function NumberToWordConverter() {
+interface NumberToWordConverterProps {
+  isDark: boolean;
+}
+
+function NumberToWordConverter({ isDark }: NumberToWordConverterProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [numInput, setNumInput] = useState<string>('123456');
   const [formatMode, setFormatMode] = useState<'standard' | 'currency'>('standard');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -1389,26 +1402,28 @@ function NumberToWordConverter() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-indigo-50 text-indigo-600 border-indigo-200';
+
   return (
     <div className="space-y-6" id="num-to-word-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">WORD</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>WORD</span>
           Number to Word Converter
         </h2>
-        <p className="text-sm text-gray-400">Translate scientific digits and integers into formal English spelled-out written patterns.</p>
+        <p className={`text-sm ${t.textMuted}`}>Translate scientific digits and integers into formal English spelled-out written patterns.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        
-        {/* Input box */}
-        <div className="lg:col-span-5 bg-[#141416] border border-white/5 p-5 rounded-2xl flex flex-col justify-between">
+        <div className={`lg:col-span-5 ${t.panelBg} p-5 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 block font-mono">ENTER DIGITS OR DECIMALS:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>ENTER DIGITS OR DECIMALS:</label>
               <input
                 type="text"
-                className="w-full p-3 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-mono font-bold text-lg focus:ring-1 focus:ring-indigo-500/40 focus:border-indigo-500 focus:outline-none"
+                className={`w-full p-3 ${t.inputBg} rounded-xl font-mono font-bold text-lg focus:ring-1 focus:ring-indigo-500/40 focus:border-indigo-500 focus:outline-none`}
                 value={numInput}
                 onChange={(e) => setNumInput(e.target.value)}
                 placeholder="1234.56"
@@ -1416,7 +1431,7 @@ function NumberToWordConverter() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 block font-mono">TRANSLATION STYLE FORMAT:</label>
+              <label className={`text-xs font-bold ${t.label} block font-mono`}>TRANSLATION STYLE FORMAT:</label>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 <button
                   type="button"
@@ -1424,7 +1439,7 @@ function NumberToWordConverter() {
                   className={`p-3 rounded-lg border text-center transition-all cursor-pointer ${
                     formatMode === 'standard'
                       ? 'bg-indigo-505/10 border-indigo-500 text-white font-bold'
-                      : 'bg-black/35 border-white/5 text-gray-400 hover:text-white'
+                      : `bg-black/35 ${t.border} ${t.textMuted} hover:text-white`
                   }`}
                 >
                   Standard Spelled Out
@@ -1435,7 +1450,7 @@ function NumberToWordConverter() {
                   className={`p-3 rounded-lg border text-center transition-all cursor-pointer ${
                     formatMode === 'currency'
                       ? 'bg-indigo-505/10 border-indigo-500 text-white font-bold'
-                      : 'bg-black/35 border-white/5 text-gray-400 hover:text-white'
+                      : `bg-black/35 ${t.border} ${t.textMuted} hover:text-white`
                   }`}
                 >
                   Financial USD Notes
@@ -1444,8 +1459,8 @@ function NumberToWordConverter() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/5 text-xs text-gray-500 font-mono space-y-1.5 select-none">
-            <span className="font-bold text-gray-400 block">Quick Examples (click to load)</span>
+          <div className={`pt-4 border-t ${t.border} text-xs ${t.textFaint} font-mono space-y-1.5 select-none`}>
+            <span className={`font-bold ${t.label} block`}>Quick Examples (click to load)</span>
             <div className="flex flex-wrap gap-2">
               {['1450', '98754.20', '-35', '1000000'].map((ex) => (
                 <button
@@ -1461,8 +1476,7 @@ function NumberToWordConverter() {
           </div>
         </div>
 
-        {/* Output box */}
-        <div className="lg:col-span-7 bg-[#141416] border border-white/5 p-5 rounded-2xl flex flex-col justify-between">
+        <div className={`lg:col-span-7 ${t.panelBg} p-5 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block font-mono">TRANSLATED ENGLISH</span>
@@ -1485,16 +1499,15 @@ function NumberToWordConverter() {
               </button>
             </div>
 
-            <div className="p-4 bg-black/40 rounded-xl border border-white/5 min-h-[95px] flex items-center text-sm text-gray-200 font-semibold leading-relaxed break-words capitalize-first">
+            <div className={`p-4 bg-black/40 rounded-xl border ${t.border} min-h-[95px] flex items-center text-sm ${t.heading} font-semibold leading-relaxed break-words capitalize-first`}>
               {wordsResult}
             </div>
           </div>
 
-          <p className="text-[11px] text-gray-500 leading-normal font-mono select-none border-t border-white/5 pt-3.5 mt-4">
+          <p className={`text-[11px] ${t.textFaint} leading-normal font-mono select-none border-t ${t.border} pt-3.5 mt-4`}>
             Ideal for printing checks, draft documents, or translating decimal values inside engineering specifications.
           </p>
         </div>
-
       </div>
     </div>
   );
@@ -1592,7 +1605,28 @@ function parseHelper(tokens: string[], units: Record<string, number>, multiplier
   return total + currentGroup;
 }
 
-function WordToNumberConverter() {
+interface WordToNumberConverterProps {
+  isDark: boolean;
+}
+
+function WordToNumberConverter({ isDark }: WordToNumberConverterProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [wordsInput, setWordsInput] = useState<string>('one million two hundred thirty-four thousand five hundred and sixty-seven');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -1604,32 +1638,34 @@ function WordToNumberConverter() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const badgeClass = isDark
+    ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+    : 'bg-cyan-50 text-cyan-600 border-cyan-200';
+
   return (
     <div className="space-y-6" id="word-to-num-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded">UNIT</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>UNIT</span>
           Word to Number Converter
         </h2>
-        <p className="text-sm text-gray-400">Reconstruct high precision digits from alphabetical English text notations automatically.</p>
+        <p className={`text-sm ${t.textMuted}`}>Reconstruct high precision digits from alphabetical English text notations automatically.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        
-        {/* Input box */}
-        <div className="lg:col-span-6 bg-[#141416] border border-white/5 p-5 rounded-2xl flex flex-col justify-between">
+        <div className={`lg:col-span-6 ${t.panelBg} p-5 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-3">
-            <label className="text-xs font-bold text-gray-400 block font-mono">PASTE OR WRITE ENGLISH WORDS:</label>
+            <label className={`text-xs font-bold ${t.label} block font-mono`}>PASTE OR WRITE ENGLISH WORDS:</label>
             <textarea
-              className="w-full h-28 p-3.5 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-mono placeholder-gray-650 text-sm focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none resize-none leading-relaxed"
+              className={`w-full h-28 p-3.5 ${t.textareaBg} rounded-xl font-mono placeholder-gray-650 text-sm focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none resize-none leading-relaxed`}
               value={wordsInput}
               onChange={(e) => setWordsInput(e.target.value)}
               placeholder="e.g., forty-five thousand six hundred and twelve point three"
             />
           </div>
 
-          <div className="pt-4 border-t border-white/5 text-xs text-gray-500 font-mono space-y-1.5 mt-4 select-none">
-            <span className="font-bold text-gray-400 block">Click Examples to Load</span>
+          <div className={`pt-4 border-t ${t.border} text-xs ${t.textFaint} font-mono space-y-1.5 mt-4 select-none`}>
+            <span className={`font-bold ${t.label} block`}>Click Examples to Load</span>
             <div className="space-y-1">
               {[
                 'one hundred fifty thousand and five',
@@ -1649,8 +1685,7 @@ function WordToNumberConverter() {
           </div>
         </div>
 
-        {/* Output box */}
-        <div className="lg:col-span-6 bg-[#141416] border border-white/5 p-5 rounded-2xl flex flex-col justify-between">
+        <div className={`lg:col-span-6 ${t.panelBg} p-5 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest block font-mono">PARSED INT / DECIMAL</span>
@@ -1674,7 +1709,7 @@ function WordToNumberConverter() {
               </button>
             </div>
 
-            <div className="p-4 bg-black/40 rounded-xl border border-white/5 min-h-[95px] flex flex-col items-center justify-center text-center">
+            <div className={`p-4 bg-black/40 rounded-xl border ${t.border} min-h-[95px] flex flex-col items-center justify-center text-center`}>
               {isNaN(numericResult) ? (
                 <div className="space-y-1.5 text-red-400">
                   <Icons.AlertCircle className="w-6 h-6 text-red-500 mx-auto" />
@@ -1683,17 +1718,16 @@ function WordToNumberConverter() {
               ) : (
                 <div className="space-y-1">
                   <span className="text-3xl font-black font-mono text-cyan-400 break-all select-all">{numericResult.toLocaleString(undefined, { maximumFractionDigits: 10 })}</span>
-                  <p className="text-[10px] text-gray-500 font-mono tracking-wider">RAW FORMAT: {numericResult}</p>
+                  <p className={`text-[10px] ${t.textFaint} font-mono tracking-wider`}>RAW FORMAT: {numericResult}</p>
                 </div>
               )}
             </div>
           </div>
 
-          <p className="text-[11px] text-gray-550 leading-normal font-mono select-none border-t border-white/5 pt-3.5 mt-4">
+          <p className={`text-[11px] ${t.textFaint} leading-normal font-mono select-none border-t ${t.border} pt-3.5 mt-4`}>
             Supports standard hyphenations, hundreds, millions, trillions, decimals ("point") and optional negatives ("minus").
           </p>
         </div>
-
       </div>
     </div>
   );
@@ -1717,7 +1751,28 @@ function integerToRoman(num: number): string {
   return roman;
 }
 
-function NumberToRomanConverter() {
+interface NumberToRomanConverterProps {
+  isDark: boolean;
+}
+
+function NumberToRomanConverter({ isDark }: NumberToRomanConverterProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [inputStr, setInputStr] = useState<string>('2026');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -1736,37 +1791,39 @@ function NumberToRomanConverter() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const badgeClass = isDark
+    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+    : 'bg-purple-50 text-purple-600 border-purple-200';
+
   return (
     <div className="space-y-6" id="num-to-roman-container">
-      <div className="pb-4 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className={`pb-4 border-b ${t.border} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded">HISTORIC</span>
+          <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+            <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>HISTORIC</span>
             Number to Roman Numerals
           </h2>
-          <p className="text-sm text-gray-400">Convert modern base-10 standard Hindu-Arabic integers into chronological classic Roman digits.</p>
+          <p className={`text-sm ${t.textMuted}`}>Convert modern base-10 standard Hindu-Arabic integers into chronological classic Roman digits.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        
-        {/* Card for inputs */}
-        <div className="p-6 bg-[#141416] border border-white/5 rounded-2xl flex flex-col justify-between space-y-4">
+        <div className={`${t.panelBg} p-6 rounded-2xl flex flex-col justify-between space-y-4`}>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 block font-mono">POSITIVE INTEGER (1 TO 3999):</label>
+            <label className={`text-xs font-bold ${t.label} block font-mono`}>POSITIVE INTEGER (1 TO 3999):</label>
             <input
               type="number"
               min="1"
               max="3999"
-              className="w-full p-3.5 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-mono font-bold text-xl focus:ring-1 focus:ring-purple-500/40 focus:border-purple-500 focus:outline-none"
+              className={`w-full p-3.5 ${t.inputBg} rounded-xl font-mono font-bold text-xl focus:ring-1 focus:ring-purple-500/40 focus:border-purple-500 focus:outline-none`}
               value={inputStr}
               onChange={(e) => setInputStr(e.target.value)}
               placeholder="e.g. 1999"
             />
           </div>
 
-          <div className="text-xs text-gray-500 font-mono space-y-1.5 select-none">
-            <span className="font-bold text-gray-400 block">Historic Presets</span>
+          <div className={`text-xs ${t.textFaint} font-mono space-y-1.5 select-none`}>
+            <span className={`font-bold ${t.label} block`}>Historic Presets</span>
             <div className="flex flex-wrap gap-2">
               {['44', '100', '1999', '2000', '2026', '3999'].map((p) => (
                 <button
@@ -1782,8 +1839,7 @@ function NumberToRomanConverter() {
           </div>
         </div>
 
-        {/* Card for outputs */}
-        <div className="p-6 bg-[#141416] border border-white/5 rounded-2xl flex flex-col justify-between">
+        <div className={`${t.panelBg} p-6 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-[10px] font-bold text-purple-400 uppercase tracking-widest block font-mono">ROMAN DIGIT MATCH</span>
@@ -1807,16 +1863,16 @@ function NumberToRomanConverter() {
               </button>
             </div>
 
-            <div className="p-4 bg-black/40 rounded-xl border border-white/5 min-h-[90px] flex items-center justify-center text-center">
+            <div className={`p-4 bg-black/40 rounded-xl border ${t.border} min-h-[90px] flex items-center justify-center text-center`}>
               {isError ? (
-                <p className="text-xs font-mono text-gray-500">{romanOutput}</p>
+                <p className={`text-xs font-mono ${t.textFaint}`}>{romanOutput}</p>
               ) : (
                 <span className="text-4xl font-extrabold font-serif text-purple-400 tracking-widest break-all select-all">{romanOutput}</span>
               )}
             </div>
           </div>
 
-          <p className="text-[11px] text-gray-500 leading-normal font-mono select-none pt-3 border-t border-white/5 mt-4">
+          <p className={`text-[11px] ${t.textFaint} leading-normal font-mono select-none pt-3 border-t ${t.border} mt-4`}>
             Formula breakdown: {romanOutput.split('').map((char, index) => {
               const symValue: Record<string, number> = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
               if (isError) return '';
@@ -1824,7 +1880,6 @@ function NumberToRomanConverter() {
             })}
           </p>
         </div>
-
       </div>
     </div>
   );
@@ -1859,7 +1914,28 @@ function romanToInteger(str: string): number {
   return total;
 }
 
-function RomanToNumberConverter() {
+interface RomanToNumberConverterProps {
+  isDark: boolean;
+}
+
+function RomanToNumberConverter({ isDark }: RomanToNumberConverterProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const [romanStr, setRomanStr] = useState<string>('MCMXCIX');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -1872,33 +1948,35 @@ function RomanToNumberConverter() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const badgeClass = isDark
+    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+    : 'bg-indigo-50 text-indigo-600 border-indigo-200';
+
   return (
     <div className="space-y-6" id="roman-to-num-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">HISTORIC</span>
+      <div className={`pb-4 border-b ${t.border}`}>
+        <h2 className={`text-xl font-semibold ${t.heading} flex items-center gap-2 select-none`}>
+          <span className={`p-1 px-2 text-xs font-mono ${badgeClass} border rounded`}>HISTORIC</span>
           Roman Numerals to Number
         </h2>
-        <p className="text-sm text-gray-400">Resolve standard Latin Roman alphabet strings back into standard base-10 numerical values.</p>
+        <p className={`text-sm ${t.textMuted}`}>Resolve standard Latin Roman alphabet strings back into standard base-10 numerical values.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        
-        {/* Inputs */}
-        <div className="p-6 bg-[#141416] border border-white/5 rounded-2xl flex flex-col justify-between space-y-4">
+        <div className={`${t.panelBg} p-6 rounded-2xl flex flex-col justify-between space-y-4`}>
           <div className="space-y-1.5 font-mono">
-            <label className="text-xs font-bold text-gray-400 block">TYPE VALID ROMAN CHARACTERS (I, V, X, L, C, D, M):</label>
+            <label className={`text-xs font-bold ${t.label} block`}>TYPE VALID ROMAN CHARACTERS (I, V, X, L, C, D, M):</label>
             <input
               type="text"
-              className="w-full p-3.5 bg-[#0a0a0b] border border-white/10 rounded-xl text-white font-serif font-black text-2xl uppercase tracking-widest focus:ring-1 focus:ring-indigo-550 focus:border-indigo-500 focus:outline-none"
+              className={`w-full p-3.5 ${t.inputBg} rounded-xl font-serif font-black text-2xl uppercase tracking-widest focus:ring-1 focus:ring-indigo-550 focus:border-indigo-500 focus:outline-none`}
               value={romanStr}
               onChange={(e) => setRomanStr(e.target.value)}
               placeholder="MCMXCIX"
             />
           </div>
 
-          <div className="text-xs text-gray-500 font-mono space-y-1.5 select-none">
-            <span className="font-bold text-gray-400 block">Common Roman Examples</span>
+          <div className={`text-xs ${t.textFaint} font-mono space-y-1.5 select-none`}>
+            <span className={`font-bold ${t.label} block`}>Common Roman Examples</span>
             <div className="flex flex-wrap gap-2">
               {['IV', 'XCVII', 'DLV', 'MCMXCIX', 'MMXVI', 'MMMCMXCIX'].map((char) => (
                 <button
@@ -1914,8 +1992,7 @@ function RomanToNumberConverter() {
           </div>
         </div>
 
-        {/* Output */}
-        <div className="p-6 bg-[#141416] border border-white/5 rounded-2xl flex flex-col justify-between">
+        <div className={`${t.panelBg} p-6 rounded-2xl flex flex-col justify-between`}>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block font-mono">RESOLVED VALUE</span>
@@ -1939,7 +2016,7 @@ function RomanToNumberConverter() {
               </button>
             </div>
 
-            <div className="p-4 bg-black/40 rounded-xl border border-white/5 min-h-[90px] flex items-center justify-center text-center font-mono">
+            <div className={`p-4 bg-black/40 rounded-xl border ${t.border} min-h-[90px] flex items-center justify-center text-center font-mono`}>
               {isErr ? (
                 <div className="space-y-1 text-red-400">
                   <Icons.AlertCircle className="w-5 h-5 text-red-500 mx-auto" />
@@ -1951,13 +2028,11 @@ function RomanToNumberConverter() {
             </div>
           </div>
 
-          <p className="text-[11px] text-gray-500 leading-normal font-mono select-none pt-3 border-t border-white/5 mt-4">
+          <p className={`text-[11px] ${t.textFaint} leading-normal font-mono select-none pt-3 border-t ${t.border} mt-4`}>
             Subtractive notation rules apply (e.g., IV = 4, IX = 9, XC = 90, CM = 900) standardly.
           </p>
         </div>
-
       </div>
     </div>
   );
 }
-

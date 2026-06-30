@@ -66,6 +66,31 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://www.rocketwebtools.com?page=blog&amp;post=how-to-convert-images-to-webp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rocketwebtools.com?page=blog&amp;post=utm-parameters-complete-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rocketwebtools.com?page=blog&amp;post=what-is-a-jwt-token</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rocketwebtools.com?page=blog&amp;post=css-gradients-complete-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.rocketwebtools.com?page=blog&amp;post=how-to-calculate-loan-payments</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
   <!-- Tools -->
   <url>

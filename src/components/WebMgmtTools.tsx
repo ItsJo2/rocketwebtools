@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react';
 
 interface WebMgmtToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
 // Beautifier and Minifier engines
@@ -11,7 +12,6 @@ function beautifyHTML(html: string, indentSize: number): string {
   let level = 0;
   const tab = ' '.repeat(indentSize);
 
-  // Parse tags, text elements, and comments
   const tokens = html.match(/(<[^>]+>|[^<]+)/g) || [];
 
   for (let i = 0; i < tokens.length; i++) {
@@ -20,26 +20,20 @@ function beautifyHTML(html: string, indentSize: number): string {
     if (!trimmed) continue;
 
     if (trimmed.startsWith('<!--')) {
-      // HTML Comment
       result += '\n' + tab.repeat(level) + trimmed;
     } else if (trimmed.startsWith('</')) {
-      // Closing tag
       level = Math.max(0, level - 1);
-      result = result.trimEnd(); // avoid trailing gap
+      result = result.trimEnd();
       result += '\n' + tab.repeat(level) + trimmed;
     } else if (trimmed.startsWith('<') && trimmed.endsWith('/>')) {
-      // Self-closing tag
       result += '\n' + tab.repeat(level) + trimmed;
     } else if (trimmed.startsWith('<') && trimmed.startsWith('<!')) {
-      // Doctype or system declaration
       result += '\n' + tab.repeat(level) + trimmed;
     } else if (trimmed.startsWith('<')) {
-      // Standard opening tag
       const tagNameMatch = trimmed.match(/^<([a-zA-Z0-9:-]+)/);
       const tagName = tagNameMatch ? tagNameMatch[1].toLowerCase() : '';
       const isVoid = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'].includes(tagName);
 
-      // Check if the next token is a closing tag of the same element to keep inline text node
       const nextToken = tokens[i + 1]?.trim() || '';
       const isInlineClosing = nextToken === `</${tagName}>`;
       const isTextNode = nextToken && !nextToken.startsWith('<');
@@ -47,10 +41,10 @@ function beautifyHTML(html: string, indentSize: number): string {
 
       if (isInlineClosing) {
         result += '\n' + tab.repeat(level) + trimmed + nextToken;
-        i++; // skip closing token
+        i++;
       } else if (isNextNextClosing) {
         result += '\n' + tab.repeat(level) + trimmed + tokens[i + 1].trim() + tokens[i + 2].trim();
-        i += 2; // skip both text & closing token
+        i += 2;
       } else {
         result += '\n' + tab.repeat(level) + trimmed;
         if (!isVoid) {
@@ -58,7 +52,6 @@ function beautifyHTML(html: string, indentSize: number): string {
         }
       }
     } else {
-      // Standard text node
       result += '\n' + tab.repeat(level) + trimmed;
     }
   }
@@ -70,14 +63,11 @@ function minifyHTML(html: string, options: { removeComments: boolean; collapseWh
   let minified = html;
   
   if (options.removeComments) {
-    // Remove comments
     minified = minified.replace(/<!--[\s\S]*?-->/g, '');
   }
   
   if (options.collapseWhitespace) {
-    // Replace newlines and collapse white spaces
     minified = minified.replace(/\s+/g, ' ');
-    // Remove spacing around tag boundaries
     minified = minified.replace(/>\s+</g, '><');
   }
 
@@ -85,9 +75,8 @@ function minifyHTML(html: string, options: { removeComments: boolean; collapseWh
 }
 
 function beautifyCSS(css: string, indentSize: number): string {
-  // Remove existing redundant tabs and space arrays
   let clean = css
-    .replace(/\/\*[\s\S]*?\*\//g, '') // remove comments for simple accurate formatting
+    .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/\s+/g, ' ')
     .replace(/\s*([{};:])\s*/g, '$1')
     .trim();
@@ -105,7 +94,6 @@ function beautifyCSS(css: string, indentSize: number): string {
       result = result.trimEnd();
       result += '\n' + tab.repeat(level) + '}\n' + tab.repeat(level);
     } else if (char === ';') {
-      // Don't inject break if it's the very last character
       if (i < clean.length - 1 && clean[i + 1] !== '}') {
         result += ';\n' + tab.repeat(level);
       } else {
@@ -124,18 +112,13 @@ function beautifyCSS(css: string, indentSize: number): string {
 }
 
 function minifyCSS(css: string): string {
-  // Strip CSS comments
   let min = css.replace(/\/\*[\s\S]*?\*\//g, '');
-  // Collapse whitespace
   min = min.replace(/\s+/g, ' ');
-  // Remove spacing around symbols
   min = min.replace(/\s*([{};:,])\s*/g, '$1');
-  // Remove final extra semicolons before closing braces
   min = min.replace(/;}/g, '}');
   return min.trim();
 }
 
-// String decode and encode maps for HTML
 const HTML_ENTITIES_MAP: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
@@ -175,11 +158,9 @@ function encodeHTML(text: string, encodeAllNonAscii: boolean): string {
 
 function decodeHTML(html: string): string {
   let decoded = html;
-  // Replace standard named entities
   for (const [key, val] of Object.entries(HTML_DECODE_MAP)) {
     decoded = decoded.replace(new RegExp(key, 'g'), val);
   }
-  // Replace numerical entity references
   decoded = decoded.replace(/&#(\d+);/g, (_, numStr) => {
     try {
       return String.fromCharCode(parseInt(numStr, 10));
@@ -187,7 +168,6 @@ function decodeHTML(html: string): string {
       return '';
     }
   });
-  // Replace hex entity references
   decoded = decoded.replace(/&#x([a-fA-F0-9]+);/g, (_, hexStr) => {
     try {
       return String.fromCharCode(parseInt(hexStr, 16));
@@ -198,7 +178,6 @@ function decodeHTML(html: string): string {
   return decoded;
 }
 
-// Configurations of tools
 const TOOLS_CONFIG: Record<string, {
   title: string;
   description: string;
@@ -291,39 +270,47 @@ const TOOLS_CONFIG: Record<string, {
   }
 };
 
-export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
+export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textareaBg: isDark ? 'bg-[#09090b] border-white/5 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-gray-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400',
+    selectBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   const currentId = TOOLS_CONFIG[activeToolId] ? activeToolId : 'html-decode';
   const config = TOOLS_CONFIG[currentId];
 
-  // Primary State
   const [inputVal, setInputVal] = useState<string>('');
   const [outputVal, setOutputVal] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // HTML Entity encoding specific settings
   const [encodeNonAscii, setEncodeNonAscii] = useState<boolean>(false);
-
-  // URL Encode custom flags
   const [encodeSpacesAsPluses, setEncodeSpacesAsPluses] = useState<boolean>(false);
-
-  // HTML format config
   const [indentSize, setIndentSize] = useState<number>(2);
   const [stripCommentsOnMinify, setStripCommentsOnMinify] = useState<boolean>(true);
   const [collapseWhitespaceOnMinify, setCollapseWhitespaceOnMinify] = useState<boolean>(true);
 
-  // Metrics (Size tracking)
   const [inputSize, setInputSize] = useState<number>(0);
   const [outputSize, setOutputSize] = useState<number>(0);
   const [compressionRatio, setCompressionRatio] = useState<string>('0%');
 
-  // Load standard template state
   useEffect(() => {
     setInputVal(config.demoString);
     setErrorMsg(null);
   }, [currentId]);
 
-  // Execute processing whenever inputs configuration change
   useEffect(() => {
     if (!inputVal) {
       setOutputVal('');
@@ -346,11 +333,10 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
           calculatedVal = encodeHTML(inputVal, encodeNonAscii);
           break;
         case 'url-decode':
-          // Safely decode URI parameters, handling errors gracefully
           try {
             calculatedVal = decodeURIComponent(inputVal.replace(/\+/g, ' '));
           } catch {
-            calculatedVal = decodeURIComponent(inputVal); // backup
+            calculatedVal = decodeURIComponent(inputVal);
           }
           break;
         case 'url-encode':
@@ -380,7 +366,6 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
 
       setOutputVal(calculatedVal);
 
-      // Track size statistics
       const inB = new Blob([inputVal]).size;
       const outB = new Blob([calculatedVal]).size;
       setInputSize(inB);
@@ -413,7 +398,6 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
     setErrorMsg(null);
   };
 
-  // Dynamically resolve icons
   const getIcon = () => {
     switch (config.icon) {
       case 'Terminal': return <Icons.Terminal className="w-5 h-5 text-teal-400" />;
@@ -429,29 +413,29 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
 
   return (
     <div className="space-y-6">
-      <div id="web-mgmt-main-card" className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+      <div id="web-mgmt-main-card" className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
         
         {/* Header Block */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-4">
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b ${t.border} pb-4`}>
           <div>
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+            <h2 className={`text-base font-semibold ${t.heading} tracking-tight flex items-center gap-2 font-mono select-none`}>
               {getIcon()}
               {config.title}
             </h2>
-            <p className="text-xs text-gray-400 mt-1">{config.description}</p>
+            <p className={`text-xs ${t.textMuted} mt-1`}>{config.description}</p>
           </div>
 
           <div className="flex gap-2 w-full md:w-auto">
             <button
               onClick={loadDemo}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-all font-mono"
+              className={`flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium ${t.textMuted} hover:${t.heading} ${t.controlBg} hover:bg-white/10 rounded-lg border ${t.border} transition-all font-mono`}
             >
               <Icons.FileCode className="w-3.5 h-3.5 text-teal-400" />
               Demo Payload
             </button>
             <button
               onClick={handleClear}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-[#271c1c] rounded-lg border border-white/5 transition-all font-mono"
+              className={`flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium ${t.textMuted} hover:${t.heading} ${t.controlBg} hover:bg-[#271c1c] rounded-lg border ${t.border} transition-all font-mono`}
             >
               <Icons.Trash2 className="w-3.5 h-3.5 text-rose-400" />
               Clear
@@ -460,16 +444,15 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
         </div>
 
         {/* Customized config panel depending on active tool */}
-        <div className="p-4 bg-[#09090b]/80 border border-white/5 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+        <div className={`p-4 ${t.controlBg} rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs`}>
           
-          {/* HTML Indent options */}
           {(currentId === 'html-beautifier' || currentId === 'css-beautifier') && (
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-gray-400 font-mono uppercase tracking-wider block">Indentation Customization</label>
+              <label className={`text-[10px] font-bold ${t.textMuted} font-mono uppercase tracking-wider block`}>Indentation Customization</label>
               <select
                 value={indentSize}
                 onChange={(e) => setIndentSize(parseInt(e.target.value, 10))}
-                className="w-full p-2 border border-white/5 rounded bg-[#09090b] text-xs text-white focus:outline-none focus:border-teal-500/40"
+                className={`w-full p-2 ${t.selectBg} rounded focus:outline-none focus:border-teal-500/40`}
               >
                 <option value="2">2 Spaces</option>
                 <option value="4">4 Spaces</option>
@@ -478,7 +461,6 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
             </div>
           )}
 
-          {/* HTML Entity Options */}
           {currentId === 'html-encode' && (
             <div className="flex items-center gap-2 mt-4">
               <input
@@ -488,13 +470,12 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
                 onChange={(e) => setEncodeNonAscii(e.target.checked)}
                 className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
               />
-              <label htmlFor="non-ascii-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
+              <label htmlFor="non-ascii-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                 Encode all Non-ASCII Characters
               </label>
             </div>
           )}
 
-          {/* URL Encoding spaces options */}
           {currentId === 'url-encode' && (
             <div className="flex items-center gap-2 mt-4">
               <input
@@ -504,13 +485,12 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
                 onChange={(e) => setEncodeSpacesAsPluses(e.target.checked)}
                 className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
               />
-              <label htmlFor="space-encode-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
+              <label htmlFor="space-encode-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                 Represent Spaces as Plus signs (<code>+</code>)
               </label>
             </div>
           )}
 
-          {/* Minifier specific parameters */}
           {currentId === 'html-minifier' && (
             <>
               <div className="flex items-center gap-2">
@@ -521,7 +501,7 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
                   onChange={(e) => setStripCommentsOnMinify(e.target.checked)}
                   className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
                 />
-                <label htmlFor="strip-comments-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
+                <label htmlFor="strip-comments-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                   Strip Document Comments
                 </label>
               </div>
@@ -533,17 +513,16 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
                   onChange={(e) => setCollapseWhitespaceOnMinify(e.target.checked)}
                   className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
                 />
-                <label htmlFor="collapse-ws-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
+                <label htmlFor="collapse-ws-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                   Collapse Whitespaces / Gaps
                 </label>
               </div>
             </>
           )}
 
-          {/* Stats indicator */}
-          <div className="lg:col-span-1 flex flex-col justify-center font-mono text-[10px] text-gray-500 space-y-0.5">
-            <div>Input Size: <strong className="text-gray-300">{inputSize} Bytes</strong></div>
-            <div>Output Size: <strong className="text-gray-300">{outputSize} Bytes</strong></div>
+          <div className="lg:col-span-1 flex flex-col justify-center font-mono text-[10px] ${t.textFaint} space-y-0.5">
+            <div>Input Size: <strong className={t.heading}>{inputSize} Bytes</strong></div>
+            <div>Output Size: <strong className={t.heading}>{outputSize} Bytes</strong></div>
             {inputSize > 0 && (
               <div className="text-teal-400 font-bold">{compressionRatio}</div>
             )}
@@ -555,7 +534,7 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
           
           {/* Input Panel */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono ${t.textFaint} uppercase tracking-widest`}>
               <span>{config.inputLabel}</span>
               <span>Length: {inputVal.length} Chars</span>
             </div>
@@ -565,13 +544,13 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
               onChange={(e) => setInputVal(e.target.value)}
               placeholder={config.placeholder}
               rows={9}
-              className="w-full p-4 bg-[#09090b] border border-white/5 rounded-xl text-[12.5px] text-white font-mono placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-teal-500/20 focus:border-teal-500/40 transition-colors"
+              className={`w-full p-4 ${t.textareaBg} rounded-xl text-[12.5px] font-mono focus:outline-none focus:ring-1 focus:ring-teal-500/20 focus:border-teal-500/40 transition-colors`}
             />
           </div>
 
           {/* Output Panel */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono ${t.textFaint} uppercase tracking-widest`}>
               <span>{config.outputLabel}</span>
               <span>COMPLETED COMPILATION</span>
             </div>
@@ -582,7 +561,7 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
                 value={outputVal}
                 placeholder="Transformed web content will reflect here in real-time..."
                 rows={9}
-                className="w-full p-4 bg-[#0c0c0e] border border-white/5 rounded-xl text-[12.5px] text-emerald-400 font-mono focus:outline-none placeholder:text-gray-750"
+                className={`w-full p-4 ${t.outputBg} rounded-xl text-[12.5px] font-mono focus:outline-none placeholder:text-gray-400`}
               />
 
               {errorMsg && (
@@ -598,7 +577,7 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
               {outputVal && !errorMsg && (
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-1.5 text-[10px] font-mono text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-1.5 px-3 rounded border border-white/5 transition-colors"
+                  className={`flex items-center gap-1.5 text-[10px] font-mono ${t.textMuted} hover:${t.heading} ${t.copyBtn} p-1.5 px-3 rounded border ${t.border} transition-colors`}
                 >
                   {copied ? (
                     <>
@@ -618,12 +597,12 @@ export function WebMgmtTools({ activeToolId }: WebMgmtToolsProps) {
         </div>
 
         {/* Explaining matching algorithm rules */}
-        <div className="border-t border-white/4 pt-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+        <div className={`border-t ${t.border} pt-4 space-y-2`}>
+          <div className={`flex items-center gap-1.5 text-[10px] font-mono ${t.textMuted} uppercase tracking-widest`}>
             <Icons.BookOpen className="w-3.5 h-3.5 text-teal-400" />
             <span>Under the hood - execution standards</span>
           </div>
-          <div className="p-4 bg-[#09090a] border border-white/5 rounded-xl text-xs text-gray-400 leading-relaxed font-sans space-y-1.5">
+          <div className={`p-4 ${t.controlBg} rounded-xl text-xs ${t.textMuted} leading-relaxed font-sans space-y-1.5`}>
             {currentId === 'html-decode' && (
               <p>Uses recursive mapping arrays translating nested entities. Correctly maps classic entities like <code>&amp;lt;</code>, hexadecimal indicators (e.g. <code>&amp;#x3a;</code>), and base-10 indices back into native UTF-8 symbols.</p>
             )}

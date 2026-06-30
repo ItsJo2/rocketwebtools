@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Copy, Check, RotateCcw, AlertCircle, Sparkles, Terminal } from 'lucide-react';
 
-export function CodeTools({ activeToolId }: { activeToolId: string }) {
+export function CodeTools({ activeToolId, isDark }: { activeToolId: string; isDark: boolean }) {
   const [copiedStatus, setCopiedStatus] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -11,29 +11,45 @@ export function CodeTools({ activeToolId }: { activeToolId: string }) {
   };
 
   if (activeToolId === 'json-formatter') {
-    return <JsonFormatter onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <JsonFormatter onCopy={handleCopy} copiedStatus={copiedStatus} isDark={isDark} />;
   }
   if (activeToolId === 'base64') {
-    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} isDark={isDark} />;
   }
   if (activeToolId === 'base64-encode') {
-    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} initialMode="encode" />;
+    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} initialMode="encode" isDark={isDark} />;
   }
   if (activeToolId === 'base64-decode') {
-    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} initialMode="decode" />;
+    return <Base64Tool onCopy={handleCopy} copiedStatus={copiedStatus} initialMode="decode" isDark={isDark} />;
   }
   if (activeToolId === 'html-url') {
-    return <HtmlUrlEncoder onCopy={handleCopy} copiedStatus={copiedStatus} />;
+    return <HtmlUrlEncoder onCopy={handleCopy} copiedStatus={copiedStatus} isDark={isDark} />;
   }
   if (activeToolId === 'hash-gen' || activeToolId === 'md5-gen') {
-    return <HashGenerator onCopy={handleCopy} copiedStatus={copiedStatus} activeToolId={activeToolId} />;
+    return <HashGenerator onCopy={handleCopy} copiedStatus={copiedStatus} activeToolId={activeToolId} isDark={isDark} />;
   }
 
   return null;
 }
 
 // 1. JSON FORMATTER & VALIDATOR
-function JsonFormatter({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function JsonFormatter({ onCopy, copiedStatus, isDark }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null; isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textSecondary: isDark ? 'text-gray-300' : 'text-gray-700',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    borderInput: isDark ? 'border-white/10' : 'border-gray-300',
+    input: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textarea: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600 font-mono' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 font-mono',
+    output: isDark ? 'bg-[#0a0a0a] border-white/5 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-800',
+    select: isDark ? 'bg-[#141414] border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900',
+    badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
+    divider: isDark ? 'border-white/5' : 'border-gray-200',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+  };
+
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -79,20 +95,20 @@ function JsonFormatter({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
 
   return (
     <div className="space-y-6" id="json-formatter-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${t.divider}`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">DEV</span>
+          <h2 className={`text-xl font-semibold flex items-center gap-2 select-none ${t.heading}`}>
+            <span className={`p-1 px-2 text-xs font-mono border rounded ${t.badge}`}>DEV</span>
             JSON Formatter & Validator
           </h2>
-          <p className="text-sm text-gray-400">Validate, beautify, formatting or minifying messy JSON instantly.</p>
+          <p className={`text-sm ${t.textMuted}`}>Validate, beautify, formatting or minifying messy JSON instantly.</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap text-sm">
-          <label className="text-gray-400 font-medium">Spaces:</label>
+          <label className={`font-medium ${t.label}`}>Spaces:</label>
           <select 
             value={indent} 
             onChange={(e) => setIndent(e.target.value)}
-            className="p-1.5 px-3 border border-white/10 rounded text-sm bg-[#161616] text-white focus:outline-none focus:ring-1 focus:ring-indigo-650 cursor-pointer"
+            className={`p-1.5 px-3 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-indigo-650 cursor-pointer ${t.select}`}
           >
             <option value="2">2 Spaces</option>
             <option value="4">4 Spaces</option>
@@ -111,9 +127,9 @@ function JsonFormatter({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Column */}
         <div className="flex flex-col">
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">INPUT STRING:</label>
+          <label className={`text-xs font-mono mb-1.5 block ${t.label}`}>INPUT STRING:</label>
           <textarea
-            className="w-full h-80 p-4 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 bg-[#161616] text-white placeholder-gray-600"
+            className={`w-full h-80 p-4 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 ${t.textarea}`}
             placeholder="Paste your raw JSON text here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -147,7 +163,7 @@ function JsonFormatter({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
         {/* Output Column */}
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-mono text-gray-400">FORMATTED OUTPUT:</span>
+            <span className={`text-xs font-mono ${t.label}`}>FORMATTED OUTPUT:</span>
             {output && (
               <button 
                 type="button"
@@ -168,11 +184,11 @@ function JsonFormatter({ onCopy, copiedStatus }: { onCopy: (text: string, id: st
                 <p className="text-xs text-rose-300/85 max-w-sm mt-1 font-mono break-all">{error}</p>
               </div>
             ) : output ? (
-              <pre className="absolute inset-0 p-4 border border-white/10 bg-[#161616] overflow-auto rounded-lg text-sm font-mono text-emerald-400 break-all whitespace-pre-wrap">
+              <pre className={`absolute inset-0 p-4 border overflow-auto rounded-lg text-sm font-mono break-all whitespace-pre-wrap ${t.output}`}>
                 {output}
               </pre>
             ) : (
-              <div className="absolute inset-0 border border-dashed border-white/10 rounded-lg flex flex-col justify-center items-center text-center bg-white/2 overflow-auto text-gray-500 p-4 text-xs">
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 overflow-auto p-4 text-xs ${t.borderInput} ${t.textFaint}`}>
                 <Terminal className="w-8 h-8 mb-2 text-gray-600" />
                 Format some JSON on the left to review parsed attributes here.
               </div>
@@ -189,9 +205,26 @@ interface Base64Props {
   onCopy: (text: string, id: string) => void;
   copiedStatus: string | null;
   initialMode?: 'encode' | 'decode';
+  isDark: boolean;
 }
 
-function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Props) {
+function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Base64Props) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textSecondary: isDark ? 'text-gray-300' : 'text-gray-700',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    borderInput: isDark ? 'border-white/10' : 'border-gray-300',
+    input: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textarea: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600 font-mono' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 font-mono',
+    output: isDark ? 'bg-[#0a0a0a] border-white/5 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-800',
+    select: isDark ? 'bg-[#141414] border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900',
+    badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
+    divider: isDark ? 'border-white/5' : 'border-gray-200',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+  };
+
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [mode, setMode] = useState<'encode' | 'decode'>(initialMode);
@@ -245,13 +278,13 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Prop
 
   return (
     <div className="space-y-6" id="base64-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${t.divider}`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">DEV</span>
+          <h2 className={`text-xl font-semibold flex items-center gap-2 select-none ${t.heading}`}>
+            <span className={`p-1 px-2 text-xs font-mono border rounded ${t.badge}`}>DEV</span>
             Base64 Encoder / Decoder
           </h2>
-          <p className="text-sm text-gray-400">Encode standard text content to base64, or decode back to humans.</p>
+          <p className={`text-sm ${t.textMuted}`}>Encode standard text content to base64, or decode back to humans.</p>
         </div>
         <div className="bg-white/5 p-1 rounded-full flex inline-flex text-xs font-semibold">
           <button 
@@ -274,11 +307,11 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Prop
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Input */}
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">
+          <label className={`text-xs font-mono mb-1.5 block ${t.label}`}>
             {mode === 'encode' ? 'PLAIN TEXT INPUT' : 'BASE64 INPUT'}
           </label>
           <textarea
-            className="w-full h-64 p-4 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 bg-[#161616] text-white placeholder-gray-650"
+            className={`w-full h-64 p-4 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 ${t.textarea}`}
             placeholder={mode === 'encode' ? 'Enter normal readable text here...' : 'Enter base64 encoded text (e.g. SGVsbG8gd29ybGQ=)'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -312,7 +345,7 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Prop
         {/* Right Output */}
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-mono text-gray-400">
+            <span className={`text-xs font-mono ${t.label}`}>
               {mode === 'encode' ? 'BASE64 STRING' : 'DECODED PLAIN TEXT'}
             </span>
             {output && (
@@ -334,11 +367,11 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Prop
                 <p className="text-xs text-rose-300 font-medium">{error}</p>
               </div>
             ) : output ? (
-              <pre className="absolute inset-0 p-4 border border-white/10 bg-[#161616] overflow-auto rounded-lg text-sm font-mono text-emerald-400 break-all whitespace-pre-wrap select-all">
+              <pre className={`absolute inset-0 p-4 border overflow-auto rounded-lg text-sm font-mono break-all whitespace-pre-wrap select-all ${t.output}`}>
                 {output}
               </pre>
             ) : (
-              <div className="absolute inset-0 border border-dashed border-white/10 rounded-lg flex flex-col justify-center items-center text-center bg-white/2 text-gray-500 p-4 text-xs font-mono">
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 p-4 text-xs font-mono ${t.borderInput} ${t.textFaint}`}>
                 Click Convert on the left to see results.
               </div>
             )}
@@ -350,7 +383,23 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode' }: Base64Prop
 }
 
 // 3. HTML / URL ENCODER & DECODER
-function HtmlUrlEncoder({ onCopy, copiedStatus }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null }) {
+function HtmlUrlEncoder({ onCopy, copiedStatus, isDark }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null; isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textSecondary: isDark ? 'text-gray-300' : 'text-gray-700',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    borderInput: isDark ? 'border-white/10' : 'border-gray-300',
+    input: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textarea: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600 font-mono' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 font-mono',
+    output: isDark ? 'bg-[#0a0a0a] border-white/5 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-800',
+    select: isDark ? 'bg-[#141414] border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900',
+    badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
+    divider: isDark ? 'border-white/5' : 'border-gray-200',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+  };
+
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [type, setType] = useState<'url' | 'html'>('url');
@@ -389,13 +438,13 @@ function HtmlUrlEncoder({ onCopy, copiedStatus }: { onCopy: (text: string, id: s
 
   return (
     <div className="space-y-6" id="html-url-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${t.divider}`}>
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">DEV</span>
+          <h2 className={`text-xl font-semibold flex items-center gap-2 select-none ${t.heading}`}>
+            <span className={`p-1 px-2 text-xs font-mono border rounded ${t.badge}`}>DEV</span>
             URL & HTML Helper
           </h2>
-          <p className="text-sm text-gray-400">Safely encode URLs and HTML tags or decode special characters.</p>
+          <p className={`text-sm ${t.textMuted}`}>Safely encode URLs and HTML tags or decode special characters.</p>
         </div>
         <div className="flex items-center gap-4 text-xs font-semibold flex-wrap">
           <div className="bg-white/5 p-1 rounded-full flex">
@@ -435,9 +484,9 @@ function HtmlUrlEncoder({ onCopy, copiedStatus }: { onCopy: (text: string, id: s
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">INPUT STRING:</label>
+          <label className={`text-xs font-mono mb-1.5 block ${t.label}`}>INPUT STRING:</label>
           <textarea
-            className="w-full h-56 p-4 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 bg-[#161616] text-white"
+            className={`w-full h-56 p-4 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 ${t.textarea}`}
             placeholder={
               type === 'url' 
                 ? (action === 'encode' ? 'Search value in browser=my search result' : 'Search%20value%20in%20browser%3Dmy%20search%20result')
@@ -466,7 +515,7 @@ function HtmlUrlEncoder({ onCopy, copiedStatus }: { onCopy: (text: string, id: s
 
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-mono text-gray-400">OUTPUT STRING:</span>
+            <span className={`text-xs font-mono ${t.label}`}>OUTPUT STRING:</span>
             {output && (
               <button 
                 type="button"
@@ -480,11 +529,11 @@ function HtmlUrlEncoder({ onCopy, copiedStatus }: { onCopy: (text: string, id: s
           </div>
           <div className="relative flex-1 min-h-[224px]">
             {output ? (
-              <pre className="absolute inset-0 p-4 border border-white/10 bg-[#161616] overflow-auto rounded-lg text-sm font-mono text-emerald-400 break-all whitespace-pre-wrap select-all">
+              <pre className={`absolute inset-0 p-4 border overflow-auto rounded-lg text-sm font-mono break-all whitespace-pre-wrap select-all ${t.output}`}>
                 {output}
               </pre>
             ) : (
-              <div className="absolute inset-0 border border-dashed border-white/10 rounded-lg flex flex-col justify-center items-center text-center bg-white/2 text-gray-500 p-4 text-xs font-mono">
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 p-4 text-xs font-mono ${t.borderInput} ${t.textFaint}`}>
                 Results will display here after conversion.
               </div>
             )}
@@ -578,7 +627,23 @@ function md5(str: string): string {
 }
 
 // 4. SHA & CRYPTO HASH GENERATOR
-function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null; activeToolId?: string }) {
+function HashGenerator({ onCopy, copiedStatus, activeToolId, isDark }: { onCopy: (text: string, id: string) => void; copiedStatus: string | null; activeToolId?: string; isDark: boolean }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textSecondary: isDark ? 'text-gray-300' : 'text-gray-700',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    borderInput: isDark ? 'border-white/10' : 'border-gray-300',
+    input: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    textarea: isDark ? 'bg-[#141414] border-white/10 text-white placeholder:text-gray-600 font-mono' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 font-mono',
+    output: isDark ? 'bg-[#0a0a0a] border-white/5 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-800',
+    select: isDark ? 'bg-[#141414] border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900',
+    badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
+    divider: isDark ? 'border-white/5' : 'border-gray-200',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+  };
+
   const [input, setInput] = useState('');
   const [hashes, setHashes] = useState<{ md5: string; sha1: string; sha256: string; sha512: string } | null>(null);
 
@@ -622,12 +687,12 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
 
   return (
     <div className="space-y-6" id="hash-gen-container">
-      <div className="pb-4 border-b border-white/5">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <span className="p-1 px-2 text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">DEV</span>
+      <div className={`pb-4 border-b ${t.divider}`}>
+        <h2 className={`text-xl font-semibold flex items-center gap-2 select-none ${t.heading}`}>
+          <span className={`p-1 px-2 text-xs font-mono border rounded ${t.badge}`}>DEV</span>
           {activeToolId === 'md5-gen' ? 'MD5 Checksum Generator' : 'Cryptography Hash Generator'}
         </h2>
-        <p className="text-sm text-gray-400">
+        <p className={`text-sm ${t.textMuted}`}>
           {activeToolId === 'md5-gen' 
             ? 'Generate standard 128-bit MD5 signature digests directly inside your browser.' 
             : 'Generate secure web cryptographical checksums (MD5, SHA-1, SHA-256, SHA-512) directly in your browser.'}
@@ -636,9 +701,9 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-mono text-gray-400 mb-1.5 block">INPUT PLAIN STRING:</label>
+          <label className={`text-xs font-mono mb-1.5 block ${t.label}`}>INPUT PLAIN STRING:</label>
           <textarea
-            className="w-full h-32 p-4 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 bg-[#161616] text-white placeholder-gray-500"
+            className={`w-full h-32 p-4 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-650/20 focus:border-indigo-650 ${t.textarea}`}
             placeholder="Type or paste contents to calculate hash instantly..."
             value={input}
             onChange={(e) => {
@@ -657,11 +722,11 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
         </button>
 
         {hashes && (
-          <div className="space-y-4 pt-4 border-t border-white/5">
+          <div className={`space-y-4 pt-4 border-t ${t.divider}`}>
             {/* MD5 Checksum display */}
-            <div className={`p-3 border rounded-lg ${activeToolId === 'md5-gen' ? 'bg-[#1b251d] border-emerald-500/25' : 'bg-[#111111] border-white/5'}`}>
+            <div className={`p-3 border rounded-lg ${activeToolId === 'md5-gen' ? (isDark ? 'bg-[#1b251d] border-emerald-500/25' : 'bg-emerald-50 border-emerald-200') : (isDark ? 'bg-[#111111] border-white/5' : 'bg-white border-gray-200')}`}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-gray-300 font-mono">
+                <span className={`text-xs font-bold font-mono ${t.textSecondary}`}>
                   MD5 Digest: {activeToolId === 'md5-gen' && <span className="ml-1 text-[9px] text-emerald-450 border border-emerald-550/20 bg-emerald-500/10 px-1.5 rounded py-0.2">Featured</span>}
                 </span>
                 <button 
@@ -672,13 +737,13 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
                   {copiedStatus === 'md5' ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <p className="text-xs font-mono text-emerald-400 break-all bg-[#161616] p-2.5 rounded border border-white/5 select-all">{hashes.md5}</p>
+              <p className={`text-xs font-mono break-all p-2.5 rounded border select-all ${t.output}`}>{hashes.md5}</p>
             </div>
 
             {/* SHA-1 */}
-            <div className="p-3 bg-[#111111] border border-white/5 rounded-lg">
+            <div className={`p-3 border rounded-lg ${isDark ? 'bg-[#111111] border-white/5' : 'bg-white border-gray-200'}`}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-gray-300 font-mono">SHA-1:</span>
+                <span className={`text-xs font-bold font-mono ${t.textSecondary}`}>SHA-1:</span>
                 <button 
                   type="button"
                   onClick={() => onCopy(hashes.sha1, 'sha1')}
@@ -687,13 +752,13 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
                   {copiedStatus === 'sha1' ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <p className="text-xs font-mono text-emerald-400 break-all bg-[#161616] p-2.5 rounded border border-white/5 select-all">{hashes.sha1}</p>
+              <p className={`text-xs font-mono break-all p-2.5 rounded border select-all ${t.output}`}>{hashes.sha1}</p>
             </div>
 
             {/* SHA-256 */}
-            <div className="p-3 bg-[#111111] border border-white/5 rounded-lg">
+            <div className={`p-3 border rounded-lg ${isDark ? 'bg-[#111111] border-white/5' : 'bg-white border-gray-200'}`}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-gray-350 font-mono">SHA-256:</span>
+                <span className={`text-xs font-bold font-mono ${t.textSecondary}`}>SHA-256:</span>
                 <button 
                   type="button"
                   onClick={() => onCopy(hashes.sha256, 'sha256')}
@@ -702,13 +767,13 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
                   {copiedStatus === 'sha256' ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <p className="text-xs font-mono text-emerald-400 break-all bg-[#161616] p-2.5 rounded border border-white/5 select-all">{hashes.sha256}</p>
+              <p className={`text-xs font-mono break-all p-2.5 rounded border select-all ${t.output}`}>{hashes.sha256}</p>
             </div>
 
             {/* SHA-512 */}
-            <div className="p-3 bg-[#111111] border border-white/5 rounded-lg">
+            <div className={`p-3 border rounded-lg ${isDark ? 'bg-[#111111] border-white/5' : 'bg-white border-gray-200'}`}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-gray-350 font-mono">SHA-512:</span>
+                <span className={`text-xs font-bold font-mono ${t.textSecondary}`}>SHA-512:</span>
                 <button 
                   type="button"
                   onClick={() => onCopy(hashes.sha512, 'sha512')}
@@ -717,7 +782,7 @@ function HashGenerator({ onCopy, copiedStatus, activeToolId }: { onCopy: (text: 
                   {copiedStatus === 'sha512' ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <p className="text-xs font-mono text-emerald-400 break-all bg-[#161616] p-2.5 rounded border border-white/5 select-all">{hashes.sha512}</p>
+              <p className={`text-xs font-mono break-all p-2.5 rounded border select-all ${t.output}`}>{hashes.sha512}</p>
             </div>
           </div>
         )}

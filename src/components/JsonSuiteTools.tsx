@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react';
 
 interface JsonSuiteToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
 // =========================================================================
@@ -347,7 +348,7 @@ export function TreeViewerNode({ name, value, depth, searchFilter }: TreeNodePro
 
     // Filter list check
     return (
-      <div className="pl-4 border-l border-white/5 py-1 select-none">
+      <div className="pl-4 border-l border-gray-200/50 dark:border-white/5 py-1 select-none">
         <div 
           onClick={() => setCollapsed(!collapsed)}
           className={`flex items-center gap-1.5 cursor-pointer p-0.5 rounded transition-all hover:bg-white/5 ${isMatched ? 'bg-indigo-950/40 border-l border-indigo-500' : ''}`}
@@ -411,7 +412,7 @@ export function TreeViewerNode({ name, value, depth, searchFilter }: TreeNodePro
 // =========================================================================
 // MAIN JSON DATA CONVERSION SUITE
 // =========================================================================
-export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
+export function JsonSuiteTools({ activeToolId, isDark }: JsonSuiteToolsProps) {
   
   // Tab alignment options
   const [inputVal, setInputVal] = useState<string>('');
@@ -692,29 +693,50 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
     return 'PROCESSED JSON OUTPUT CONFIGURATION';
   };
 
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-gray-200 placeholder:text-gray-650' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0a0a0c] border-white/5 text-indigo-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-indigo-600 placeholder:text-gray-400',
+    treeViewerBg: isDark ? 'bg-[#0a0a0c] border-white/5' : 'bg-gray-50 border-gray-200',
+    searchInputBg: isDark ? 'bg-[#09090b] border-white/10 text-white placeholder:text-gray-600' : 'bg-white border-gray-300 text-gray-900 placeholder:text-gray-400',
+    selectWrap: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-100 border-gray-200',
+    selectText: isDark ? 'text-white' : 'text-gray-900',
+    badge: isDark ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border-indigo-200',
+    resetBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700',
+    copyBtn: isDark ? 'text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/5' : 'text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 border-gray-200',
+    footerBg: isDark ? 'bg-[#09090b] border-white/5 text-gray-500' : 'bg-gray-50 border-gray-200 text-gray-600',
+    editorBtn: isDark ? 'bg-[#18181b] hover:bg-white/5 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700',
+    label: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   return (
     <div className="space-y-6">
-      <div id="json-suite-container" className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+      <div id="json-suite-container" className={`p-6 border rounded-2xl shadow-xl space-y-6 ${t.panelBg}`}>
         
         {/* Title Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-4">
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 ${t.border}`}>
           <div>
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
-              <span className="p-1 px-1.5 text-[9px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">DEV</span>
+            <h2 className={`text-base font-semibold tracking-tight flex items-center gap-2 font-mono select-none ${t.heading}`}>
+              <span className={`p-1 px-1.5 text-[9px] font-mono border rounded ${t.badge}`}>DEV</span>
               {getToolTitle()}
             </h2>
-            <p className="text-xs text-gray-400 mt-1">{getToolDescription()}</p>
+            <p className={`text-xs mt-1 ${t.textMuted}`}>{getToolDescription()}</p>
           </div>
 
           {/* Core styling options */}
           <div className="flex gap-2 w-full md:w-auto items-center text-xs">
             {['json-viewer', 'json-validator', 'json-editor', 'xml-to-json', 'json-to-xml', 'csv-to-json', 'tsv-to-json'].includes(activeToolId) && (
-              <div className="flex items-center gap-1.5 bg-[#09090b]/80 border border-white/5 p-1 px-2.5 rounded-lg">
-                <span className="text-gray-500 font-mono text-[10px] uppercase">Indentation:</span>
+              <div className={`flex items-center gap-1.5 border p-1 px-2.5 rounded-lg ${t.selectWrap}`}>
+                <span className={`font-mono text-[10px] uppercase ${t.label}`}>Indentation:</span>
                 <select
                   value={indentWidth}
                   onChange={(e) => setIndentWidth(parseInt(e.target.value, 10))}
-                  className="bg-transparent border-none text-white focus:outline-none cursor-pointer font-semibold font-mono"
+                  className={`bg-transparent border-none focus:outline-none cursor-pointer font-semibold font-mono ${t.selectText}`}
                 >
                   <option value="2">2 Spaces</option>
                   <option value="4">4 Spaces</option>
@@ -722,14 +744,10 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
                 </select>
               </div>
             )}
-
             <button
-              onClick={() => {
-                // simple refresh default string triggers trigger
-                setInputVal(inputVal);
-              }}
+              onClick={() => { setInputVal(inputVal); }}
               title="Reset configuration values"
-              className="p-1.5 px-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-gray-300 font-mono text-[11px] font-semibold"
+              className={`p-1.5 px-3 border rounded-lg font-mono text-[11px] font-semibold ${t.resetBtn}`}
             >
               Reset
             </button>
@@ -738,22 +756,22 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
 
         {/* Dynamic Controls Drawer for Specific Tools */}
         {activeToolId === 'json-viewer' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[#09090b]/40 border border-white/5 rounded-xl text-xs">
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-xl text-xs ${t.controlBg}`}>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Interactive Node Search Key Filter</label>
+              <label className={`text-[10px] font-mono font-bold uppercase tracking-widest block ${t.label}`}>Interactive Node Search Key Filter</label>
               <div className="relative">
-                <Icons.Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-gray-500" />
+                <Icons.Search className={`absolute left-3 top-2.5 w-3.5 h-3.5 ${t.textFaint}`} />
                 <input
                   type="text"
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                   placeholder="Type any tag, value text, or key identifier..."
-                  className="w-full pl-9 pr-4 p-2 bg-[#09090b] border border-white/10 rounded font-mono text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500/40"
+                  className={`w-full pl-9 pr-4 p-2 border rounded font-mono text-xs focus:outline-none focus:border-indigo-500/40 ${t.searchInputBg}`}
                 />
               </div>
             </div>
 
-            <div className="flex flex-col justify-end items-start md:items-end font-mono text-[10px] text-gray-500">
+            <div className={`flex flex-col justify-end items-start md:items-end font-mono text-[10px] ${t.textFaint}`}>
               <p>Supports live filtering across deep closures</p>
               <p className="mt-0.5">Click chevron arrows to toggle tree fold states</p>
             </div>
@@ -762,15 +780,15 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
 
         {/* Dynamic Controls Drawer for Validator */}
         {activeToolId === 'json-validator' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-[#09090b]/80 border border-white/5 rounded-xl text-xs align-middle">
+          <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-xl text-xs align-middle ${t.controlBg}`}>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-gray-500 uppercase font-bold">LINTER TARGETS:</span>
+              <span className={`text-[10px] font-mono uppercase font-bold ${t.label}`}>LINTER TARGETS:</span>
               <span className="font-mono text-xs text-emerald-400 font-bold bg-emerald-950/20 px-2 py-0.5 border border-emerald-500/20 rounded">
                 Strict RFC-8259 Schema Check
               </span>
             </div>
 
-            <div className="font-mono text-[11px] text-gray-400 flex items-center">
+            <div className={`font-mono text-[11px] flex items-center ${t.textMuted}`}>
               {validationContext.status === 'success' && (
                 <span className="text-emerald-400 flex items-center gap-1.5 font-bold">
                   <Icons.CheckCircle className="w-4 h-4" />
@@ -784,7 +802,7 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
                 </span>
               )}
               {validationContext.status === 'empty' && (
-                <span className="text-gray-500">Missing input code payload details.</span>
+                <span className="text-gray-400">Missing input code payload details.</span>
               )}
             </div>
 
@@ -806,46 +824,24 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
 
         {/* Dynamic Controls Drawer for Editor */}
         {activeToolId === 'json-editor' && (
-          <div className="flex gap-2 flex-wrap p-3 bg-[#09090b]/50 border border-white/5 rounded-xl text-xs font-mono">
-            <button
-              onClick={() => loadTemplatesValue('object')}
-              className="p-1 px-3 bg-[#18181b] hover:bg-white/5 border border-white/5 rounded text-gray-300 hover:text-white"
-            >
-              + Create Template Object
-            </button>
-            <button
-              onClick={() => loadTemplatesValue('array')}
-              className="p-1 px-3 bg-[#18181b] hover:bg-white/5 border border-white/5 rounded text-gray-300 hover:text-white"
-            >
-              + Create Template Array
-            </button>
+          <div className={`flex gap-2 flex-wrap p-3 border rounded-xl text-xs font-mono ${t.controlBg}`}>
+            <button onClick={() => loadTemplatesValue('object')} className={`p-1 px-3 border rounded ${t.editorBtn}`}>+ Create Template Object</button>
+            <button onClick={() => loadTemplatesValue('array')} className={`p-1 px-3 border rounded ${t.editorBtn}`}>+ Create Template Array</button>
             <button
               onClick={() => {
                 try {
                   const parsed = JSON.parse(inputVal);
                   if (typeof parsed === 'object' && parsed !== null) {
-                    // Sorting keys
                     const sortedKeys = Object.keys(parsed).sort();
                     const nextObj: Record<string, any> = {};
-                    sortedKeys.forEach(k => {
-                      nextObj[k] = parsed[k];
-                    });
+                    sortedKeys.forEach(k => { nextObj[k] = parsed[k]; });
                     setInputVal(JSON.stringify(nextObj, null, indentWidth));
                   }
-                } catch {
-                  setErrorMsg('Keys Sorting failed. Verify structure is valid JSON.');
-                }
+                } catch { setErrorMsg('Keys Sorting failed. Verify structure is valid JSON.'); }
               }}
-              className="p-1 px-3 bg-[#18181b] hover:bg-white/5 border border-white/5 rounded text-indigo-300 hover:text-indigo-200"
-            >
-              ⇅ Sort Object Keys
-            </button>
-            <button
-              onClick={() => loadTemplatesValue('clear')}
-              className="p-1 px-3 bg-[#18181b] hover:bg-[#201515] border border-white/5 rounded text-rose-400"
-            >
-              Clear Buffer
-            </button>
+              className={`p-1 px-3 border rounded text-indigo-500 hover:text-indigo-400 ${isDark ? 'bg-[#18181b] hover:bg-white/5 border-white/5' : 'bg-gray-100 hover:bg-gray-200 border-gray-200'}`}
+            >⇅ Sort Object Keys</button>
+            <button onClick={() => loadTemplatesValue('clear')} className={`p-1 px-3 border rounded text-rose-500 ${isDark ? 'bg-[#18181b] hover:bg-[#201515] border-white/5' : 'bg-gray-100 hover:bg-red-50 border-gray-200'}`}>Clear Buffer</button>
           </div>
         )}
 
@@ -854,32 +850,28 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
           
           {/* Input Panel Column */}
           <div className="space-y-2 flex flex-col">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono uppercase tracking-widest ${t.label}`}>
               <span>{getInputCardLabel()}</span>
               <span>Buffer size: {inputVal.length} chars</span>
             </div>
-
             <textarea
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder="Supply structured inputs here to initiate conversion or linter validations..."
               rows={14}
-              className="w-full p-4 bg-[#09090b] border border-white/5 rounded-xl text-[12.5px] text-gray-200 font-mono placeholder:text-gray-650 focus:outline-none focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-colors"
+              className={`w-full p-4 border rounded-xl text-[12.5px] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-colors ${t.inputBg}`}
             />
           </div>
 
           {/* Output Panel Column */}
           <div className="space-y-2 flex flex-col">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono uppercase tracking-widest ${t.label}`}>
               <span>{getOutputCardLabel()}</span>
               <span className="text-emerald-500">Live Browser Renderer</span>
             </div>
-
             <div className="relative flex-grow">
-              
-              {/* If JSON Tree Viewer configuration is highlighted */}
               {activeToolId === 'json-viewer' && !errorMsg && outputVal ? (
-                <div className="w-full h-72 sm:h-80 p-4 bg-[#0a0a0c] border border-white/5 rounded-xl overflow-y-auto overflow-x-auto">
+                <div className={`w-full h-72 sm:h-80 p-4 border rounded-xl overflow-y-auto overflow-x-auto ${t.treeViewerBg}`}>
                   {(() => {
                     try {
                       const rootValue = JSON.parse(inputVal);
@@ -888,9 +880,7 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
                           <TreeViewerNode name="root" value={rootValue} depth={0} searchFilter={searchFilter} />
                         </div>
                       );
-                    } catch {
-                      return <span />;
-                    }
+                    } catch { return <span />; }
                   })()}
                 </div>
               ) : (
@@ -899,7 +889,7 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
                   value={outputVal}
                   placeholder="Formatted structural text outputs will yield back here..."
                   rows={14}
-                  className="w-full p-4 bg-[#0a0a0c] border border-white/5 rounded-xl text-[12.5px] text-indigo-300 font-mono focus:outline-none placeholder:text-gray-700"
+                  className={`w-full p-4 border rounded-xl text-[12.5px] font-mono focus:outline-none ${t.outputBg}`}
                 />
               )}
 
@@ -908,7 +898,7 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
                 <div className="absolute inset-0 p-4 bg-red-950/95 border border-red-500/20 rounded-xl flex flex-col justify-center items-center text-center">
                   <Icons.AlertTriangle className="w-8 h-8 text-rose-500 mb-2" />
                   <span className="text-xs font-mono font-bold text-red-300 uppercase tracking-wider">Parsing Interrupted</span>
-                  <p className="text-[11px] text-gray-400 mt-1 max-w-sm font-mono overflow-hidden text-ellipsis">{errorMsg}</p>
+                  <p className="text-[11px] text-red-200 mt-1 max-w-sm font-mono overflow-hidden text-ellipsis">{errorMsg}</p>
                 </div>
               )}
             </div>
@@ -924,7 +914,7 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
               {outputVal && !errorMsg && (
                 <button
                   onClick={copyResult}
-                  className="flex items-center gap-1.5 text-[10px] font-mono text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-1.5 px-3 rounded border border-white/5 transition-colors self-end ml-auto"
+                  className={`flex items-center gap-1.5 text-[10px] font-mono p-1.5 px-3 rounded border transition-colors self-end ml-auto ${t.copyBtn}`}
                 >
                   {copied ? (
                     <>
@@ -946,12 +936,12 @@ export function JsonSuiteTools({ activeToolId }: JsonSuiteToolsProps) {
         </div>
 
         {/* Informative summary footer advice */}
-        <div className="border-t border-white/5 pt-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+        <div className={`border-t pt-4 space-y-2 ${t.border}`}>
+          <div className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest ${t.textMuted}`}>
             <Icons.BookOpen className="w-3.5 h-3.5 text-indigo-400" />
             <span>Under the hood - offline logic properties</span>
           </div>
-          <p className="text-xs text-gray-500 font-mono leading-relaxed p-4 bg-[#09090b] border border-white/5 rounded-xl">
+          <p className={`text-xs font-mono leading-relaxed p-4 border rounded-xl ${t.footerBg}`}>
             This module operates inside a secure front-end sandbox environment without transferring your configuration settings to foreign servers. Feel free to use heavy payload blocks securely.
           </p>
         </div>

@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react';
 
 interface JsDeveloperToolsProps {
   activeToolId: string;
+  isDark: boolean;
 }
 
 // 1. JavaScript Beautifier
@@ -204,7 +205,7 @@ const TOOLS_CONFIG: Record<string, {
   }
 };
 
-export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
+export function JsDeveloperTools({ activeToolId, isDark }: JsDeveloperToolsProps) {
   const currentId = TOOLS_CONFIG[activeToolId] ? activeToolId : 'js-beautifier';
   const config = TOOLS_CONFIG[currentId];
 
@@ -291,32 +292,44 @@ export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
     }
   };
 
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    controlBg: isDark ? 'bg-[#09090b]/80 border-white/5' : 'bg-gray-50 border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-gray-200 placeholder:text-gray-650' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400',
+    outputBg: isDark ? 'bg-[#0c0c0e] border-white/5 text-yellow-300 placeholder:text-gray-700' : 'bg-gray-50 border-gray-200 text-yellow-600 placeholder:text-gray-400',
+    footerBg: isDark ? 'bg-[#09090a] border-white/5 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600',
+    actionBtn: isDark ? 'text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/5' : 'text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 border-gray-200',
+    clearBtn: isDark ? 'text-gray-300 hover:text-white bg-white/5 hover:bg-[#271c1c] border-white/5' : 'text-gray-600 hover:text-red-700 bg-gray-100 hover:bg-red-50 border-gray-200',
+    copyBtn: isDark ? 'text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/5' : 'text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 border-gray-200',
+    selectBg: isDark ? 'border-white/5 bg-[#09090b] text-white' : 'border-gray-300 bg-white text-gray-900',
+    checkLabel: isDark ? 'text-gray-300' : 'text-gray-700',
+    label: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
+
   return (
     <div className="space-y-6">
-      <div id="js-dev-main-card" className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
+      <div id="js-dev-main-card" className={`p-6 border rounded-2xl shadow-xl space-y-6 ${t.panelBg}`}>
         
         {/* Title and Controls Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-4">
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 ${t.border}`}>
           <div>
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+            <h2 className={`text-base font-semibold tracking-tight flex items-center gap-2 font-mono select-none ${t.heading}`}>
               {getIconComponent()}
               {config.title}
             </h2>
-            <p className="text-xs text-gray-400 mt-1">{config.description}</p>
+            <p className={`text-xs mt-1 ${t.textMuted}`}>{config.description}</p>
           </div>
 
           <div className="flex gap-2 w-full md:w-auto">
-            <button
-              onClick={loadDemo}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-all font-mono"
-            >
+            <button onClick={loadDemo} className={`flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium rounded-lg border transition-all font-mono ${t.actionBtn}`}>
               <Icons.FileCode className="w-3.5 h-3.5 text-yellow-400" />
               Demo Payload
             </button>
-            <button
-              onClick={handleClear}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-[#271c1c] rounded-lg border border-white/5 transition-all font-mono"
-            >
+            <button onClick={handleClear} className={`flex-1 md:flex-initial flex items-center justify-center gap-1.5 p-1.5 px-3 text-[11px] font-medium rounded-lg border transition-all font-mono ${t.clearBtn}`}>
               <Icons.Trash2 className="w-3.5 h-3.5 text-rose-400" />
               Clear
             </button>
@@ -324,15 +337,14 @@ export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
         </div>
 
         {/* Custom Controls Row */}
-        <div className="p-4 bg-[#09090b]/80 border border-white/5 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-          {/* Indent Sizes */}
+        <div className={`p-4 border rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs ${t.controlBg}`}>
           {(currentId === 'js-beautifier') && (
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-gray-450 font-mono uppercase tracking-wider block">Indentation Steps</label>
+              <label className={`text-[10px] font-bold font-mono uppercase tracking-wider block ${t.label}`}>Indentation Steps</label>
               <select
                 value={indentSize}
                 onChange={(e) => setIndentSize(parseInt(e.target.value, 10))}
-                className="w-full p-2 border border-white/5 bg-[#09090b] rounded text-xs text-white focus:outline-none focus:border-yellow-500/40"
+                className={`w-full p-2 border rounded text-xs focus:outline-none focus:border-yellow-500/40 ${t.selectBg}`}
               >
                 <option value="2">2 Spaces</option>
                 <option value="4">4 Spaces</option>
@@ -341,55 +353,28 @@ export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
             </div>
           )}
 
-          {/* Comment Stripper Controls */}
           {currentId === 'js-minifier' && (
             <div className="flex items-center gap-2 mt-2">
-              <input
-                type="checkbox"
-                id="rm-comments-check"
-                checked={removeComments}
-                onChange={(e) => setRemoveComments(e.target.checked)}
-                className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
-              />
-              <label htmlFor="rm-comments-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
-                Remove Annotations & Comments
-              </label>
+              <input type="checkbox" id="rm-comments-check" checked={removeComments} onChange={(e) => setRemoveComments(e.target.checked)} className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer" />
+              <label htmlFor="rm-comments-check" className={`cursor-pointer font-mono text-[11px] ${t.checkLabel}`}>Remove Annotations & Comments</label>
             </div>
           )}
 
-          {/* Obfuscator Settings */}
           {currentId === 'js-obfuscator' && (
             <>
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="hex-strings-check"
-                  checked={hexStrings}
-                  onChange={(e) => setHexStrings(e.target.checked)}
-                  className="rounded border-white/10 accent-orange-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
-                />
-                <label htmlFor="hex-strings-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
-                  Convert Strings to Hex Escape Format
-                </label>
+                <input type="checkbox" id="hex-strings-check" checked={hexStrings} onChange={(e) => setHexStrings(e.target.checked)} className="rounded border-white/10 accent-orange-500 w-3.5 h-3.5 cursor-pointer" />
+                <label htmlFor="hex-strings-check" className={`cursor-pointer font-mono text-[11px] ${t.checkLabel}`}>Convert Strings to Hex Escape Format</label>
               </div>
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="base64-wrap-check"
-                  checked={base64Wrap}
-                  onChange={(e) => setBase64Wrap(e.target.checked)}
-                  className="rounded border-white/10 accent-orange-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
-                />
-                <label htmlFor="base64-wrap-check" className="text-gray-300 cursor-pointer font-mono text-[11px]">
-                  Encode Entire Bundle with Base64 Eval
-                </label>
+                <input type="checkbox" id="base64-wrap-check" checked={base64Wrap} onChange={(e) => setBase64Wrap(e.target.checked)} className="rounded border-white/10 accent-orange-500 w-3.5 h-3.5 cursor-pointer" />
+                <label htmlFor="base64-wrap-check" className={`cursor-pointer font-mono text-[11px] ${t.checkLabel}`}>Encode Entire Bundle with Base64 Eval</label>
               </div>
             </>
           )}
 
-          {/* General processing helper note */}
-          <div className="md:col-span-1 flex items-center justify-end font-mono text-[10px] text-gray-500">
-            <span>Runs locally inside sandbox</span>
+          <div className="md:col-span-1 flex items-center justify-end font-mono text-[10px]">
+            <span className={t.textFaint}>Runs locally inside sandbox</span>
           </div>
         </div>
 
@@ -398,62 +383,48 @@ export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
           
           {/* Input block */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono uppercase tracking-widest ${t.label}`}>
               <span>{config.inputLabel}</span>
               <span>Buffer: {codeVal.length} Characters</span>
             </div>
-
             <textarea
               value={codeVal}
               onChange={(e) => setCodeVal(e.target.value)}
               placeholder={config.placeholder}
               rows={11}
-              className="w-full p-4 bg-[#09090b] border border-white/5 rounded-xl text-[12.5px] text-gray-200 font-mono placeholder:text-gray-650 focus:outline-none focus:ring-1 focus:ring-yellow-500/20 focus:border-yellow-500/40 transition-colors"
+              className={`w-full p-4 border rounded-xl text-[12.5px] font-mono focus:outline-none focus:ring-1 focus:ring-yellow-500/20 focus:border-yellow-500/40 transition-colors ${t.inputBg}`}
             />
           </div>
 
           {/* Output block */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+            <div className={`flex justify-between items-center text-[10px] font-mono uppercase tracking-widest ${t.label}`}>
               <span>{config.outputLabel}</span>
               <span className="text-emerald-500">Compiles Automatically</span>
             </div>
-
             <div className="relative">
               <textarea
                 readOnly
                 value={outputVal}
                 placeholder="Processed JavaScript source code outputs will display here..."
                 rows={11}
-                className="w-full p-4 bg-[#0c0c0e] border border-white/5 rounded-xl text-[12.5px] text-yellow-300 font-mono focus:outline-none placeholder:text-gray-700"
+                className={`w-full p-4 border rounded-xl text-[12.5px] font-mono focus:outline-none ${t.outputBg}`}
               />
-
               {errorMsg && (
                 <div className="absolute inset-0 p-4 bg-red-950/90 border border-red-500/20 rounded-xl flex flex-col justify-center items-center text-center">
                   <Icons.AlertCircle className="w-8 h-8 text-red-500 mb-2" />
                   <span className="text-xs font-mono font-bold text-red-300 uppercase tracking-wider">Analysis Blocked</span>
-                  <p className="text-[11px] text-gray-400 mt-1 max-w-sm">{errorMsg}</p>
+                  <p className="text-[11px] text-red-200 mt-1 max-w-sm">{errorMsg}</p>
                 </div>
               )}
             </div>
-
-            {/* Quick copy indicator */}
             <div className="flex justify-end pt-1">
               {outputVal && !errorMsg && (
-                <button
-                  onClick={copyResult}
-                  className="flex items-center gap-1.5 text-[10px] font-mono text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-1.5 px-3 rounded border border-white/5 transition-colors"
-                >
+                <button onClick={copyResult} className={`flex items-center gap-1.5 text-[10px] font-mono p-1.5 px-3 rounded border transition-colors ${t.copyBtn}`}>
                   {copied ? (
-                    <>
-                      <Icons.Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Copied Output!</span>
-                    </>
+                    <><Icons.Check className="w-3.5 h-3.5 text-emerald-400" /><span>Copied Output!</span></>
                   ) : (
-                    <>
-                      <Icons.Copy className="w-3.5 h-3.5 text-yellow-400" />
-                      <span>Copy Result</span>
-                    </>
+                    <><Icons.Copy className="w-3.5 h-3.5 text-yellow-400" /><span>Copy Result</span></>
                   )}
                 </button>
               )}
@@ -462,24 +433,16 @@ export function JsDeveloperTools({ activeToolId }: JsDeveloperToolsProps) {
         </div>
 
         {/* Under the hood parameters info */}
-        <div className="border-t border-white/5 pt-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+        <div className={`border-t pt-4 space-y-2 ${t.border}`}>
+          <div className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest ${t.textMuted}`}>
             <Icons.BookOpen className="w-3.5 h-3.5 text-yellow-400" />
             <span>Developer Guidelines & Execution Context</span>
           </div>
-          <div className="p-4 bg-[#09090a] border border-white/5 rounded-xl text-xs text-gray-400 leading-relaxed space-y-1.5">
-            {currentId === 'js-beautifier' && (
-              <p>Reformulates script listings by spacing out functions, structural braces, arrays, and separators. Helps review minified tracking scripts or nested closures with high readability.</p>
-            )}
-            {currentId === 'js-minifier' && (
-              <p>Strips developer annotations, single & multi-line blocks, and converts space formatting sets to single spacing. Keeps code execution logic unchanged while shrinking file weight.</p>
-            )}
-            {currentId === 'js-obfuscator' && (
-              <p>Adds layers of protection to your source structures. Encodes literal values into byte representations, making logic inspection incredibly harder for reverse engineers.</p>
-            )}
-            {currentId === 'js-deobfuscator' && (
-              <p>Reverses standard obfuscation. Scans string sequences for Hex character references, un-escapes native identifiers, and decompresses evaluation templates securely.</p>
-            )}
+          <div className={`p-4 border rounded-xl text-xs leading-relaxed space-y-1.5 ${t.footerBg}`}>
+            {currentId === 'js-beautifier' && <p>Reformulates script listings by spacing out functions, structural braces, arrays, and separators. Helps review minified tracking scripts or nested closures with high readability.</p>}
+            {currentId === 'js-minifier' && <p>Strips developer annotations, single & multi-line blocks, and converts space formatting sets to single spacing. Keeps code execution logic unchanged while shrinking file weight.</p>}
+            {currentId === 'js-obfuscator' && <p>Adds layers of protection to your source structures. Encodes literal values into byte representations, making logic inspection incredibly harder for reverse engineers.</p>}
+            {currentId === 'js-deobfuscator' && <p>Reverses standard obfuscation. Scans string sequences for Hex character references, un-escapes native identifiers, and decompresses evaluation templates securely.</p>}
           </div>
         </div>
 
