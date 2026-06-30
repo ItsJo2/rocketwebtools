@@ -17,8 +17,18 @@ export function CookieBanner({ isDark }: CookieBannerProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const consent = localStorage.getItem('rwt_cookie_consent');
+    if (consent === 'accepted' && typeof window !== 'undefined' && (window as any).loadGoogleAnalytics) {
+      (window as any).loadGoogleAnalytics();
+    }
+  }, []);
+
   const handleAccept = () => {
     localStorage.setItem('rwt_cookie_consent', 'accepted');
+    if (typeof window !== 'undefined' && (window as any).loadGoogleAnalytics) {
+      (window as any).loadGoogleAnalytics();
+    }
     setVisible(false);
   };
 
@@ -76,7 +86,7 @@ export function CookieBanner({ isDark }: CookieBannerProps) {
 
           {/* Description */}
           <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            We use cookies for advertising (Google AdSense) and to remember your preferences like dark mode and starred tools. Your tool inputs are never stored or tracked.
+            We use cookies for advertising (Google AdSense), anonymized analytics (Google Analytics), and to remember your preferences like dark mode and starred tools. Your tool inputs are never stored or tracked.
           </p>
 
           {/* Details toggle */}
@@ -111,6 +121,13 @@ export function CookieBanner({ isDark }: CookieBannerProps) {
                 <div>
                   <p className={`font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Advertising cookies</p>
                   <p className={isDark ? 'text-gray-500' : 'text-gray-500'}>Google AdSense serves ads to keep this site free. These are third-party cookies managed by Google.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Icons.BarChart3 className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className={`font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Analytics cookies</p>
+                  <p className={isDark ? 'text-gray-500' : 'text-gray-500'}>Google Analytics helps us understand which tools are most useful, with IP addresses anonymized. No personal data is sold or shared.</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
