@@ -100,6 +100,9 @@ export function LegalPages({ type, onBack }: LegalPageProps) {
               <li>
                 <strong className={t.textPrimary}>Cookie Consent & Preferences:</strong> We use essential cookies to remember your preferences (theme, starred tools). We also use Google AdSense advertising cookies to serve ads that keep this service free. You can decline optional cookies using the cookie banner. Essential cookies cannot be disabled as they are required for the site to function correctly.
               </li>
+              <li>
+                <strong className={t.textPrimary}>Google Analytics Tracking:</strong> We use Google Analytics to understand how visitors use Rocket Web Tools, such as which tools are most popular and how people navigate the site. IP addresses are anonymized before processing. This data helps us improve the service and is never sold or shared with third parties beyond Google&apos;s standard analytics processing. You can decline analytics cookies using the cookie consent banner, and you can also opt out of Google Analytics tracking entirely using the Google Analytics Opt-out Browser Add-on available at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="underline hover:text-orange-500">https://tools.google.com/dlpage/gaoptout</a>.
+              </li>
             </ul>
           </section>
 
