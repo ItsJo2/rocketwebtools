@@ -182,7 +182,7 @@ export function AboutContact({ onBack }: AboutContactProps) {
         <div className="bg-orange-500/5 border border-orange-500/15 rounded-2xl p-6 flex gap-4 items-start">
           <Icons.Shield className="w-6 h-6 text-orange-500 shrink-0 mt-0.5" />
           <div>
-            <h3 className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Our Privacy Promise</h3>
+            <h2 className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Our Privacy Promise</h2>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} leading-relaxed mt-2`}>
               Every tool on Rocket Web Tools that can run locally, does run locally. Your JSON, your images, your passwords, your text — none of it leaves your browser unless the tool explicitly requires a network request (like our AI tools or DNS lookups). We label every tool clearly so you always know.
             </p>
@@ -192,9 +192,9 @@ export function AboutContact({ onBack }: AboutContactProps) {
         {/* Block 4 — "What we're building" two column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className={`${isDark ? 'bg-[#0f0f0f] border border-white/5' : 'bg-white border border-gray-200'} rounded-2xl p-6`}>
-            <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
+            <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
               What Rocket Web Tools is
-            </h3>
+            </h2>
             <ul className="space-y-3">
               <li className={`flex items-start gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 <Icons.Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -216,9 +216,9 @@ export function AboutContact({ onBack }: AboutContactProps) {
           </div>
 
           <div className={`${isDark ? 'bg-[#0f0f0f] border border-white/5' : 'bg-white border border-gray-200'} rounded-2xl p-6`}>
-            <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
+            <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
               What Rocket Web Tools isn't
-            </h3>
+            </h2>
             <ul className="space-y-3">
               <li className={`flex items-start gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 <Icons.X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />

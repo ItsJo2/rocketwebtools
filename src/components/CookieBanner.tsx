@@ -63,6 +63,7 @@ export function CookieBanner({ isDark }: CookieBannerProps) {
             <button
               type="button"
               onClick={handleDecline}
+              aria-label="Decline and close cookie banner"
               className={`p-1 rounded-lg transition-colors shrink-0 ${
                 isDark
                   ? 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
@@ -82,6 +83,7 @@ export function CookieBanner({ isDark }: CookieBannerProps) {
           <button
             type="button"
             onClick={() => setShowDetails(!showDetails)}
+            aria-expanded={showDetails}
             className={`flex items-center gap-1 text-[11px] font-semibold transition-colors ${
               isDark
                 ? 'text-gray-500 hover:text-gray-300'

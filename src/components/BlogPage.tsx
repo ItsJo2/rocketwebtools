@@ -246,9 +246,9 @@ export function BlogPage({ onBack, onOpenPost, isDark }: BlogPageProps) {
                 </div>
 
                 {/* Title */}
-                <h3 className={`font-extrabold ${t.textPrimary} text-base sm:text-lg tracking-tight group-hover:text-orange-500 transition-colors`}>
+                <h2 className={`font-extrabold ${t.textPrimary} text-base sm:text-lg tracking-tight group-hover:text-orange-500 transition-colors`}>
                   {post.title}
-                </h3>
+                </h2>
 
                 {/* Excerpt */}
                 <p className={`text-xs ${t.textSecondary} leading-relaxed line-clamp-3`}>

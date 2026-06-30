@@ -1,34 +1,36 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import * as Icons from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from './ThemeContext';
-import { CodeTools } from './components/CodeTools';
-import { JsonSuiteTools } from './components/JsonSuiteTools';
-import { WebMgmtTools } from './components/WebMgmtTools';
-import { JsDeveloperTools } from './components/JsDeveloperTools';
-import { QrCodeHelperTools } from './components/QrCodeHelperTools';
-import { UrlMarketingTools } from './components/UrlMarketingTools';
-import { TextTools } from './components/TextTools';
-import { NetworkTools } from './components/NetworkTools';
-import { UtilityTools } from './components/UtilityTools';
-import { ImageTools } from './components/ImageTools';
-import { CalculatorTools } from './components/CalculatorTools';
 import { LegalPages } from './components/LegalPages';
 import { AboutContact } from './components/AboutContact';
 import { FaqPage } from './components/FaqPage';
 import { BlogPage } from './components/BlogPage';
 import { BlogPost } from './components/BlogPost';
 import { ToolExplanation } from './components/ToolExplanations';
-import { ConverterTools } from './components/ConverterTools';
-import { BinaryTools } from './components/BinaryTools';
-import { AvSubtitleTools } from './components/AvSubtitleTools';
-import { ColorTools } from './components/ColorTools';
-import { DeveloperSuiteTools } from './components/DeveloperSuiteTools';
-import { DesignSuiteTools } from './components/DesignSuiteTools';
-import { SeoSpatialTools } from './components/SeoSpatialTools';
 import { TopAdBanner, BottomAdBanner, SidebarAdSkyscraper } from './components/Advertisements';
 import { Tool } from './types';
 import { CookieBanner } from './components/CookieBanner';
+
+// Lazy load tool components to optimize initial bundle size and page load speed
+const CodeTools = lazy(() => import('./components/CodeTools').then(m => ({ default: m.CodeTools })));
+const JsonSuiteTools = lazy(() => import('./components/JsonSuiteTools').then(m => ({ default: m.JsonSuiteTools })));
+const WebMgmtTools = lazy(() => import('./components/WebMgmtTools').then(m => ({ default: m.WebMgmtTools })));
+const JsDeveloperTools = lazy(() => import('./components/JsDeveloperTools').then(m => ({ default: m.JsDeveloperTools })));
+const QrCodeHelperTools = lazy(() => import('./components/QrCodeHelperTools').then(m => ({ default: m.QrCodeHelperTools })));
+const UrlMarketingTools = lazy(() => import('./components/UrlMarketingTools').then(m => ({ default: m.UrlMarketingTools })));
+const TextTools = lazy(() => import('./components/TextTools').then(m => ({ default: m.TextTools })));
+const NetworkTools = lazy(() => import('./components/NetworkTools').then(m => ({ default: m.NetworkTools })));
+const UtilityTools = lazy(() => import('./components/UtilityTools').then(m => ({ default: m.UtilityTools })));
+const ImageTools = lazy(() => import('./components/ImageTools').then(m => ({ default: m.ImageTools })));
+const CalculatorTools = lazy(() => import('./components/CalculatorTools').then(m => ({ default: m.CalculatorTools })));
+const ConverterTools = lazy(() => import('./components/ConverterTools').then(m => ({ default: m.ConverterTools })));
+const BinaryTools = lazy(() => import('./components/BinaryTools').then(m => ({ default: m.BinaryTools })));
+const AvSubtitleTools = lazy(() => import('./components/AvSubtitleTools').then(m => ({ default: m.AvSubtitleTools })));
+const ColorTools = lazy(() => import('./components/ColorTools').then(m => ({ default: m.ColorTools })));
+const DeveloperSuiteTools = lazy(() => import('./components/DeveloperSuiteTools').then(m => ({ default: m.DeveloperSuiteTools })));
+const DesignSuiteTools = lazy(() => import('./components/DesignSuiteTools').then(m => ({ default: m.DesignSuiteTools })));
+const SeoSpatialTools = lazy(() => import('./components/SeoSpatialTools').then(m => ({ default: m.SeoSpatialTools })));
 
 const ALL_TOOLS: Tool[] = [
   // Website Management Tools
@@ -1119,17 +1121,17 @@ export default function App() {
     text: 'text-gray-600',
     textPrimary: 'text-gray-900',
     textSecondary: 'text-gray-600',
-    textMuted: 'text-gray-400',
+    textMuted: 'text-gray-550',
     panelBg: 'bg-gray-100',
-    searchBg: 'bg-gray-100 border border-gray-250 text-gray-900 placeholder:text-gray-400',
+    searchBg: 'bg-gray-100 border border-gray-250 text-gray-900 placeholder:text-gray-500',
     tabInactive: 'bg-gray-100 border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-200',
     cardBg: 'bg-white',
     tooltipBg: 'bg-white',
     tooltipBorder: 'border-gray-200',
     tooltipArrow: 'border-t-white',
-    starBg: 'bg-gray-100 border border-gray-200 text-gray-400 hover:text-yellow-650 hover:bg-yellow-500/5 shadow-sm',
+    starBg: 'bg-gray-100 border border-gray-200 text-gray-550 hover:text-yellow-650 hover:bg-yellow-500/5 shadow-sm',
     footerBg: 'bg-gray-105 border-t border-gray-200',
-    tagText: 'text-gray-300'
+    tagText: 'text-gray-500'
   };
 
   const [search, setSearch] = useState('');
@@ -1507,12 +1509,14 @@ export default function App() {
   };
 
   // Filter tools based on query and selected category tab
-  const filteredTools = ALL_TOOLS.filter(tool => {
-    const matchesSearch = tool.name.toLowerCase().includes(search.toLowerCase()) || 
-                          tool.description.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredTools = useMemo(() => {
+    return ALL_TOOLS.filter(tool => {
+      const matchesSearch = tool.name.toLowerCase().includes(search.toLowerCase()) || 
+                            tool.description.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [search, activeCategory]);
 
   // Get dynamic icon based on registration key
   const getToolIcon = (name: string) => {
@@ -1534,6 +1538,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <a 
               href="/"
+              aria-label="Rocket Web Tools logo, go to home page"
               className={`w-9 h-9 ${theme.bg} ${theme.hoverBg} text-white rounded-lg flex items-center justify-center cursor-pointer transition-all shadow-md ${theme.shadowColor}`}
               onClick={(e) => { e.preventDefault(); selectTool(null); setActiveCategory('all'); setActiveLegalView(null); }}
             >
@@ -1570,6 +1575,7 @@ export default function App() {
 
             <button
               onClick={toggleTheme}
+              aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
               className={`rounded-full p-1.5 px-3 flex items-center gap-1.5 text-xs font-mono transition-all cursor-pointer ${
                 isDark 
                   ? 'bg-[#141414] border border-white/10 text-gray-400 hover:text-white' 
@@ -1699,46 +1705,54 @@ export default function App() {
 
             {/* Renderer Router */}
             <div className={`border rounded-2xl p-6 sm:p-8 shadow-xl ${isDark ? 'bg-[#0f0f0f] border-white/5' : 'bg-white border-gray-200'}`}>
-              {activeTool.category === 'web-mgmt' && (
-                ['qr-generator', 'qr-decoder'].includes(activeTool.id) ? (
-                  <QrCodeHelperTools activeToolId={activeTool.id} isDark={isDark} />
-                ) : ['facebook-id', 'uuid-gen', 'url-parser', 'utm-builder', 'query-param-stripper'].includes(activeTool.id) ? (
-                  <UrlMarketingTools activeToolId={activeTool.id} />
-                ) : ['social-meta-preview', 'redirect-header-inspect', 'dns-mx-txt'].includes(activeTool.id) ? (
-                  <SeoSpatialTools activeToolId={activeTool.id} />
+              <Suspense fallback={
+                <div className="flex items-center justify-center py-24">
+                  <div className={`w-8 h-8 border-2 rounded-full animate-spin ${
+                    isDark ? 'border-white/10 border-t-orange-500' : 'border-gray-200 border-t-orange-500'
+                  }`} />
+                </div>
+              }>
+                {activeTool.category === 'web-mgmt' && (
+                  ['qr-generator', 'qr-decoder'].includes(activeTool.id) ? (
+                    <QrCodeHelperTools activeToolId={activeTool.id} isDark={isDark} />
+                  ) : ['facebook-id', 'uuid-gen', 'url-parser', 'utm-builder', 'query-param-stripper'].includes(activeTool.id) ? (
+                    <UrlMarketingTools activeToolId={activeTool.id} />
+                  ) : ['social-meta-preview', 'redirect-header-inspect', 'dns-mx-txt'].includes(activeTool.id) ? (
+                    <SeoSpatialTools activeToolId={activeTool.id} />
+                  ) : (
+                    <WebMgmtTools activeToolId={activeTool.id} />
+                  )
+                )}
+                {activeTool.category === 'development' && (
+                  ['json-viewer', 'json-validator', 'json-editor', 'json-minify', 'xml-to-json', 'json-to-xml', 'csv-to-json', 'tsv-to-json', 'json-to-csv', 'json-to-tsv', 'json-to-text'].includes(activeTool.id) ? (
+                    <JsonSuiteTools activeToolId={activeTool.id} isDark={isDark} />
+                  ) : ['json-diff', 'jwt-debugger', 'regex-tester', 'cron-generator'].includes(activeTool.id) ? (
+                    <DeveloperSuiteTools activeToolId={activeTool.id} />
+                  ) : ['js-beautifier', 'js-minifier', 'js-obfuscator', 'js-deobfuscator'].includes(activeTool.id) ? (
+                    <JsDeveloperTools activeToolId={activeTool.id} isDark={isDark} />
+                  ) : ['html-beautifier', 'html-minifier', 'css-beautifier', 'css-minifier'].includes(activeTool.id) ? (
+                    <WebMgmtTools activeToolId={activeTool.id} />
+                  ) : (
+                    <CodeTools activeToolId={activeTool.id} isDark={isDark} />
+                  )
+                )}
+                {activeTool.category === 'text' && <TextTools activeToolId={activeTool.id} />}
+                {activeTool.category === 'network' && <NetworkTools activeToolId={activeTool.id} />}
+                {activeTool.category === 'binary' && <BinaryTools activeToolId={activeTool.id} isDark={isDark} />}
+                {['css-gradient', 'color-palette', 'svg-optimizer', 'svg-path-editor'].includes(activeTool.id) ? (
+                  <DesignSuiteTools activeToolId={activeTool.id} />
+                ) : ['length-conv', 'area-conv', 'weight-conv', 'volume-conv', 'temp-conv', 'each-conv', 'time-conv', 'digital-conv', 'parts-per-conv', 'speed-conv', 'pace-conv', 'pressure-conv', 'current-conv', 'voltage-conv', 'power-conv', 'reactive-power-conv', 'apparent-power-conv', 'energy-conv', 'reactive-energy-conv', 'vol-flow-conv', 'illuminance-conv', 'frequency-conv', 'angle-conv', 'currency-conv', 'num-to-word-conv', 'word-to-num-conv', 'torque-conv', 'charge-conv', 'num-to-roman-conv', 'roman-to-num-conv'].includes(activeTool.id) ? (
+                  <ConverterTools activeToolId={activeTool.id} />
+                ) : ['vtt-to-srt', 'srt-to-vtt', 'youtube-thumbnail'].includes(activeTool.id) ? (
+                  <AvSubtitleTools activeToolId={activeTool.id} />
+                ) : ['color-converter', 'hex-to-rgb', 'rgb-to-hex'].includes(activeTool.id) ? (
+                  <ColorTools activeToolId={activeTool.id} />
                 ) : (
-                  <WebMgmtTools activeToolId={activeTool.id} />
-                )
-              )}
-              {activeTool.category === 'development' && (
-                ['json-viewer', 'json-validator', 'json-editor', 'json-minify', 'xml-to-json', 'json-to-xml', 'csv-to-json', 'tsv-to-json', 'json-to-csv', 'json-to-tsv', 'json-to-text'].includes(activeTool.id) ? (
-                  <JsonSuiteTools activeToolId={activeTool.id} isDark={isDark} />
-                ) : ['json-diff', 'jwt-debugger', 'regex-tester', 'cron-generator'].includes(activeTool.id) ? (
-                  <DeveloperSuiteTools activeToolId={activeTool.id} />
-                ) : ['js-beautifier', 'js-minifier', 'js-obfuscator', 'js-deobfuscator'].includes(activeTool.id) ? (
-                  <JsDeveloperTools activeToolId={activeTool.id} isDark={isDark} />
-                ) : ['html-beautifier', 'html-minifier', 'css-beautifier', 'css-minifier'].includes(activeTool.id) ? (
-                  <WebMgmtTools activeToolId={activeTool.id} />
-                ) : (
-                  <CodeTools activeToolId={activeTool.id} isDark={isDark} />
-                )
-              )}
-              {activeTool.category === 'text' && <TextTools activeToolId={activeTool.id} />}
-              {activeTool.category === 'network' && <NetworkTools activeToolId={activeTool.id} />}
-              {activeTool.category === 'binary' && <BinaryTools activeToolId={activeTool.id} isDark={isDark} />}
-              {['css-gradient', 'color-palette', 'svg-optimizer', 'svg-path-editor'].includes(activeTool.id) ? (
-                <DesignSuiteTools activeToolId={activeTool.id} />
-              ) : ['length-conv', 'area-conv', 'weight-conv', 'volume-conv', 'temp-conv', 'each-conv', 'time-conv', 'digital-conv', 'parts-per-conv', 'speed-conv', 'pace-conv', 'pressure-conv', 'current-conv', 'voltage-conv', 'power-conv', 'reactive-power-conv', 'apparent-power-conv', 'energy-conv', 'reactive-energy-conv', 'vol-flow-conv', 'illuminance-conv', 'frequency-conv', 'angle-conv', 'currency-conv', 'num-to-word-conv', 'word-to-num-conv', 'torque-conv', 'charge-conv', 'num-to-roman-conv', 'roman-to-num-conv'].includes(activeTool.id) ? (
-                <ConverterTools activeToolId={activeTool.id} />
-              ) : ['vtt-to-srt', 'srt-to-vtt', 'youtube-thumbnail'].includes(activeTool.id) ? (
-                <AvSubtitleTools activeToolId={activeTool.id} />
-              ) : ['color-converter', 'hex-to-rgb', 'rgb-to-hex'].includes(activeTool.id) ? (
-                <ColorTools activeToolId={activeTool.id} />
-              ) : (
-                activeTool.category === 'utility' && <UtilityTools activeToolId={activeTool.id} />
-              )}
-              {activeTool.category === 'image' && <ImageTools activeToolId={activeTool.id} />}
-              {activeTool.category === 'calculator' && <CalculatorTools activeToolId={activeTool.id} isDark={isDark} />}
+                  activeTool.category === 'utility' && <UtilityTools activeToolId={activeTool.id} />
+                )}
+                {activeTool.category === 'image' && <ImageTools activeToolId={activeTool.id} />}
+                {activeTool.category === 'calculator' && <CalculatorTools activeToolId={activeTool.id} isDark={isDark} />}
+              </Suspense>
             </div>
 
             {/* Dynamic Rich SEO Explanation Article */}
@@ -1758,7 +1772,7 @@ export default function App() {
               return (
                 <div className={`mt-8 pt-6 border-t ${isDark ? 'border-white/5' : 'border-gray-200'}`}>
                   <p className={`text-xs font-bold font-mono uppercase tracking-widest mb-4 ${
-                    isDark ? 'text-gray-500' : 'text-gray-400'
+                    isDark ? 'text-gray-500' : 'text-gray-550'
                   }`}>
                     More {activeTool.category.replace(/-/g, ' ')} tools
                   </p>
@@ -1788,7 +1802,7 @@ export default function App() {
                           {relTool.name}
                         </p>
                         <p className={`text-[10px] mt-1 line-clamp-1 ${
-                          isDark ? 'text-gray-600' : 'text-gray-400'
+                          isDark ? 'text-gray-600' : 'text-gray-550'
                         }`}>
                           {relTool.description}
                         </p>
@@ -1826,7 +1840,7 @@ export default function App() {
               </p>
 
               <div className={`flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-mono ${
-                isDark ? 'text-gray-500' : 'text-gray-400'
+                isDark ? 'text-gray-500' : 'text-gray-550'
               }`}>
                 <span className="flex items-center gap-1.5">
                   <Icons.Shield className="w-3.5 h-3.5 text-emerald-500" />
@@ -1855,9 +1869,9 @@ export default function App() {
                 <Icons.Rocket className="w-3.5 h-3.5" />
                 <span>RAPID WEB UTILITIES</span>
               </div>
-              <h1 className={`text-4xl sm:text-5xl font-black tracking-tight ${t.textPrimary} leading-tight`}>
+              <h2 className={`text-4xl sm:text-5xl font-black tracking-tight ${t.textPrimary} leading-tight`}>
                 Rocket <span className={`text-transparent bg-gradient-to-r ${theme.gradient} bg-clip-text`}>Web Tools</span>
-              </h1>
+              </h2>
               <p className={`text-sm ${t.textSecondary} max-w-xl mx-auto leading-relaxed`}>
                 Super-charged, client-safe utilities engineered for seamless, lightning-fast on-device computations. Direct offline capabilities, professional interfaces, and zero processing lag.
               </p>
@@ -1886,7 +1900,8 @@ export default function App() {
                   <button 
                     type="button" 
                     onClick={() => setSearch('')} 
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                    aria-label="Clear search query"
+                    className={`absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 ${isDark ? 'hover:text-white' : 'hover:text-black'} transition-colors`}
                   >
                     <Icons.X className="w-4 h-4" />
                   </button>
@@ -1899,7 +1914,7 @@ export default function App() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Icons.History className={`w-4 h-4 ${theme.textAccent}`} />
-                  <span className="text-xs font-bold font-mono text-gray-400 uppercase tracking-widest">Recently Used</span>
+                  <span className={`text-xs font-bold font-mono ${isDark ? 'text-gray-500' : 'text-gray-550'} uppercase tracking-widest`}>Recently Used</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {recentTools.map(id => {
@@ -2055,6 +2070,7 @@ export default function App() {
                           }}
                           className={`absolute top-4 right-4 p-1.5 rounded-lg ${t.starBg} transition-all text-xs`}
                           title={isStarred ? "Unstar tool" : "Star tool"}
+                          aria-label={isStarred ? `Remove ${tool.name} from starred tools` : `Add ${tool.name} to starred tools`}
                         >
                           <Icons.Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
                         </button>
@@ -2082,7 +2098,7 @@ export default function App() {
               ) : (
                 <div className={`py-16 text-center ${t.textMuted} border ${t.border} ${t.panelBg} rounded-2xl max-w-sm mx-auto`}>
                   <Icons.SearchX className="w-10 h-10 mx-auto text-gray-600 mb-2" />
-                  <h4 className={`font-semibold ${t.textPrimary} text-sm`}>No matched utilities found</h4>
+                  <h3 className={`font-semibold ${t.textPrimary} text-sm`}>No matched utilities found</h3>
                   <p className={`text-xs ${t.textSecondary} mt-1`}>Try modifying your query or select a different category filter.</p>
                 </div>
               )}

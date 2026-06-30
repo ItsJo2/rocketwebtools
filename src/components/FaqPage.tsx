@@ -380,7 +380,7 @@ export function FaqPage({ onBack, onContactSupport }: FaqPageProps) {
       {/* Support CTA Footer */}
       <div className={`p-6 ${t.panelBg} border ${t.border} rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left`}>
         <div>
-          <h3 className={`text-sm font-bold ${t.textPrimary} tracking-tight`}>Still have a question?</h3>
+          <h2 className={`text-sm font-bold ${t.textPrimary} tracking-tight`}>Still have a question?</h2>
           <p className={`text-xs ${t.textMuted} mt-1`}>If you didn&apos;t find an answer here, please get in touch with our team.</p>
         </div>
         <button

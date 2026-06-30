@@ -184,13 +184,34 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool, onOpenPost }: BlogP
   }, [slug]);
 
   useEffect(() => {
+    let ticking = false;
+    let cachedTotalHeight = 0;
+
+    const updateHeight = () => {
+      cachedTotalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
-      setReadingProgress(Math.min(100, Math.max(0, progress)));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (cachedTotalHeight <= 0) {
+            updateHeight();
+          }
+          const progress = cachedTotalHeight > 0 ? (window.scrollY / cachedTotalHeight) * 100 : 0;
+          setReadingProgress(Math.min(100, Math.max(0, progress)));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -450,10 +471,10 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool, onOpenPost }: BlogP
                 {recommendations.length > 0 && (
                   <div className={`p-6 ${t.panelBg} border ${t.border} rounded-2xl space-y-4 mt-12`}>
                     <div className="space-y-1">
-                      <h3 className={`text-base font-black ${t.textPrimary} tracking-tight flex items-center gap-2`}>
+                      <h2 className={`text-base font-black ${t.textPrimary} tracking-tight flex items-center gap-2`}>
                         <Icons.Wrench className="w-4 h-4 text-orange-500" />
                         Try Related Web Utilities
-                      </h3>
+                      </h2>
                       <p className={`text-xs ${t.textSecondary}`}>
                         Execute these tasks right now entirely inside your browser sandbox.
                       </p>
@@ -472,7 +493,7 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool, onOpenPost }: BlogP
                                 <div className="w-7 h-7 rounded bg-orange-500/10 text-orange-500 flex items-center justify-center">
                                   <ToolIcon className="w-4 h-4" />
                                 </div>
-                                <h4 className={`text-xs font-bold ${t.textPrimary}`}>{tool.name}</h4>
+                                <h3 className={`text-xs font-bold ${t.textPrimary}`}>{tool.name}</h3>
                               </div>
                               <p className={`text-[11px] ${t.textSecondary} leading-normal`}>
                                 {tool.description}
@@ -498,9 +519,9 @@ export function BlogPost({ slug, isDark, onBack, onOpenTool, onOpenPost }: BlogP
                   <div className={`rounded-2xl border p-6 space-y-4 ${
                     isDark ? 'bg-[#0f0f0f] border-white/5' : 'bg-white border-gray-200'
                   }`}>
-                    <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       You might also like
-                    </h3>
+                    </h2>
                     <div className="space-y-3">
                       {relatedPosts.map(post => (
                         <button
