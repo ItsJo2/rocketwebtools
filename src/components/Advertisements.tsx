@@ -4,11 +4,11 @@ export function TopAdBanner() {
   return (
     <>
       <div 
-        className="w-full max-w-5xl mx-auto mb-6 h-[90px] bg-[#0a0a0a]/50 border border-dashed border-white/5 rounded-xl relative overflow-hidden flex items-center justify-center" 
+        className="w-full max-w-5xl mx-auto mb-6 h-[90px] overflow-hidden rounded-lg border border-dashed border-white/5 relative flex items-center justify-center" 
         id="ad-top-banner"
       >
-        <a href="https://www.hostinger.com/ae?REFERRALCODE=ROUJIHEDLE8T" target="_blank" rel="noopener noreferrer sponsored" aria-label="Hostinger Web Hosting">
-          <img src="/banners/hostinger_banner_728x90.png" alt="Hostinger - AI Website Builder Sale" width="728" height="90" className="w-full object-cover rounded-lg max-h-[90px]" />
+        <a href="https://www.hostinger.com/ae?REFERRALCODE=ROUJIHEDLE8T" target="_blank" rel="noopener noreferrer sponsored" aria-label="Hostinger Web Hosting" className="w-full h-full">
+          <img src="/banners/hostinger_banner_728x90.png" alt="Hostinger - AI Website Builder Sale" width="728" height="90" className="w-full h-[90px] object-cover" />
         </a>
       </div>
       <p className="text-center text-[10px] text-gray-500 mt-1 font-mono">
@@ -21,11 +21,11 @@ export function TopAdBanner() {
 export function BottomAdBanner() {
   return (
     <div 
-      className="w-full max-w-5xl mx-auto mt-10 h-[90px] bg-[#0a0a0a]/50 border border-dashed border-white/5 rounded-xl relative overflow-hidden flex items-center justify-center" 
+      className="w-full max-w-5xl mx-auto mt-10 h-[90px] overflow-hidden rounded-lg border border-dashed border-white/5 relative flex items-center justify-center" 
       id="ad-bottom-banner"
     >
-      <a href="https://www.hostinger.com/ae?REFERRALCODE=ROUJIHEDLE8T" target="_blank" rel="noopener noreferrer sponsored" aria-label="Hostinger Web Hosting">
-        <img src="/banners/hostinger_banner_728x90.png" alt="Hostinger - AI Website Builder Sale" width="728" height="90" className="w-full object-cover rounded-lg max-h-[90px]" />
+      <a href="https://www.hostinger.com/ae?REFERRALCODE=ROUJIHEDLE8T" target="_blank" rel="noopener noreferrer sponsored" aria-label="Hostinger Web Hosting" className="w-full h-full">
+        <img src="/banners/hostinger_banner_728x90.png" alt="Hostinger - AI Website Builder Sale" width="728" height="90" className="w-full h-[90px] object-cover" />
       </a>
     </div>
   );
@@ -38,7 +38,7 @@ export function SidebarAdSkyscraper({ side }: { side: 'left' | 'right' }) {
       id={`ad-sidebar-${side}`}
     >
       {/* 300x250 Ad Box 1 */}
-      <div className="w-[300px] h-[250px] bg-[#0a0a0a]/50 border border-dashed border-white/5 rounded-2xl relative shadow-lg flex flex-col items-center justify-center overflow-hidden hover:border-white/10 transition-all group">
+      <div className="w-[300px] h-[250px] border border-dashed border-white/5 rounded-2xl relative shadow-lg flex flex-col items-center justify-center overflow-hidden hover:border-white/10 transition-all group">
         {side === 'left' ? (
           <a href="https://referral.bluehost.com/jihedlajili55!bd7fed8ba3!a" target="_blank" rel="noopener noreferrer sponsored" aria-label="Bluehost Web Hosting" className="w-full h-full">
             <img src="/banners/bluehost_banner_300x250.png" alt="Bluehost - The Best Web Hosting" width="300" height="250" className="w-full h-full object-cover rounded-lg" />
@@ -51,7 +51,7 @@ export function SidebarAdSkyscraper({ side }: { side: 'left' | 'right' }) {
       </div>
       
       {/* 300x250 Ad Box 2 */}
-      <div className="w-[300px] h-[250px] bg-[#0a0a0a]/50 border border-dashed border-white/5 rounded-2xl relative shadow-lg flex flex-col items-center justify-center overflow-hidden hover:border-white/10 transition-all group">
+      <div className="w-[300px] h-[250px] border border-dashed border-white/5 rounded-2xl relative shadow-lg flex flex-col items-center justify-center overflow-hidden hover:border-white/10 transition-all group">
         {side === 'left' ? (
           <a href="https://www.greengeeks.com/track/itsjo" target="_blank" rel="noopener noreferrer sponsored" aria-label="GreenGeeks Web Hosting" className="w-full h-full">
             <img src="/banners/greengeeks_banner_300x250.png" alt="GreenGeeks - Eco-Friendly Web Hosting" width="300" height="250" className="w-full h-full object-cover rounded-lg" />
