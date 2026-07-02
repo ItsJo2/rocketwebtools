@@ -48,6 +48,7 @@ function JsonFormatter({ onCopy, copiedStatus, isDark }: { onCopy: (text: string
     badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
     divider: isDark ? 'border-white/5' : 'border-gray-200',
     label: isDark ? 'text-gray-400' : 'text-gray-600',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
   };
 
   const [input, setInput] = useState('');
@@ -117,7 +118,7 @@ function JsonFormatter({ onCopy, copiedStatus, isDark }: { onCopy: (text: string
           <button 
             type="button"
             onClick={loadDemo}
-            className="p-1.5 px-3 bg-white/5 text-gray-300 hover:bg-white/10 rounded border border-white/10 transition-colors cursor-pointer text-xs font-semibold"
+            className={`p-1.5 px-3 rounded border transition-colors cursor-pointer text-xs font-semibold ${t.copyBtn}`}
           >
             Demo JSON
           </button>
@@ -138,21 +139,21 @@ function JsonFormatter({ onCopy, copiedStatus, isDark }: { onCopy: (text: string
             <button 
               type="button"
               onClick={() => handleFormat(false)}
-              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-850 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-750 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
             >
               Beautify JSON
             </button>
             <button 
               type="button"
               onClick={() => handleFormat(true)}
-              className="flex-grow p-2.5 bg-[#252525] border border-white/5 text-white hover:bg-[#333333] rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+              className={`flex-grow p-2.5 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer border ${isDark ? 'bg-[#252525] border-white/5 hover:bg-[#333333]' : 'bg-gray-800 border-gray-700 hover:bg-gray-950'}`}
             >
               Minify JSON
             </button>
             <button 
               type="button"
               onClick={() => { setInput(''); setOutput(''); setError(null); }}
-              className="p-2.5 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg border border-white/10 transition-colors cursor-pointer"
+              className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${t.copyBtn}`}
               title="Reset"
             >
               <RotateCcw className="w-5 h-5" />
@@ -188,8 +189,8 @@ function JsonFormatter({ onCopy, copiedStatus, isDark }: { onCopy: (text: string
                 {output}
               </pre>
             ) : (
-              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 overflow-auto p-4 text-xs ${t.borderInput} ${t.textFaint}`}>
-                <Terminal className="w-8 h-8 mb-2 text-gray-600" />
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center overflow-auto p-4 text-xs ${t.borderInput} ${t.textFaint} ${isDark ? 'bg-white/2' : 'bg-gray-50/50'}`}>
+                <Terminal className="w-8 h-8 mb-2 text-gray-500" />
                 Format some JSON on the left to review parsed attributes here.
               </div>
             )}
@@ -223,6 +224,7 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Ba
     badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
     divider: isDark ? 'border-white/5' : 'border-gray-200',
     label: isDark ? 'text-gray-400' : 'text-gray-600',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
   };
 
   const [input, setInput] = useState('');
@@ -286,17 +288,17 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Ba
           </h2>
           <p className={`text-sm ${t.textMuted}`}>Encode standard text content to base64, or decode back to humans.</p>
         </div>
-        <div className="bg-white/5 p-1 rounded-full flex inline-flex text-xs font-semibold">
+        <div className={`${isDark ? 'bg-white/5' : 'bg-gray-100'} p-1 rounded-full flex inline-flex text-xs font-semibold`}>
           <button 
             type="button"
-            className={`p-1.5 px-4 rounded-full transition-all cursor-pointer ${mode === 'encode' ? 'bg-indigo-650 text-white shadow-md' : 'text-gray-450 hover:text-white'}`}
+            className={`p-1.5 px-4 rounded-full transition-all cursor-pointer ${mode === 'encode' ? 'bg-indigo-650 text-white shadow-md' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')}`}
             onClick={() => { setMode('encode'); setOutput(''); setError(null); }}
           >
             Encode
           </button>
           <button 
             type="button"
-            className={`p-1.5 px-4 rounded-full transition-all cursor-pointer ${mode === 'decode' ? 'bg-indigo-650 text-white shadow-md' : 'text-gray-450 hover:text-white'}`}
+            className={`p-1.5 px-4 rounded-full transition-all cursor-pointer ${mode === 'decode' ? 'bg-indigo-650 text-white shadow-md' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')}`}
             onClick={() => { setMode('decode'); setOutput(''); setError(null); }}
           >
             Decode
@@ -320,14 +322,14 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Ba
             <button 
               type="button"
               onClick={handleConvert}
-              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-850 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-750 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
             >
               {mode === 'encode' ? 'Encode to Base64' : 'Decode Base64'}
             </button>
             <button 
               type="button"
               onClick={toggleMode}
-              className="p-2.5 text-xs font-semibold bg-white/5 border border-white/10 text-gray-350 rounded-lg hover:bg-white/10 hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+              className={`p-2.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer border ${t.copyBtn}`}
               title="Swap fields"
             >
               Swap Mode
@@ -335,7 +337,7 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Ba
             <button 
               type="button"
               onClick={() => { setInput(''); setOutput(''); setError(null); }}
-              className="p-2.5 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg border border-white/10 transition-colors cursor-pointer"
+              className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${t.copyBtn}`}
             >
               <RotateCcw className="w-5 h-5" />
             </button>
@@ -371,7 +373,7 @@ function Base64Tool({ onCopy, copiedStatus, initialMode = 'encode', isDark }: Ba
                 {output}
               </pre>
             ) : (
-              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 p-4 text-xs font-mono ${t.borderInput} ${t.textFaint}`}>
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center p-4 text-xs font-mono ${t.borderInput} ${t.textFaint} ${isDark ? 'bg-white/2' : 'bg-gray-50/50'}`}>
                 Click Convert on the left to see results.
               </div>
             )}
@@ -398,6 +400,7 @@ function HtmlUrlEncoder({ onCopy, copiedStatus, isDark }: { onCopy: (text: strin
     badge: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
     divider: isDark ? 'border-white/5' : 'border-gray-200',
     label: isDark ? 'text-gray-400' : 'text-gray-600',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
   };
 
   const [input, setInput] = useState('');
@@ -447,33 +450,33 @@ function HtmlUrlEncoder({ onCopy, copiedStatus, isDark }: { onCopy: (text: strin
           <p className={`text-sm ${t.textMuted}`}>Safely encode URLs and HTML tags or decode special characters.</p>
         </div>
         <div className="flex items-center gap-4 text-xs font-semibold flex-wrap">
-          <div className="bg-white/5 p-1 rounded-full flex">
+          <div className={`${isDark ? 'bg-white/5' : 'bg-gray-100'} p-1 rounded-full flex`}>
             <button 
               type="button"
-              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${type === 'url' ? 'bg-indigo-650 text-white shadow' : 'text-gray-400 hover:text-white'}`}
+              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${type === 'url' ? 'bg-indigo-650 text-white shadow' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black')}`}
               onClick={() => { setType('url'); setOutput(''); }}
             >
               URL
             </button>
             <button 
               type="button"
-              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${type === 'html' ? 'bg-indigo-650 text-white shadow' : 'text-gray-400 hover:text-white'}`}
+              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${type === 'html' ? 'bg-indigo-650 text-white shadow' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black')}`}
               onClick={() => { setType('html'); setOutput(''); }}
             >
               HTML Entities
             </button>
           </div>
-          <div className="bg-white/5 p-1 rounded-full flex">
+          <div className={`${isDark ? 'bg-white/5' : 'bg-gray-100'} p-1 rounded-full flex`}>
             <button 
               type="button"
-              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${action === 'encode' ? 'bg-indigo-650 text-white shadow' : 'text-gray-400 hover:text-white'}`}
+              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${action === 'encode' ? 'bg-indigo-650 text-white shadow' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black')}`}
               onClick={() => { setAction('encode'); setOutput(''); }}
             >
               Encode
             </button>
             <button 
               type="button"
-              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${action === 'decode' ? 'bg-indigo-650 text-white shadow' : 'text-gray-400 hover:text-white'}`}
+              className={`p-1.5 px-4 text-xs rounded-full transition-all cursor-pointer ${action === 'decode' ? 'bg-indigo-650 text-white shadow' : (isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black')}`}
               onClick={() => { setAction('decode'); setOutput(''); }}
             >
               Decode
@@ -499,14 +502,14 @@ function HtmlUrlEncoder({ onCopy, copiedStatus, isDark }: { onCopy: (text: strin
             <button 
               type="button"
               onClick={handleProcess}
-              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-850 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+              className="flex-grow p-2.5 bg-indigo-650 text-white hover:bg-indigo-750 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
             >
               Run Code conversion
             </button>
             <button 
               type="button"
               onClick={() => { setInput(''); setOutput(''); }}
-              className="p-2.5 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg border border-white/10 transition-colors cursor-pointer"
+              className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${t.copyBtn}`}
             >
               <RotateCcw className="w-5 h-5" />
             </button>
@@ -533,7 +536,7 @@ function HtmlUrlEncoder({ onCopy, copiedStatus, isDark }: { onCopy: (text: strin
                 {output}
               </pre>
             ) : (
-              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center bg-white/2 p-4 text-xs font-mono ${t.borderInput} ${t.textFaint}`}>
+              <div className={`absolute inset-0 border border-dashed rounded-lg flex flex-col justify-center items-center text-center p-4 text-xs font-mono ${t.borderInput} ${t.textFaint} ${isDark ? 'bg-white/2' : 'bg-gray-50/50'}`}>
                 Results will display here after conversion.
               </div>
             )}

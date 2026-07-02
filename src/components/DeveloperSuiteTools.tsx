@@ -161,14 +161,14 @@ function JsonDiff({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (
             {/* Left side */}
             <div className={`p-3 space-y-0.5 ${t.controlBg}`}>
               {diffResult.leftLines.map((line, idx) => {
-                let bgStyle = 'hover:bg-white/2';
+                let bgStyle = isDark ? 'hover:bg-white/2' : 'hover:bg-black/5';
                 let txtStyle = t.textMuted;
                 if (line.status === 'deleted') {
-                  bgStyle = 'bg-rose-950/30 text-rose-300 hover:bg-rose-950/40';
+                  bgStyle = isDark ? 'bg-rose-950/30 text-rose-300 hover:bg-rose-950/40' : 'bg-rose-50 text-rose-750 hover:bg-rose-100';
                 } else if (line.status === 'changed') {
-                  bgStyle = 'bg-amber-950/30 text-amber-200 hover:bg-amber-950/40';
+                  bgStyle = isDark ? 'bg-amber-950/30 text-amber-200 hover:bg-amber-950/40' : 'bg-amber-50 text-amber-750 hover:bg-amber-100';
                 } else if (line.status === 'empty') {
-                  bgStyle = 'bg-white/1 opacity-20';
+                  bgStyle = isDark ? 'bg-white/1 opacity-20' : 'bg-gray-100/30 opacity-40';
                 }
 
                 return (
@@ -183,14 +183,14 @@ function JsonDiff({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (
             {/* Right side */}
             <div className={`p-3 space-y-0.5 ${t.controlBg}`}>
               {diffResult.rightLines.map((line, idx) => {
-                let bgStyle = 'hover:bg-white/2';
+                let bgStyle = isDark ? 'hover:bg-white/2' : 'hover:bg-black/5';
                 let txtStyle = t.textMuted;
                 if (line.status === 'added') {
-                  bgStyle = 'bg-emerald-950/30 text-emerald-350 hover:bg-emerald-950/40';
+                  bgStyle = isDark ? 'bg-emerald-950/30 text-emerald-350 hover:bg-emerald-950/40' : 'bg-emerald-50 text-emerald-750 hover:bg-emerald-100';
                 } else if (line.status === 'changed') {
-                  bgStyle = 'bg-amber-950/30 text-amber-200 hover:bg-amber-950/40';
+                  bgStyle = isDark ? 'bg-amber-950/30 text-amber-200 hover:bg-amber-950/40' : 'bg-amber-50 text-amber-750 hover:bg-amber-100';
                 } else if (line.status === 'empty') {
-                  bgStyle = 'bg-white/1 opacity-20';
+                  bgStyle = isDark ? 'bg-white/1 opacity-20' : 'bg-gray-100/30 opacity-40';
                 }
 
                 return (
@@ -351,26 +351,26 @@ function JwtDebugger({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs font-mono text-violet-400 font-bold uppercase">HEADER: ALGORITHM & TOKEN TYPE</span>
+                <span className={`text-xs font-mono font-bold uppercase ${isDark ? 'text-violet-400' : 'text-violet-600'}`}>HEADER: ALGORITHM & TOKEN TYPE</span>
                 <button onClick={() => onCopy(header || '', 'jwt-h')} className={`text-xxs ${t.textFaint} hover:${t.heading} cursor-pointer inline-flex items-center gap-1`}>
                   {copiedStatus === 'jwt-h' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                   Copy
                 </button>
               </div>
-              <pre className={`p-3 border border-violet-900/30 ${t.controlBg} text-violet-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-56`}>
+              <pre className={`p-3 border border-violet-900/30 ${t.controlBg} ${isDark ? 'text-violet-300' : 'text-violet-800'} font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-56`}>
                 {header}
               </pre>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs font-mono text-sky-400 font-bold uppercase">PAYLOAD: DATA CLAIMS</span>
+                <span className={`text-xs font-mono font-bold uppercase ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>PAYLOAD: DATA CLAIMS</span>
                 <button onClick={() => onCopy(payload || '', 'jwt-p')} className={`text-xxs ${t.textFaint} hover:${t.heading} cursor-pointer inline-flex items-center gap-1`}>
                   {copiedStatus === 'jwt-p' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   Copy
                 </button>
               </div>
-              <pre className={`p-3 border border-sky-900/30 ${t.controlBg} text-sky-300 font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-80`}>
+              <pre className={`p-3 border border-sky-900/30 ${t.controlBg} ${isDark ? 'text-sky-300' : 'text-sky-800'} font-mono text-xs rounded-lg overflow-auto leading-relaxed max-h-80`}>
                 {payload}
               </pre>
             </div>
@@ -383,7 +383,7 @@ function JwtDebugger({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className={`w-3 h-3 rounded-full ${expirationReport.valid ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                    <span className={`text-sm font-bold ${expirationReport.valid ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`text-sm font-bold ${expirationReport.valid ? (isDark ? 'text-emerald-400' : 'text-emerald-650') : (isDark ? 'text-rose-400' : 'text-rose-650')}`}>
                       {expirationReport.valid ? 'VALID CLAIM SESSION' : 'TOKEN CLAIM EXPIRED'}
                     </span>
                   </div>
@@ -398,12 +398,12 @@ function JwtDebugger({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy
             </div>
 
             <div>
-              <span className={`text-xs font-mono text-emerald-400 font-bold uppercase block mb-1.5`}>SIGNATURE VERIFICATION SEGMENT</span>
-              <div className={`p-4 border border-emerald-950 bg-emerald-950/15 text-emerald-300 font-mono text-xs rounded-lg break-all ${t.controlBg}`}>
+              <span className={`text-xs font-mono font-bold uppercase block mb-1.5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>SIGNATURE VERIFICATION SEGMENT</span>
+              <div className={`p-4 border font-mono text-xs rounded-lg break-all ${t.controlBg} ${isDark ? 'border-emerald-950 bg-emerald-950/15 text-emerald-300' : 'border-emerald-200 bg-emerald-50/50 text-emerald-800'}`}>
                 HMACSHA256(<br />
                 &nbsp;&nbsp;base64UrlEncode(header) + "." +<br />
                 &nbsp;&nbsp;base64UrlEncode(payload),<br />
-                &nbsp;&nbsp;<span className="text-emerald-400 bg-white/5 p-1 rounded font-bold">your-256-bit-secret</span><br />
+                &nbsp;&nbsp;<span className={`p-1 rounded font-bold ${isDark ? 'text-emerald-400 bg-white/5' : 'text-emerald-700 bg-black/5'}`}>your-256-bit-secret</span><br />
                 )<br />
                 <span className={t.textFaint}>// Result signature chunk:</span><br />
                 <span className={`select-all font-bold ${t.textMuted}`}>{signature}</span>
@@ -507,7 +507,7 @@ function RegexTester({ isDark }: { isDark: boolean }) {
         elements.push(
           <mark 
             key={`match-${match.index}-${matchIndex}`} 
-            className="bg-amber-500/20 text-amber-300 border-b-2 border-amber-500 px-0.5 rounded-sm font-semibold select-all"
+            className={`px-0.5 rounded-sm font-semibold select-all ${isDark ? 'bg-amber-500/20 text-amber-300 border-b-2 border-amber-500' : 'bg-amber-100 text-amber-800 border-b-2 border-amber-600'}`}
             title={`Match index: ${match.index}`}
           >
             {matchValue}
@@ -620,7 +620,7 @@ function RegexTester({ isDark }: { isDark: boolean }) {
                 </thead>
                 <tbody className={`divide-y ${t.border} ${t.textMuted}`}>
                   {matches.map((m, idx) => (
-                    <tr key={`match-tbl-${idx}`} className="hover:bg-white/5">
+                    <tr key={`match-tbl-${idx}`} className={isDark ? "hover:bg-white/5" : "hover:bg-black/5"}>
                       <td className="p-2 pl-4 font-bold text-blue-400">#{idx + 1}</td>
                       <td className="p-2 select-all font-semibold max-w-xs truncate">{m.text}</td>
                       <td className="p-2 text-right pr-4 ${t.textFaint}">offset {m.index}</td>
@@ -871,7 +871,7 @@ function CronGenerator({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCo
               </thead>
               <tbody className={`divide-y ${t.border} ${t.textMuted}`}>
                 {upcomingDates.map((dateStr, idx) => (
-                  <tr key={`date-${idx}`} className="hover:bg-white/5">
+                  <tr key={`date-${idx}`} className={isDark ? "hover:bg-white/5" : "hover:bg-black/5"}>
                     <td className="p-3 pl-4 text-blue-400">Trigger {idx + 1}</td>
                     <td className="p-3 text-right pr-4 ${t.textFaint}">{dateStr}</td>
                   </tr>

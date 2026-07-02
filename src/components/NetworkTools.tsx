@@ -106,13 +106,13 @@ function VisitorAnalyzer({ isDark, onCopy, copiedStatus }: { isDark: boolean; on
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Core details */}
         <div className="md:col-span-1 space-y-4">
-          <div className="bg-[#132a22]/40 border border-emerald-500/20 p-5 rounded-xl">
-            <div className="flex items-center gap-2 text-emerald-400 mb-1">
+          <div className={`p-5 rounded-xl border ${isDark ? 'bg-[#132a22]/40 border-emerald-500/20 text-emerald-200' : 'bg-emerald-50 border-emerald-200 text-emerald-900'}`}>
+            <div className={`flex items-center gap-2 mb-1 ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>
               <Wifi className="w-4 h-4 animate-pulse" />
               <span className="text-xs font-semibold uppercase tracking-wider">detected address</span>
             </div>
-            <div className="text-2xl font-black text-emerald-200 font-mono break-all">{info?.ip}</div>
-            <p className="text-xs text-emerald-400/80 mt-1">Direct remote source IP address resolved by the request parser.</p>
+            <div className={`text-2xl font-mono break-all font-black ${isDark ? 'text-emerald-200' : 'text-emerald-950'}`}>{info?.ip}</div>
+            <p className={`text-xs mt-1 ${isDark ? 'text-emerald-400/80' : 'text-emerald-800'}`}>Direct remote source IP address resolved by the request parser.</p>
           </div>
 
           <div className={`${t.panelBg} p-5 rounded-xl`}>
@@ -146,7 +146,7 @@ function VisitorAnalyzer({ isDark, onCopy, copiedStatus }: { isDark: boolean; on
               </thead>
               <tbody className={`divide-y ${t.border} ${t.textMuted}`}>
                 {info && Object.entries(info.headers).map(([k, v]) => (
-                  <tr key={k} className="hover:bg-white/5">
+                  <tr key={k} className={isDark ? "hover:bg-white/5" : "hover:bg-black/5"}>
                     <td className="p-3 font-medium text-indigo-400 break-all select-all">{k}</td>
                     <td className="p-3 break-all select-all font-mono">{v}</td>
                   </tr>
@@ -503,15 +503,15 @@ function IpLookup({ isDark, onCopy, copiedStatus }: { isDark: boolean; onCopy: (
                 <span className={t.textFaint}>ISP / Vendor:</span>
                 <span className={`${t.heading} select-all font-bold text-right max-w-[200px] break-all`}>{geoData.isp || 'Unavailable'}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-t ${t.border}">
+              <div className={`flex justify-between items-center py-1 border-t ${t.border}`}>
                 <span className={t.textFaint}>Organization:</span>
                 <span className={`${t.heading} select-all text-right max-w-[200px] break-all`}>{geoData.org || 'Unknown'}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-t ${t.border} font-bold text-indigo-400">
+              <div className={`flex justify-between items-center py-1 border-t ${t.border} font-bold text-indigo-400`}>
                 <span className={t.textFaint}>ASN:</span>
                 <span className="select-all text-right max-w-[200px] break-all">{geoData.as || 'N/A'}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-t ${t.border}">
+              <div className={`flex justify-between items-center py-1 border-t ${t.border}`}>
                 <span className={t.textFaint}>IP Queries:</span>
                 <button
                   type="button"

@@ -468,7 +468,7 @@ export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
                 id="non-ascii-check"
                 checked={encodeNonAscii}
                 onChange={(e) => setEncodeNonAscii(e.target.checked)}
-                className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                className={`rounded accent-teal-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
               />
               <label htmlFor="non-ascii-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                 Encode all Non-ASCII Characters
@@ -483,7 +483,7 @@ export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
                 id="space-encode-check"
                 checked={encodeSpacesAsPluses}
                 onChange={(e) => setEncodeSpacesAsPluses(e.target.checked)}
-                className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                className={`rounded accent-teal-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
               />
               <label htmlFor="space-encode-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                 Represent Spaces as Plus signs (<code>+</code>)
@@ -499,7 +499,7 @@ export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
                   id="strip-comments-check"
                   checked={stripCommentsOnMinify}
                   onChange={(e) => setStripCommentsOnMinify(e.target.checked)}
-                  className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                  className={`rounded accent-teal-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
                 />
                 <label htmlFor="strip-comments-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                   Strip Document Comments
@@ -511,7 +511,7 @@ export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
                   id="collapse-ws-check"
                   checked={collapseWhitespaceOnMinify}
                   onChange={(e) => setCollapseWhitespaceOnMinify(e.target.checked)}
-                  className="rounded border-white/10 accent-teal-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                  className={`rounded accent-teal-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
                 />
                 <label htmlFor="collapse-ws-check" className={`${t.textMuted} cursor-pointer font-mono text-[11px]`}>
                   Collapse Whitespaces / Gaps
@@ -520,7 +520,7 @@ export function WebMgmtTools({ activeToolId, isDark }: WebMgmtToolsProps) {
             </>
           )}
 
-          <div className="lg:col-span-1 flex flex-col justify-center font-mono text-[10px] ${t.textFaint} space-y-0.5">
+          <div className={`lg:col-span-1 flex flex-col justify-center font-mono text-[10px] ${t.textFaint} space-y-0.5`}>
             <div>Input Size: <strong className={t.heading}>{inputSize} Bytes</strong></div>
             <div>Output Size: <strong className={t.heading}>{outputSize} Bytes</strong></div>
             {inputSize > 0 && (

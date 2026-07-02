@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react';
 
 interface UrlMarketingToolsProps {
   activeToolId: string;
+  isDark?: boolean;
 }
 
 // 1. UUID Generation engines
@@ -24,8 +25,29 @@ function generateUUIDv1(): string {
   return `${timeHex.substring(4, 12)}-${timeHex.substring(0, 4)}-11ed-b${clockHex.substring(1, 4)}-${nodeHex}`;
 }
 
-export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
+export function UrlMarketingTools({ activeToolId, isDark = true }: UrlMarketingToolsProps) {
   const currentId = activeToolId;
+
+  const t = {
+    heading: isDark ? 'text-white' : 'text-gray-900',
+    textMuted: isDark ? 'text-gray-400' : 'text-gray-600',
+    textFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+    border: isDark ? 'border-white/5' : 'border-gray-200',
+    panelBg: isDark ? 'bg-[#18181b]/95 border-white/5' : 'bg-white border-gray-200',
+    cardBg: isDark ? 'bg-[#09090c] border-white/5' : 'bg-gray-50 border-gray-200',
+    innerCardBg: isDark ? 'bg-[#18181b] border-white/5' : 'bg-white border-gray-200',
+    inputBg: isDark ? 'bg-[#09090b] border-white/5 text-white' : 'bg-gray-50 border-gray-300 text-gray-900',
+    outputBg: isDark ? 'bg-[#18181b]/50 border-white/5 text-indigo-300' : 'bg-gray-50 border-gray-200 text-indigo-600',
+    selectBg: isDark ? 'bg-[#18181b] border-white/5 text-white' : 'bg-white border-gray-300 text-gray-900',
+    checkboxLabel: isDark ? 'text-gray-300' : 'text-gray-700',
+    tableHead: isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-100 border-gray-200 text-gray-500',
+    tableRow: isDark ? 'hover:bg-white/5 text-gray-300' : 'hover:bg-gray-50 text-gray-600',
+    tagBtn: isDark ? 'bg-[#18181b] border-white/5 text-gray-400 hover:text-white' : 'bg-gray-100 border-gray-200 text-gray-500 hover:text-gray-900',
+    copyBtn: isDark ? 'bg-white/5 hover:bg-white/10 border-white/5 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-600 hover:text-gray-900',
+    uuidItem: isDark ? 'bg-[#18181b]/45 hover:bg-[#18181b]/95 border-white/5' : 'bg-white hover:bg-gray-50 border-gray-200',
+    label: isDark ? 'text-gray-400' : 'text-gray-600',
+    labelFaint: isDark ? 'text-gray-500' : 'text-gray-400',
+  };
 
   // =========================================================================
   // TOOL 1: UUID GENERATOR STATES & LOGIC
@@ -348,32 +370,32 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
           RENDER 1: UUID GENERATOR
           ===================================================================== */}
       {currentId === 'uuid-gen' && (
-        <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+        <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
+          <div className={`border-b ${t.border} pb-4`}>
+            <h2 className={`text-base font-semibold ${t.heading} select-none tracking-tight flex items-center gap-2 font-mono`}>
               <Icons.Cpu className="w-5 h-5 text-indigo-400" />
               UUID / GUID Generator
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className={`text-xs ${t.textMuted} mt-1`}>
               Create UUID (Universally Unique Identifier) Version 4 (cryptographically random) or Version 1 (timestamp-based) vectors easily.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {/* Setting Configuration */}
-            <div className="md:col-span-4 bg-[#09090b]/80 border border-white/5 p-4 rounded-xl space-y-4">
-              <h3 className="text-xs font-mono font-bold text-gray-300 uppercase tracking-wider">Adjustment Board</h3>
+            <div className={`md:col-span-4 ${t.cardBg} p-4 rounded-xl space-y-4`}>
+              <h3 className={`text-xs font-mono font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'} uppercase tracking-wider`}>Adjustment Board</h3>
               
               {/* Type toggle */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-gray-500 uppercase block font-bold">Standard Version</label>
+                <label className={`text-[10px] font-mono ${t.labelFaint} uppercase block font-bold`}>Standard Version</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setUuidType('v4')}
                     className={`p-1.5 text-xs font-semibold rounded font-mono border transition-all ${
                       uuidType === 'v4' 
                         ? 'bg-indigo-600 text-white border-indigo-400' 
-                        : 'bg-[#18181b] text-gray-400 border-white/5 hover:text-white'
+                        : t.tagBtn
                     }`}
                   >
                     UUID v4 (Random)
@@ -383,7 +405,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                     className={`p-1.5 text-xs font-semibold rounded font-mono border transition-all ${
                       uuidType === 'v1' 
                         ? 'bg-indigo-600 text-white border-indigo-400' 
-                        : 'bg-[#18181b] text-gray-400 border-white/5 hover:text-white'
+                        : t.tagBtn
                     }`}
                   >
                     UUID v1 (Time)
@@ -393,11 +415,11 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
               {/* Quantity */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-gray-500 uppercase block font-bold">Quantity counts</label>
+                <label className={`text-[10px] font-mono ${t.labelFaint} uppercase block font-bold`}>Quantity counts</label>
                 <select
                   value={uuidCount}
                   onChange={(e) => setUuidCount(parseInt(e.target.value, 10))}
-                  className="w-full p-2 bg-[#18181b] border border-white/5 rounded text-xs text-white focus:outline-none"
+                  className={`w-full p-2 ${t.selectBg} rounded text-xs focus:outline-none`}
                 >
                   <option value="1">1 Token</option>
                   <option value="5">5 Tokens</option>
@@ -409,16 +431,16 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               </div>
 
               {/* Uppercase and Hyphens Checkboxes */}
-              <div className="space-y-2 pt-2 border-t border-white/5">
+              <div className={`space-y-2 pt-2 border-t ${t.border}`}>
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     id="upper-uuid-check"
                     checked={uuidUppercase}
                     onChange={(e) => setUuidUppercase(e.target.checked)}
-                    className="rounded border-white/10 accent-indigo-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                    className={`rounded accent-indigo-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
                   />
-                  <label htmlFor="upper-uuid-check" className="text-gray-300 font-mono text-[11px] cursor-pointer">
+                  <label htmlFor="upper-uuid-check" className={`${t.checkboxLabel} font-mono text-[11px] cursor-pointer`}>
                     Capitalize Letters (A-F)
                   </label>
                 </div>
@@ -429,21 +451,21 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                     id="hyphen-uuid-check"
                     checked={uuidHyphens}
                     onChange={(e) => setUuidHyphens(e.target.checked)}
-                    className="rounded border-white/10 accent-indigo-500 w-3.5 h-3.5 cursor-pointer bg-white/5"
+                    className={`rounded accent-indigo-500 w-3.5 h-3.5 cursor-pointer border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-300 bg-white'}`}
                   />
-                  <label htmlFor="hyphen-uuid-check" className="text-gray-300 font-mono text-[11px] cursor-pointer">
+                  <label htmlFor="hyphen-uuid-check" className={`${t.checkboxLabel} font-mono text-[11px] cursor-pointer`}>
                     Include Separator Hyphens
                   </label>
                 </div>
               </div>
 
               {/* Wrapped formatting */}
-              <div className="space-y-1 pt-2 border-t border-white/5">
-                <label className="text-[10px] font-mono text-gray-500 uppercase block font-bold">Wrap Wrapper Formats</label>
+              <div className={`space-y-1 pt-2 border-t ${t.border}`}>
+                <label className={`text-[10px] font-mono ${t.labelFaint} uppercase block font-bold`}>Wrap Wrapper Formats</label>
                 <select
                   value={uuidWrap}
                   onChange={(e) => setUuidWrap(e.target.value as any)}
-                  className="w-full p-2 bg-[#18181b] border border-white/5 rounded text-xs text-white focus:outline-none"
+                  className={`w-full p-2 ${t.selectBg} rounded text-xs focus:outline-none`}
                 >
                   <option value="none">Raw standard identifiers</option>
                   <option value="braces">Wrapped in braces {"{...}"}</option>
@@ -454,7 +476,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               {/* Regeneration Button */}
               <button
                 onClick={handleGenerateUUIDs}
-                className="w-full flex items-center justify-center gap-1.5 p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs text-white font-mono transition-all"
+                className={`w-full flex items-center justify-center gap-1.5 p-2 ${t.copyBtn} rounded text-xs font-mono transition-all`}
               >
                 <Icons.RefreshCw className="w-3.5 h-3.5 text-indigo-400" />
                 Generate New Batch
@@ -463,7 +485,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
             {/* Generated results buffer */}
             <div className="md:col-span-8 space-y-2">
-              <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+              <div className={`flex justify-between items-center text-[10px] font-mono ${t.labelFaint} uppercase tracking-widest`}>
                 <span>Output vectors ({generatedUuids.length} generated)</span>
                 <button
                   onClick={copyAllUuids}
@@ -475,13 +497,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               </div>
 
               {/* list panel */}
-              <div className="p-3 bg-[#09090c] border border-white/5 rounded-xl space-y-1.5 max-h-96 overflow-y-auto">
+              <div className={`p-3 ${t.cardBg} rounded-xl space-y-1.5 max-h-96 overflow-y-auto`}>
                 {generatedUuids.map((val, idx) => (
-                  <div key={idx} className="flex justify-between items-center p-2 bg-[#18181b]/45 hover:bg-[#18181b]/95 border border-white/5 rounded transition-all">
+                  <div key={idx} className={`flex justify-between items-center p-2 ${t.uuidItem} rounded transition-all`}>
                     <span className="font-mono text-xs text-amber-300">{val}</span>
                     <button
                       onClick={() => copyIndividualUuid(val, idx)}
-                      className="p-1 text-gray-400 hover:text-white hover:bg-white/5 rounded transition-all"
+                      className={`p-1 ${t.textMuted} hover:${t.heading} ${isDark ? 'hover:bg-white/5' : 'hover:bg-black/5'} rounded transition-all`}
                       title="Copy item info"
                     >
                       {copiedUuidsIndex === idx ? (
@@ -502,13 +524,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
           RENDER 2: UTM BUILDER
           ===================================================================== */}
       {currentId === 'utm-builder' && (
-        <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+        <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
+          <div className={`border-b ${t.border} pb-4`}>
+            <h2 className={`text-base font-semibold ${t.heading} select-none tracking-tight flex items-center gap-2 font-mono`}>
               <Icons.Tag className="w-5 h-5 text-indigo-400" />
               UTM Campaign Link Builder
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className={`text-xs ${t.textMuted} mt-1`}>
               Inject standard Google Analytics marketing campaign coordinates inside landing addresses safely for pristine advertising telemetry tracking.
             </p>
           </div>
@@ -519,13 +541,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               
               {/* Destination URL */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Target Web Page URL (Required)</label>
+                <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Target Web Page URL (Required)</label>
                 <input
                   type="text"
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
                   placeholder="e.g. https://yoursite.com/landing-page"
-                  className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded text-xs text-white focus:outline-none focus:border-indigo-500/40 font-mono"
+                  className={`w-full p-2.5 ${t.inputBg} rounded text-xs focus:outline-none focus:border-indigo-500/40 font-mono`}
                 />
               </div>
 
@@ -534,15 +556,15 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                 {/* UTM Source */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-mono text-gray-400 font-bold uppercase">Campaign Source (utm_source)</label>
-                    <span className="text-[9px] text-gray-500 font-mono">Referrer (google, newsletter)</span>
+                    <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase`}>Campaign Source (utm_source)</label>
+                    <span className={`text-[9px] ${t.labelFaint} font-mono`}>Referrer (google, newsletter)</span>
                   </div>
                   <input
                     type="text"
                     value={utmSource}
                     onChange={(e) => setUtmSource(e.target.value)}
                     placeholder="e.g. google"
-                    className="w-full p-2 bg-[#09090b] border border-white/5 rounded text-xs text-white focus:outline-none font-mono"
+                    className={`w-full p-2 ${t.inputBg} rounded text-xs focus:outline-none font-mono`}
                   />
                   {/* quick tags */}
                   <div className="flex gap-1.5 flex-wrap">
@@ -550,7 +572,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                       <button
                         key={tag}
                         onClick={() => setUtmSource(tag)}
-                        className="text-[9px] font-mono p-0.5 px-2 bg-[#18181b] border border-white/5 rounded text-gray-400 hover:text-white"
+                        className={`text-[9px] font-mono p-0.5 px-2 ${t.tagBtn} rounded`}
                       >
                         {tag}
                       </button>
@@ -561,15 +583,15 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                 {/* UTM Medium */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-mono text-gray-400 font-bold uppercase">Campaign Medium (utm_medium)</label>
-                    <span className="text-[9px] text-gray-500 font-mono">Channel (cpc, email, banner)</span>
+                    <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase`}>Campaign Medium (utm_medium)</label>
+                    <span className={`text-[9px] ${t.labelFaint} font-mono`}>Channel (cpc, email, banner)</span>
                   </div>
                   <input
                     type="text"
                     value={utmMedium}
                     onChange={(e) => setUtmMedium(e.target.value)}
                     placeholder="e.g. cpc"
-                    className="w-full p-2 bg-[#09090b] border border-white/5 rounded text-xs text-white focus:outline-none font-mono"
+                    className={`w-full p-2 ${t.inputBg} rounded text-xs focus:outline-none font-mono`}
                   />
                   {/* quick tags */}
                   <div className="flex gap-1.5 flex-wrap">
@@ -577,7 +599,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                       <button
                         key={tag}
                         onClick={() => setUtmMedium(tag)}
-                        className="text-[9px] font-mono p-0.5 px-2 bg-[#18181b] border border-white/5 rounded text-gray-400 hover:text-white"
+                        className={`text-[9px] font-mono p-0.5 px-2 ${t.tagBtn} rounded`}
                       >
                         {tag}
                       </button>
@@ -587,25 +609,25 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
                 {/* Campaign Name */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Campaign Name (utm_campaign)</label>
+                  <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Campaign Name (utm_campaign)</label>
                   <input
                     type="text"
                     value={utmCampaign}
                     onChange={(e) => setUtmCampaign(e.target.value)}
                     placeholder="e.g. summer_promo"
-                    className="w-full p-2 bg-[#09090b] border border-white/5 rounded text-xs text-white focus:outline-none font-mono"
+                    className={`w-full p-2 ${t.inputBg} rounded text-xs focus:outline-none font-mono`}
                   />
                 </div>
 
                 {/* Campaign Term */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Campaign Term (utm_term - Optional)</label>
+                  <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Campaign Term (utm_term - Optional)</label>
                   <input
                     type="text"
                     value={utmTerm}
                     onChange={(e) => setUtmTerm(e.target.value)}
                     placeholder="Paid keyword queries..."
-                    className="w-full p-2 bg-[#09090b] border border-[#18181b] rounded text-xs text-white focus:outline-none font-mono"
+                    className={`w-full p-2 ${t.inputBg} rounded text-xs focus:outline-none font-mono`}
                   />
                 </div>
 
@@ -613,27 +635,27 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
               {/* Campaign Content */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Campaign Content (utm_content - Optional)</label>
+                <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Campaign Content (utm_content - Optional)</label>
                 <input
                   type="text"
                   value={utmContent}
                   onChange={(e) => setUtmContent(e.target.value)}
                   placeholder="Identify specific ads or link blocks (e.g. top_header_button or discount_badge)..."
-                  className="w-full p-2 bg-[#09090b] border border-[#18181b] rounded text-xs text-white"
+                  className={`w-full p-2 ${t.inputBg} rounded text-xs`}
                 />
               </div>
 
             </div>
 
             {/* Generated copy card */}
-            <div className="lg:col-span-4 flex flex-col justify-center p-6 bg-[#09090c] border border-white/5 rounded-2xl space-y-4">
+            <div className={`lg:col-span-4 flex flex-col justify-center p-6 ${t.cardBg} rounded-2xl space-y-4`}>
               <div className="space-y-2">
-                <span className="text-[10px] font-bold text-gray-500 font-mono uppercase tracking-wider block">Generated Tracking URI Address</span>
+                <span className={`text-[10px] font-bold ${t.labelFaint} font-mono uppercase tracking-wider block`}>Generated Tracking URI Address</span>
                 <textarea
                   readOnly
                   value={builtUtmUrl}
                   rows={6}
-                  className="w-full p-3 bg-[#18181b]/50 border border-white/5 rounded text-xs font-mono text-indigo-300"
+                  className={`w-full p-3 ${t.outputBg} rounded text-xs font-mono`}
                 />
               </div>
 
@@ -667,26 +689,26 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
           RENDER 3: URL PARSER
           ===================================================================== */}
       {currentId === 'url-parser' && (
-        <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+        <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
+          <div className={`border-b ${t.border} pb-4`}>
+            <h2 className={`text-base font-semibold ${t.heading} select-none tracking-tight flex items-center gap-2 font-mono`}>
               <Icons.Unlink className="w-5 h-5 text-indigo-400" />
               URL Parser
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className={`text-xs ${t.textMuted} mt-1`}>
               Decompose structured URL elements instantly, showcasing credentials, host boundaries, active protocols, paths, and detailed key-value queries separately.
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Enter Target URL to Parse</label>
+              <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Enter Target URL to Parse</label>
               <input
                 type="text"
                 value={urlToParse}
                 onChange={(e) => setUrlToParse(e.target.value)}
                 placeholder="Enter complete address..."
-                className="w-full p-3 bg-[#09090b] border border-white/5 rounded text-xs text-white font-mono"
+                className={`w-full p-3 ${t.inputBg} rounded text-xs font-mono`}
               />
             </div>
 
@@ -701,34 +723,34 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                 
                 {/* Meta details columns */}
                 <div className="lg:col-span-5 space-y-3">
-                  <span className="text-[10px] font-mono text-gray-500 uppercase tracking-wider block font-bold">Base components</span>
+                  <span className={`text-[10px] font-mono ${t.labelFaint} uppercase tracking-wider block font-bold`}>Base components</span>
                   
-                  <div className="bg-[#09090c] p-4 border border-white/5 rounded-xl space-y-2.5 text-xs font-mono">
-                    <div className="flex justify-between border-b border-white/5 pb-1.5">
-                      <span className="text-gray-500">Protocol:</span>
+                  <div className={`${t.cardBg} p-4 rounded-xl space-y-2.5 text-xs font-mono`}>
+                    <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                      <span className={t.textFaint}>Protocol:</span>
                       <span className="text-emerald-400 font-bold">{parsedParts.protocol}</span>
                     </div>
-                    <div className="flex justify-between border-b border-white/5 pb-1.5">
-                      <span className="text-gray-500">Hostname:</span>
+                    <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                      <span className={t.textFaint}>Hostname:</span>
                       <span className="text-indigo-300 font-bold">{parsedParts.hostname}</span>
                     </div>
-                    <div className="flex justify-between border-b border-white/5 pb-1.5">
-                      <span className="text-gray-500">Port Reference:</span>
+                    <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                      <span className={t.textFaint}>Port Reference:</span>
                       <span className="text-blue-300">{parsedParts.port}</span>
                     </div>
-                    <div className="flex justify-between border-b border-white/5 pb-1.5">
-                      <span className="text-gray-500">Path Name:</span>
+                    <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                      <span className={t.textFaint}>Path Name:</span>
                       <span className="text-amber-400 text-right select-all">{parsedParts.pathname}</span>
                     </div>
                     {parsedParts.hash && (
-                      <div className="flex justify-between border-b border-white/5 pb-1.5">
-                        <span className="text-gray-500">Hash Match:</span>
+                      <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                        <span className={t.textFaint}>Hash Match:</span>
                         <span className="text-purple-400 font-bold select-all">{parsedParts.hash}</span>
                       </div>
                     )}
                     {parsedParts.username && (
-                      <div className="flex justify-between border-b border-white/5 pb-1.5">
-                        <span className="text-gray-500">Credential Username:</span>
+                      <div className={`flex justify-between border-b ${t.border} pb-1.5`}>
+                        <span className={t.textFaint}>Credential Username:</span>
                         <span className="text-gray-300">{parsedParts.username}</span>
                       </div>
                     )}
@@ -737,20 +759,20 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
                 {/* parsed params column */}
                 <div className="lg:col-span-7 space-y-3">
-                  <span className="text-[10px] font-mono text-gray-500 uppercase tracking-wider block font-bold">Parsed Query Parameters ({queryParamsList.length} items)</span>
+                  <span className={`text-[10px] font-mono ${t.labelFaint} uppercase tracking-wider block font-bold`}>Parsed Query Parameters ({queryParamsList.length} items)</span>
                   
                   {queryParamsList.length > 0 ? (
-                    <div className="bg-[#09090c] border border-white/5 rounded-xl block overflow-hidden">
+                    <div className={`${t.cardBg} rounded-xl block overflow-hidden`}>
                       <table className="w-full border-collapse text-xs font-mono">
                         <thead>
-                          <tr className="bg-white/5 border-b border-white/10 text-gray-400 text-left">
+                          <tr className={`${t.tableHead} border-b ${isDark ? 'border-white/10' : 'border-gray-200'} text-left`}>
                             <th className="p-2 pl-4">Key Reference</th>
                             <th className="p-2 pr-4">Value Content</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className={`divide-y ${t.border}`}>
                           {queryParamsList.map((item, idx) => (
-                            <tr key={idx} className="hover:bg-white/2">
+                            <tr key={idx} className={t.tableRow}>
                               <td className="p-2 pl-4 text-amber-250 select-all font-semibold font-mono">{item.key}</td>
                               <td className="p-2 pr-4 text-indigo-300 select-all font-mono">{decodeURIComponent(item.value)}</td>
                             </tr>
@@ -759,7 +781,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                       </table>
                     </div>
                   ) : (
-                    <div className="p-8 bg-[#09090c] border border-dashed border-white/5 rounded-xl text-center text-gray-500 font-mono text-xs">
+                    <div className={`p-8 ${t.cardBg} border-dashed border-2 ${isDark ? 'border-white/5' : 'border-gray-200'} rounded-xl text-center ${t.textFaint} font-mono text-xs`}>
                       No URL query parameters detected in the address query string.
                     </div>
                   )}
@@ -776,13 +798,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
           RENDER 4: FIND FACEBOOK ID
           ===================================================================== */}
       {currentId === 'facebook-id' && (
-        <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+        <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
+          <div className={`border-b ${t.border} pb-4`}>
+            <h2 className={`text-base font-semibold ${t.heading} select-none tracking-tight flex items-center gap-2 font-mono`}>
               <Icons.Facebook className="w-5 h-5 text-indigo-400" />
               Find Facebook ID Utility
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className={`text-xs ${t.textMuted} mt-1`}>
               Extract numeric Facebook User IDs, Page IDs, or Group IDs from customized URLs instantly, mapping raw metadata properties successfully.
             </p>
           </div>
@@ -792,24 +814,24 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
             {/* Input & Output board */}
             <div className="lg:col-span-7 space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-gray-400 font-bold uppercase block">Enter Complete Facebook URL</label>
+                <label className={`text-[10px] font-mono ${t.textMuted} font-bold uppercase block`}>Enter Complete Facebook URL</label>
                 <input
                   type="text"
                   value={fbUrl}
                   onChange={(e) => setFbUrl(e.target.value)}
                   placeholder="e.g. https://www.facebook.com/profile.php?id=1234567..."
-                  className="w-full p-2.5 bg-[#09090b] border border-white/5 rounded text-xs text-white font-mono"
+                  className={`w-full p-2.5 ${t.inputBg} rounded text-xs font-mono`}
                 />
               </div>
 
-              <div className="p-4 bg-[#09090c] border border-white/5 rounded-xl space-y-3">
-                <span className="text-[10px] font-mono text-gray-500 uppercase tracking-wider block font-bold">Extraction Analysis</span>
+              <div className={`p-4 ${t.cardBg} rounded-xl space-y-3`}>
+                <span className={`text-[10px] font-mono ${t.labelFaint} uppercase tracking-wider block font-bold`}>Extraction Analysis</span>
                 
                 {extractedFbId ? (
                   <div className="space-y-2 animate-fade-in">
-                    <div className="flex flex-col sm:flex-row justify-between sm:items-center p-3 bg-[#18181b] border border-white/5 rounded gap-2">
+                    <div className={`flex flex-col sm:flex-row justify-between sm:items-center p-3 ${t.innerCardBg} rounded gap-2`}>
                       <div className="font-mono">
-                        <span className="text-[10px] text-gray-500 block">EXTRACTED ID VALUE:</span>
+                        <span className={`text-[10px] ${t.labelFaint} block`}>EXTRACTED ID VALUE:</span>
                         <strong className="text-emerald-400 text-lg select-all font-mono tracking-wide">{extractedFbId}</strong>
                       </div>
 
@@ -819,19 +841,19 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                           setCopiedFbId(true);
                           setTimeout(() => setCopiedFbId(false), 2000);
                         }}
-                        className="p-1 px-3 bg-white/5 hover:bg-white/10 rounded border border-white/5 text-xs text-gray-300 hover:text-white transition-colors font-mono flex items-center justify-center gap-1.5"
+                        className={`p-1 px-3 ${t.copyBtn} rounded text-xs transition-colors font-mono flex items-center justify-center gap-1.5`}
                       >
                         {copiedFbId ? <Icons.Check className="w-3.5 h-3.5 text-emerald-400" /> : <Icons.Copy className="w-3.5 h-3.5" />}
                         Copy ID
                       </button>
                     </div>
 
-                    <div className="text-[11px] text-gray-400 leading-relaxed font-mono">
+                    <div className={`text-[11px] ${t.textMuted} leading-relaxed font-mono`}>
                       Status: <span className="text-indigo-400 font-semibold">{extractedType}</span>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-500 leading-relaxed font-mono">
+                  <p className={`text-xs ${t.labelFaint} leading-relaxed font-mono`}>
                     {extractedType || 'Waiting for valid numeric URL path segments in the input field.'}
                   </p>
                 )}
@@ -839,18 +861,18 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
             </div>
 
             {/* educational guide cards */}
-            <div className="lg:col-span-5 p-5 bg-[#09090c] border border-white/5 rounded-2xl space-y-3">
-              <h3 className="text-xs font-mono font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+            <div className={`lg:col-span-5 p-5 ${t.cardBg} rounded-2xl space-y-3`}>
+              <h3 className={`text-xs font-mono font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'} uppercase tracking-wider flex items-center gap-1.5`}>
                 <Icons.HelpCircle className="w-4 h-4 text-indigo-400" />
                 How to find IDs on vanity usernames?
               </h3>
               
-              <div className="text-xs text-gray-400 leading-relaxed space-y-3 font-sans">
+              <div className={`text-xs ${t.textMuted} leading-relaxed space-y-3 font-sans`}>
                 <p>If you set a custom text vanity URL, there is no ID visible in the address bar. Follow these steps to find it:</p>
                 
                 <ol className="list-decimal pl-4 space-y-2 text-[11px]">
-                  <li>Go to your Facebook profile or page, right-click anywhere, and click <strong className="text-white">"View Page Source"</strong>.</li>
-                  <li>Press <kbd className="bg-white/5 p-0.5 px-1.5 border border-white/10 rounded font-mono text-[9px]">Ctrl + F</kbd> (or Cmd + F on Mac) to open search dialog.</li>
+                  <li>Go to your Facebook profile or page, right-click anywhere, and click <strong className={t.heading}>"View Page Source"</strong>.</li>
+                  <li>Press <kbd className={`p-0.5 px-1.5 rounded font-mono text-[9px] border ${isDark ? 'bg-white/5 border-white/10 text-gray-300' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>Ctrl + F</kbd> (or Cmd + F on Mac) to open search dialog.</li>
                   <li>Type one of these parameters:
                     <ul className="list-disc pl-4 mt-1 space-y-0.5 font-mono text-[10px] text-indigo-300">
                       <li><code>fb://profile/</code></li>
@@ -871,13 +893,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
           RENDER 5: CANONICAL URL QUERY STRIPPER
           ===================================================================== */}
       {currentId === 'query-param-stripper' && (
-        <div className="p-6 bg-[#18181b]/95 border border-white/5 rounded-2xl shadow-xl space-y-6">
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-base font-semibold text-white tracking-tight flex items-center gap-2 font-mono">
+        <div className={`p-6 ${t.panelBg} rounded-2xl shadow-xl space-y-6`}>
+          <div className={`border-b ${t.border} pb-4`}>
+            <h2 className={`text-base font-semibold ${t.heading} select-none tracking-tight flex items-center gap-2 font-mono`}>
               <Icons.Scissors className="w-5 h-5 text-indigo-400" />
               Canonical URL Parameter Stripper
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className={`text-xs ${t.textMuted} mt-1`}>
               Shed telemetry tracking indicators, affiliate IDs, ad campaign properties, and fragments from pasted links for clean canonical sharing.
             </p>
           </div>
@@ -887,13 +909,13 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
             {/* Form Controls Column */}
             <div className="lg:col-span-7 space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-mono font-bold text-gray-400 uppercase block">Dirty / Tracking URL</label>
+                <label className={`text-xs font-mono font-bold ${t.textMuted} uppercase block`}>Dirty / Tracking URL</label>
                 <textarea
                   rows={4}
                   value={dirtyUrl}
                   onChange={(e) => setDirtyUrl(e.target.value)}
                   placeholder="Paste URL containing tracking parameters... e.g., https://site.com/item?foo=bar&utm_source=email&fbclid=123"
-                  className="w-full p-3 bg-[#09090b] border border-white/5 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-indigo-500/50 transition-colors leading-relaxed"
+                  className={`w-full p-3 ${t.inputBg} rounded-xl text-xs font-mono focus:outline-none focus:border-indigo-500/50 transition-colors leading-relaxed`}
                 />
                 <button
                   onClick={() => setDirtyUrl('https://example.com/shop/checkout?utm_source=spring_sale&utm_medium=email&utm_campaign=new_customers&fbclid=IwAR123xyz456_abc_test&gclid=Cj0KCQjwlPwBeBhD_ARIsAID_d0Uj_806f&ref=partner_badge&source=newsletter#shipping-options')}
@@ -905,98 +927,98 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               </div>
 
               {/* Stripper Configuration Grid */}
-              <div className="p-4 bg-[#09090c] border border-white/5 rounded-xl space-y-4">
-                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">STRIPPER CONFIGURATION</span>
+              <div className={`p-4 ${t.cardBg} rounded-xl space-y-4`}>
+                <span className={`text-[10px] font-mono ${t.textMuted} uppercase tracking-wider block font-bold`}>STRIPPER CONFIGURATION</span>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripUtm}
                       onChange={(e) => setStripUtm(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Strip Google UTMs</span>
-                      <span className="text-[10px] text-gray-500 block">utm_source, utm_medium, etc.</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Strip Google UTMs</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>utm_source, utm_medium, etc.</span>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripFbid}
                       onChange={(e) => setStripFbid(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Strip Facebook Click IDs</span>
-                      <span className="text-[10px] text-gray-500 block">fbclid parameter tracking</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Strip Facebook Click IDs</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>fbclid parameter tracking</span>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripGclid}
                       onChange={(e) => setStripGclid(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Strip Google Ads tracking</span>
-                      <span className="text-[10px] text-gray-500 block">gclid, dclid, wbraid, gbraid</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Strip Google Ads tracking</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>gclid, dclid, wbraid, gbraid</span>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripMsclkid}
                       onChange={(e) => setStripMsclkid(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Strip Bing click IDs</span>
-                      <span className="text-[10px] text-gray-500 block">msclkid Microsoft tracker</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Strip Bing click IDs</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>msclkid Microsoft tracker</span>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripOtherTracking}
                       onChange={(e) => setStripOtherTracking(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Strip Campaign/Affiliate</span>
-                      <span className="text-[10px] text-gray-500 block">yclid, affsub, mc_cid, source, etc.</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Strip Campaign/Affiliate</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>yclid, affsub, mc_cid, source, etc.</span>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 p-2 bg-[#121214] hover:bg-white/5 rounded-lg border border-white/5 transition-all cursor-pointer">
+                  <label className={`flex items-start gap-2.5 p-2 ${t.uuidItem} rounded-lg transition-all cursor-pointer`}>
                     <input
                       type="checkbox"
                       checked={stripHash}
                       onChange={(e) => setStripHash(e.target.checked)}
-                      className="mt-0.5 rounded border-white/10 bg-[#09090b] text-indigo-500 focus:ring-indigo-600 focus:ring-offset-[#121214] accent-indigo-500 h-3.5 w-3.5"
+                      className={`mt-0.5 rounded text-indigo-500 focus:ring-indigo-600 h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
                     <div className="text-left">
-                      <span className="text-xs font-semibold text-gray-250 block">Clean Hash Fragments</span>
-                      <span className="text-[10px] text-gray-500 block">Remove #anchor tags entirely</span>
+                      <span className={`text-xs font-semibold ${isDark ? 'text-gray-250' : 'text-gray-800'} block`}>Clean Hash Fragments</span>
+                      <span className={`text-[10px] ${t.labelFaint} block`}>Remove #anchor tags entirely</span>
                     </div>
                   </label>
                 </div>
 
-                <div className="border-t border-white/5 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className={`border-t ${t.border} pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3`}>
                   <label className="flex items-center gap-2 cursor-pointer p-1">
                     <input
                       type="checkbox"
                       checked={forceHttps}
                       onChange={(e) => setForceHttps(e.target.checked)}
-                      className="rounded border-white/10 bg-[#09090b] text-indigo-500 h-3.5 w-3.5 accent-indigo-500"
+                      className={`rounded h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
-                    <span className="text-[11px] text-gray-400">Upgrade protocol to secure HTTPS</span>
+                    <span className={`text-[11px] ${t.textMuted}`}>Upgrade protocol to secure HTTPS</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer p-1">
@@ -1004,9 +1026,9 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                       type="checkbox"
                       checked={stripTrailingSlash}
                       onChange={(e) => setStripTrailingSlash(e.target.checked)}
-                      className="rounded border-white/10 bg-[#09090b] text-indigo-500 h-3.5 w-3.5 accent-indigo-500"
+                      className={`rounded h-3.5 w-3.5 accent-indigo-500 border ${isDark ? 'border-white/10 bg-[#09090b]' : 'border-gray-300 bg-white'}`}
                     />
-                    <span className="text-[11px] text-gray-400">Strip directory root trailing slash (/)</span>
+                    <span className={`text-[11px] ${t.textMuted}`}>Strip directory root trailing slash (/)</span>
                   </label>
                 </div>
               </div>
@@ -1014,11 +1036,11 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
 
             {/* Results Column */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-4">
-                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">CLEANED CANONICAL LINK</span>
+              <div className={`${t.cardBg} rounded-xl p-4 space-y-4`}>
+                <span className={`text-[10px] font-mono ${t.textMuted} uppercase tracking-wider block font-bold`}>CLEANED CANONICAL LINK</span>
                 
                 <div className="space-y-3">
-                  <div className="p-3 bg-[#111114] border border-white/5 rounded-lg select-all break-all font-mono text-xs text-emerald-400 font-semibold leading-relaxed">
+                  <div className={`p-3 ${isDark ? 'bg-[#111114] border-white/5 text-emerald-400' : 'bg-gray-100 border-gray-200 text-emerald-600'} rounded-lg select-all break-all font-mono text-xs font-semibold leading-relaxed`}>
                     {cleanUrl || 'https://...'}
                   </div>
 
@@ -1047,12 +1069,12 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
               </div>
 
               {/* Param Analysis */}
-              <div className="bg-[#09090c] border border-white/5 rounded-xl p-4 space-y-3">
-                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">TRACKER SCAN METRICS</span>
+              <div className={`${t.cardBg} rounded-xl p-4 space-y-3`}>
+                <span className={`text-[10px] font-mono ${t.textMuted} uppercase tracking-wider block font-bold`}>TRACKER SCAN METRICS</span>
                 
                 <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
                   {strippedList.length === 0 && keptList.length === 0 && (
-                    <span className="text-xs text-gray-500 block italic leading-relaxed">No active parameter keys parsed yet. Enter a query block link above to begin.</span>
+                    <span className={`text-xs ${t.labelFaint} block italic leading-relaxed`}>No active parameter keys parsed yet. Enter a query block link above to begin.</span>
                   )}
 
                   {/* Stripped parameters */}
@@ -1060,7 +1082,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                     <div key={'strip-' + i} className="flex justify-between items-start p-2 bg-rose-500/5 border border-rose-500/10 rounded-lg text-[11px] gap-2">
                       <div className="font-mono text-left">
                         <span className="text-rose-400 font-bold block">-{p.name}</span>
-                        <span className="text-gray-500 block truncate max-w-[200px]" title={p.value}>Val: {p.value}</span>
+                        <span className={`block truncate max-w-[200px] ${t.labelFaint}`} title={p.value}>Val: {p.value}</span>
                       </div>
                       <span className="bg-rose-500/10 border border-rose-500/10 text-rose-400 text-[8px] font-mono font-semibold px-1 rounded uppercase tracking-[0.05em] h-fit">
                         {p.type}
@@ -1073,7 +1095,7 @@ export function UrlMarketingTools({ activeToolId }: UrlMarketingToolsProps) {
                     <div key={'keep-' + i} className="flex justify-between items-center p-2 bg-emerald-500/5 border border-emerald-500/10 rounded-lg text-[11px] font-mono gap-2">
                       <div className="text-left font-mono">
                         <span className="text-emerald-400 font-bold block">+{p.name}</span>
-                        <span className="text-gray-500 block truncate max-w-[200px]" title={p.value}>Val: {p.value}</span>
+                        <span className={`block truncate max-w-[200px] ${t.labelFaint}`} title={p.value}>Val: {p.value}</span>
                       </div>
                       <span className="bg-emerald-500/10 border border-emerald-500/10 text-emerald-400 text-[8px] font-semibold px-1 rounded uppercase">
                         Kept

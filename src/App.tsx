@@ -1716,41 +1716,41 @@ export default function App() {
                   ['qr-generator', 'qr-decoder'].includes(activeTool.id) ? (
                     <QrCodeHelperTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : ['facebook-id', 'uuid-gen', 'url-parser', 'utm-builder', 'query-param-stripper'].includes(activeTool.id) ? (
-                    <UrlMarketingTools activeToolId={activeTool.id} />
+                    <UrlMarketingTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : ['social-meta-preview', 'redirect-header-inspect', 'dns-mx-txt'].includes(activeTool.id) ? (
-                    <SeoSpatialTools activeToolId={activeTool.id} />
+                    <SeoSpatialTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : (
-                    <WebMgmtTools activeToolId={activeTool.id} />
+                    <WebMgmtTools activeToolId={activeTool.id} isDark={isDark} />
                   )
                 )}
                 {activeTool.category === 'development' && (
                   ['json-viewer', 'json-validator', 'json-editor', 'json-minify', 'xml-to-json', 'json-to-xml', 'csv-to-json', 'tsv-to-json', 'json-to-csv', 'json-to-tsv', 'json-to-text'].includes(activeTool.id) ? (
                     <JsonSuiteTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : ['json-diff', 'jwt-debugger', 'regex-tester', 'cron-generator'].includes(activeTool.id) ? (
-                    <DeveloperSuiteTools activeToolId={activeTool.id} />
+                    <DeveloperSuiteTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : ['js-beautifier', 'js-minifier', 'js-obfuscator', 'js-deobfuscator'].includes(activeTool.id) ? (
                     <JsDeveloperTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : ['html-beautifier', 'html-minifier', 'css-beautifier', 'css-minifier'].includes(activeTool.id) ? (
-                    <WebMgmtTools activeToolId={activeTool.id} />
+                    <WebMgmtTools activeToolId={activeTool.id} isDark={isDark} />
                   ) : (
                     <CodeTools activeToolId={activeTool.id} isDark={isDark} />
                   )
                 )}
-                {activeTool.category === 'text' && <TextTools activeToolId={activeTool.id} />}
-                {activeTool.category === 'network' && <NetworkTools activeToolId={activeTool.id} />}
+                {activeTool.category === 'text' && <TextTools activeToolId={activeTool.id} isDark={isDark} />}
+                {activeTool.category === 'network' && <NetworkTools activeToolId={activeTool.id} isDark={isDark} />}
                 {activeTool.category === 'binary' && <BinaryTools activeToolId={activeTool.id} isDark={isDark} />}
                 {['css-gradient', 'color-palette', 'svg-optimizer', 'svg-path-editor'].includes(activeTool.id) ? (
-                  <DesignSuiteTools activeToolId={activeTool.id} />
+                  <DesignSuiteTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['length-conv', 'area-conv', 'weight-conv', 'volume-conv', 'temp-conv', 'each-conv', 'time-conv', 'digital-conv', 'parts-per-conv', 'speed-conv', 'pace-conv', 'pressure-conv', 'current-conv', 'voltage-conv', 'power-conv', 'reactive-power-conv', 'apparent-power-conv', 'energy-conv', 'reactive-energy-conv', 'vol-flow-conv', 'illuminance-conv', 'frequency-conv', 'angle-conv', 'currency-conv', 'num-to-word-conv', 'word-to-num-conv', 'torque-conv', 'charge-conv', 'num-to-roman-conv', 'roman-to-num-conv'].includes(activeTool.id) ? (
-                  <ConverterTools activeToolId={activeTool.id} />
+                  <ConverterTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['vtt-to-srt', 'srt-to-vtt', 'youtube-thumbnail'].includes(activeTool.id) ? (
-                  <AvSubtitleTools activeToolId={activeTool.id} />
+                  <AvSubtitleTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : ['color-converter', 'hex-to-rgb', 'rgb-to-hex'].includes(activeTool.id) ? (
-                  <ColorTools activeToolId={activeTool.id} />
+                  <ColorTools activeToolId={activeTool.id} isDark={isDark} />
                 ) : (
-                  activeTool.category === 'utility' && <UtilityTools activeToolId={activeTool.id} />
+                  activeTool.category === 'utility' && <UtilityTools activeToolId={activeTool.id} isDark={isDark} />
                 )}
-                {activeTool.category === 'image' && <ImageTools activeToolId={activeTool.id} />}
+                {activeTool.category === 'image' && <ImageTools activeToolId={activeTool.id} isDark={isDark} />}
                 {activeTool.category === 'calculator' && <CalculatorTools activeToolId={activeTool.id} isDark={isDark} />}
               </Suspense>
             </div>
