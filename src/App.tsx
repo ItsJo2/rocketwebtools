@@ -1182,14 +1182,14 @@ export default function App() {
     if (tool) {
       setActiveLegalView(null);
       setBlogPostSlug(null);
-      window.history.pushState({ toolId: tool.id }, '', `?tool=${tool.id}`);
+      window.history.pushState({ toolId: tool.id }, '', `/?tool=${tool.id}`);
       setRecentTools(prev => {
         const updated = [tool.id, ...prev.filter(id => id !== tool.id)].slice(0, 5);
         localStorage.setItem('rwt_recent', JSON.stringify(updated));
         return updated;
       });
     } else {
-      window.history.pushState(null, '', window.location.pathname);
+      window.history.pushState(null, '', '/');
     }
   };
 
@@ -1200,9 +1200,9 @@ export default function App() {
       if (view !== 'blog') {
         setBlogPostSlug(null);
       }
-      window.history.pushState({ page: view }, '', `?page=${view}`);
+      window.history.pushState({ page: view }, '', `/?page=${view}`);
     } else {
-      window.history.pushState(null, '', window.location.pathname);
+      window.history.pushState(null, '', '/');
     }
   };
 
@@ -1241,6 +1241,9 @@ export default function App() {
     }
 
     const loadFromUrl = () => {
+      if (window.location.pathname !== '/') {
+        window.history.replaceState(null, '', `/${window.location.search}`);
+      }
       const params = new URLSearchParams(window.location.search);
       const targetToolId = params.get('tool');
       const targetPage = params.get('page');
@@ -1633,14 +1636,14 @@ export default function App() {
                   <BlogPost
                     onBack={() => {
                       setBlogPostSlug(null);
-                      window.history.pushState({ page: 'blog' }, '', '?page=blog');
+                      window.history.pushState({ page: 'blog' }, '', '/?page=blog');
                     }}
                     slug={blogPostSlug}
                     isDark={isDark}
                     onOpenTool={handleOpenTool}
                     onOpenPost={(slug) => {
                       setBlogPostSlug(slug);
-                      window.history.pushState({ page: 'blog', slug }, '', `?page=blog&slug=${slug}`);
+                      window.history.pushState({ page: 'blog', slug }, '', `/?page=blog&slug=${slug}`);
                     }}
                   />
                 ) : (
@@ -1648,7 +1651,7 @@ export default function App() {
                     onBack={() => selectLegalView(null)}
                     onOpenPost={(slug) => {
                       setBlogPostSlug(slug);
-                      window.history.pushState({ page: 'blog', slug }, '', `?page=blog&slug=${slug}`);
+                      window.history.pushState({ page: 'blog', slug }, '', `/?page=blog&slug=${slug}`);
                     }}
                     isDark={isDark}
                   />
