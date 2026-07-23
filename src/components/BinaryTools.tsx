@@ -286,7 +286,7 @@ export function BinaryTools({ activeToolId, isDark }: BinaryToolsProps) {
     // We update URL params to change active tool for instant refresh
     const params = new URLSearchParams(window.location.search);
     params.set('tool', config.swapToolId);
-    window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+    window.history.pushState({}, '', `/?${params.toString()}`);
     // Trigger popstate event or window refresh or allow user to click standard categories.
     // For single-view reliability within AI Studio, we dispatch an event or let App hook do navigation
     window.dispatchEvent(new Event('popstate'));
